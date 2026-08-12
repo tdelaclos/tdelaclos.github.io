@@ -1,0 +1,1327 @@
+<!DOCTYPE html>
+
+<html class="writer-html5" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="IE=edge" http-equiv="X-UA-Compatible"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="../../img/favicon.ico" rel="shortcut icon"/>
+<title>Chapitre 4.1 — Architecture d'OpenSSH - Formation Sentinel — AlmaLinux sécurisé</title>
+<link href="../../css/theme.css" rel="stylesheet"/>
+<link href="../../css/theme_extra.css" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" rel="stylesheet"/>
+<script>
+        // Current page data
+        var mkdocs_page_name = "Chapitre 4.1 \u2014 Architecture d\u0027OpenSSH";
+        var mkdocs_page_input_path = "campagne_04/4.1-architecture-openssh.md";
+        var mkdocs_page_url = null;
+      </script>
+<!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+<script>hljs.highlightAll();</script>
+</head>
+<body class="wy-body-for-nav" role="document">
+<div class="wy-grid-for-nav">
+<nav class="wy-nav-side stickynav" data-toggle="wy-nav-shift">
+<div class="wy-side-scroll">
+<div class="wy-side-nav-search">
+<a class="icon icon-home" href="../.."> Formation Sentinel — AlmaLinux sécurisé
+        </a><div role="search">
+<form action="../../search.html" class="wy-form" id="rtd-search-form" method="get">
+<input aria-label="Search docs" name="q" placeholder="Search docs" title="Type search term here" type="text"/>
+</form>
+</div>
+</div>
+<div aria-label="Navigation menu" class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../..">Accueil</a>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">A propos</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../GUIDE-REDACTION/">Guide de rédaction</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../PARCOURS-SENTINEL/">Parcours applicatif Sentinel</a>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Campagnes</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal">Campagne 1 - Sécuriser le socle Linux</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.1-pourquoi-securiser-socle-linux/">Chapitre 1.1 — Pourquoi sécuriser un socle Linux ?</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.2-installation-almalinux-minimal/">Chapitre 1.2 — Installer AlmaLinux minimal</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.3-composants-systeme-linux/">Chapitre 1.3 — Comprendre les composants d'un système Linux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.4-premier-demarrage-verifications/">Chapitre 1.4 — Établir la baseline du serveur</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.5-mise-a-jour-gestion-depots/">Chapitre 1.5 — Mettre à jour et gérer les dépôts</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.6-architecture-systemes-fichiers/">Chapitre 1.6 — Organiser les systèmes de fichiers</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.7-utilisateurs-groupes-permissions/">Chapitre 1.7 — Comprendre identités et permissions</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.8-sudo-moindre-privilege/">Chapitre 1.8 — Administrer avec sudo</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.9-premiere-mise-en-securite-serveur/">Chapitre 1.9 — Mission : mettre le serveur en sécurité</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.10-creation-laboratoire-sentinel/">Chapitre 1.10 — Créer le laboratoire Sentinel</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 2 - Gestion des permissions et des identités</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.1-permissions-unix/">Chapitre 2.1 — Les permissions UNIX</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.2-acl/">Chapitre 2.2 — Les ACL</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.3-umask/">Chapitre 2.3 — L'umask</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.4-attributs-etendus/">Chapitre 2.4 — Les attributs étendus</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.5-pam/">Chapitre 2.5 — PAM</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.6-politique-mots-de-passe/">Chapitre 2.6 — Politique de mots de passe</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.7-comptes-systeme/">Chapitre 2.7 — Les comptes système</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.8-sudo-avance/">Chapitre 2.8 — sudo avancé</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.9-fichiers-identites-linux/">Chapitre 2.9 — Comprendre les fichiers d'identités Linux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.10-synthese-securiser-identites/">Chapitre 2.10 — Synthèse : sécuriser les identités</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 3 - TCP/IP et Firewalld</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.1-tcp-ip-administrateur/">Chapitre 3.1 — TCP/IP côté administrateur</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.2-architecture-firewalld/">Chapitre 3.2 — Architecture de Firewalld</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.3-zones-firewalld/">Chapitre 3.3 — Les zones Firewalld</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.4-services-firewalld/">Chapitre 3.4 — Les services Firewalld</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.5-conntrack-filtrage-etats/">Chapitre 3.5 — Conntrack et le filtrage par états</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.6-rich-rules-firewalld/">Chapitre 3.6 — Les Rich Rules Firewalld</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.7-journalisation-firewalld/">Chapitre 3.7 — Journalisation et analyse Firewalld</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.8-ip-sets-firewalld/">Chapitre 3.8 — Les IP Sets Firewalld</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.9-runtime-permanent/">Chapitre 3.9 — Runtime et Permanent</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.10-politique-reseau-sentinel/">Chapitre 3.10 — Concevoir la politique réseau de Sentinel</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal current">Campagne 4 - SSH</a>
+<ul class="current">
+<li class="toctree-l2 current"><a class="reference internal current" href="#">Chapitre 4.1 — Architecture d'OpenSSH</a>
+<ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="#vous-etes-ici">Vous êtes ici</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#objectifs-pedagogiques">Objectifs pédagogiques</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pourquoi-ce-chapitre-existe">Pourquoi ce chapitre existe</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#theorie-detaillee">Théorie détaillée</a>
+<ul>
+<li class="toctree-l4"><a class="reference internal" href="#ssh-est-un-protocole">SSH est un protocole</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#les-deux-cotes-dune-connexion">Les deux côtés d'une connexion</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#openssh-cote-client">OpenSSH côté client</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#openssh-cote-serveur">OpenSSH côté serveur</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#une-vision-globale">Une vision globale</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pourquoi-le-demon-sappelle-sshd">Pourquoi le démon s'appelle sshd ?</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#le-role-de-systemd">Le rôle de systemd</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#une-connexion-ssh-nest-pas-un-simple-echange-de-mots-de-passe">Une connexion SSH n'est pas un simple échange de mots de passe</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#les-grandes-etapes-dune-connexion-ssh">Les grandes étapes d'une connexion SSH</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#etape-1-ouverture-de-la-connexion-tcp">Étape 1 — Ouverture de la connexion TCP</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#etape-2-echange-des-versions">Étape 2 — Échange des versions</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#etape-3-negociation-des-algorithmes">Étape 3 — Négociation des algorithmes</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pourquoi-cette-negociation-existe-t-elle">Pourquoi cette négociation existe-t-elle ?</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#etape-4-authentification-du-serveur">Étape 4 — Authentification du serveur</a>
+<ul>
+<li class="toctree-l4"><a class="reference internal" href="#premier-cas">Premier cas</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#deuxieme-cas">Deuxième cas</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#etape-5-creation-des-cles-de-session">Étape 5 — Création des clés de session</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pourquoi-ne-pas-utiliser-directement-la-cle-du-serveur">Pourquoi ne pas utiliser directement la clé du serveur ?</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#etape-6-canal-securise">Étape 6 — Canal sécurisé</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#etape-7-authentification-utilisateur">Étape 7 — Authentification utilisateur</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#etape-8-ouverture-de-session">Étape 8 — Ouverture de session</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#larchitecture-interne-dopenssh">L'architecture interne d'OpenSSH</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pourquoi-utiliser-un-processus-fils">Pourquoi utiliser un processus fils ?</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#une-session-ssh-est-un-processus-linux">Une session SSH est un processus Linux</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#ou-intervient-pam">Où intervient PAM ?</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#le-shell-nest-pas-obligatoire">Le shell n'est pas obligatoire</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#les-sous-systemes-ssh">Les sous-systèmes SSH</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#ssh-est-un-multiplexeur">SSH est un multiplexeur</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#une-representation-complete">Une représentation complète</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#approfondissement">Approfondissement</a>
+<ul>
+<li class="toctree-l4"><a class="reference internal" href="#ssh-est-avant-tout-un-protocole-de-transport-securise">SSH est avant tout un protocole de transport sécurisé</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#la-session-ne-contourne-pas-les-privileges-linux">La session ne contourne pas les privilèges Linux</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#pourquoi-openssh-est-devenu-le-standard">Pourquoi OpenSSH est devenu le standard</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#le-demon-ssh-est-volontairement-minimal">Le démon SSH est volontairement minimal</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#concevoir-la-politique">Concevoir la politique</a>
+<ul>
+<li class="toctree-l4"><a class="reference internal" href="#ssh-est-souvent-le-premier-service-durci">SSH est souvent le premier service durci</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#point-de-vue-offensif">Point de vue offensif</a>
+<ul>
+<li class="toctree-l4"><a class="reference internal" href="#pourquoi-ssh-est-autant-cible">Pourquoi SSH est autant ciblé</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#en-entreprise">En entreprise</a>
+<ul>
+<li class="toctree-l4"><a class="reference internal" href="#une-connexion-ssh-est-un-evenement-de-securite">Une connexion SSH est un événement de sécurité</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#ssh-et-lautomatisation">SSH et l'automatisation</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#culture-technique">Culture technique</a>
+<ul>
+<li class="toctree-l4"><a class="reference internal" href="#pourquoi-le-port-22">Pourquoi le port 22 ?</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#pourquoi-openssh-remplace-t-il-telnet">Pourquoi OpenSSH remplace-t-il Telnet ?</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#pourquoi-ssh-est-il-devenu-indispensable">Pourquoi SSH est-il devenu indispensable ?</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#piege-classique">Piège classique</a>
+<ul>
+<li class="toctree-l4"><a class="reference internal" href="#confondre-ssh-et-openssh">Confondre SSH et OpenSSH</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#croire-que-le-chiffrement-commence-apres-lauthentification">Croire que le chiffrement commence après l'authentification</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#tp-1-observer-le-service-et-ses-processus">TP 1 — Observer le service et ses processus</a>
+<ul>
+<li class="toctree-l4"><a class="reference internal" href="#objectif">Objectif</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#etape-1-verifier-le-service">Étape 1 — Vérifier le service</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#etape-2-observer-les-processus">Étape 2 — Observer les processus</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#tp-2-relier-le-port-decoute-aux-processus">TP 2 — Relier le port d'écoute aux processus</a>
+<ul>
+<li class="toctree-l4"><a class="reference internal" href="#etape-3-observer-le-port-decoute">Étape 3 — Observer le port d'écoute</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#etape-4-visualiser-larbre-des-processus">Étape 4 — Visualiser l'arbre des processus</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#mission-dingenieur">Mission d'ingénieur</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#impact-sur-sentinel">Impact sur Sentinel</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#synthese">Synthèse</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pour-aller-plus-loin">Pour aller plus loin</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#schema-recapitulatif">Schéma récapitulatif</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../4.2-authentification-mot-de-passe/">Chapitre 4.2 — Authentification par mot de passe</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../4.3-authentification-par-cles/">Chapitre 4.3 — Authentification par clés</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../4.4-durcissement-sshd-config/">Chapitre 4.4 — Durcissement de sshd_config</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../4.5-bastion-administration/">Chapitre 4.5 — Bastion d'administration</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../4.6-journalisation-audit-ssh/">Chapitre 4.6 — Journalisation et audit SSH</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../4.7-protection-attaques-ssh/">Chapitre 4.7 — Protection contre les attaques SSH</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../4.8-mission-administration-sentinel/">Chapitre 4.8 — Mission : administrer Sentinel en sécurité</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 5 - Systemd</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.1-comprendre-systemd/">Chapitre 5.1 — Comprendre systemd</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.2-unites-systemd/">Chapitre 5.2 — Les unités systemd</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.3-creer-service-sentinel/">Chapitre 5.3 — Créer le service Sentinel</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.4-sandboxing-systemd/">Chapitre 5.4 — Sandboxing systemd</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.5-capacites-linux/">Chapitre 5.5 — Les capacités Linux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.6-journalisation-journald/">Chapitre 5.6 — Journalisation avec journald</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.7-supervision-redemarrage/">Chapitre 5.7 — Supervision et redémarrage automatique</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.8-mission-sentinel-resilient/">Chapitre 5.8 — Mission : rendre Sentinel résilient</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 6 - SELinux</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_06/6.1-pourquoi-selinux-existe/">Chapitre 6.1 — Pourquoi SELinux existe</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_06/6.2-contextes-selinux/">Chapitre 6.2 — Comprendre les contextes SELinux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_06/6.3-politiques-selinux/">Chapitre 6.3 — Les politiques SELinux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_06/6.4-diagnostic-refus-selinux/">Chapitre 6.4 — Diagnostiquer les refus SELinux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_06/6.5-creation-regles-selinux/">Chapitre 6.5 — Créer des règles SELinux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_06/6.6-securiser-sentinel-selinux/">Chapitre 6.6 — Sécuriser Sentinel avec SELinux</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 7 - TLS et PKI</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.1-comprendre-cryptographie-appliquee/">Chapitre 7.1 — Comprendre la cryptographie appliquée</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.2-lire-verifier-certificats-x509/">Chapitre 7.2 — Lire et vérifier les certificats X.509</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.3-construire-autorite-certification/">Chapitre 7.3 — Construire une autorité de certification</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.4-authentification-mutuelle-tls/">Chapitre 7.4 — Authentifier les deux extrémités avec mTLS</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.5-preparer-integration-freeipa/">Chapitre 7.5 — Préparer l'intégration à FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.6-renouveler-revoquer-certificats/">Chapitre 7.6 — Renouveler et révoquer les certificats</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.7-securiser-sentinel-tls/">Chapitre 7.7 — Sécuriser Sentinel avec TLS</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 8 - FreeIPA</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.1-presentation-freeipa/">Chapitre 8.1 — Découvrir FreeIPA et la gestion centralisée des identités</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.2-architecture-interne-freeipa/">Chapitre 8.2 — Comprendre l'architecture interne de FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.3-installation-freeipa/">Chapitre 8.3 — Installer un serveur FreeIPA de laboratoire</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.4-gestion-utilisateurs/">Chapitre 8.4 — Gérer le cycle de vie des utilisateurs FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.5-groupes-roles/">Chapitre 8.5 — Organiser les groupes et les rôles FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.6-politiques-sudo/">Chapitre 8.6 — Centraliser les politiques sudo avec FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.7-gestion-hotes/">Chapitre 8.7 — Enrôler les hôtes et contrôler les accès avec HBAC</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.8-certificats/">Chapitre 8.8 — Gérer les certificats de service avec FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.9-integration-sentinel/">Chapitre 8.9 — Intégrer Sentinel à FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.10-mission-administration-freeipa/">Chapitre 8.10 — Mission : administrer Sentinel avec FreeIPA</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 9 - Déploiement avec Ansible</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.1-architecture-ansible/">Chapitre 9.1 — Comprendre l'architecture Ansible</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.2-composants-ansible/">Chapitre 9.2 — Comprendre les composants et l'idempotence Ansible</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.3-inventaires/">Chapitre 9.3 — Construire les inventaires Ansible</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.4-premiers-playbooks/">Chapitre 9.4 — Écrire les premiers playbooks</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.5-variables-templates/">Chapitre 9.5 — Piloter la configuration avec variables et templates</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.6-roles-ansible/">Chapitre 9.6 — Concevoir des rôles Ansible réutilisables</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.7-deployer-sentinel-ansible/">Chapitre 9.7 — Déployer Sentinel avec Ansible</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.8-integrer-sentinel-freeipa/">Chapitre 9.8 — Automatiser l'intégration de Sentinel à FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.9-industrialiser-laboratoire/">Chapitre 9.9 — Industrialiser le projet Ansible</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.10-mission-deploiement-sentinel/">Chapitre 9.10 — Mission : reconstruire Sentinel avec Ansible</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 10 - Packaging RPM</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_10/10.1-construire-paquet-rpm/">Chapitre 10.1 — Construire un paquet RPM</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_10/10.2-gerer-dependances-rpm/">Chapitre 10.2 — Gérer les dépendances RPM</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_10/10.3-gerer-fichiers-configuration-rpm/">Chapitre 10.3 — Gérer les fichiers de configuration RPM</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_10/10.4-signer-paquets-rpm/">Chapitre 10.4 — Signer les paquets RPM</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_10/10.5-exploiter-depot-rpm-prive/">Chapitre 10.5 — Exploiter un dépôt RPM privé</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_10/10.6-packager-sentinel/">Chapitre 10.6 — Packager Sentinel</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 11 - Conteneurs Podman</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_11/11.1-decouvrir-podman/">Chapitre 11.1 — Découvrir Podman</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_11/11.2-conteneurs-rootless/">Chapitre 11.2 — Exécuter des conteneurs rootless</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_11/11.3-construire-images-securisees/">Chapitre 11.3 — Construire des images sécurisées</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_11/11.4-reseaux-conteneurs/">Chapitre 11.4 — Concevoir les réseaux de conteneurs</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_11/11.5-gerer-secrets-podman/">Chapitre 11.5 — Gérer les secrets avec Podman</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_11/11.6-executer-sentinel-securite/">Chapitre 11.6 — Exécuter Sentinel en sécurité</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 12 - Supervision et audit</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_12/12.1-centraliser-journaux-rsyslog/">Chapitre 12.1 — Centraliser les journaux avec Rsyslog</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_12/12.2-auditer-systeme-auditd/">Chapitre 12.2 — Auditer le système avec auditd</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_12/12.3-controler-integrite-fichiers-aide/">Chapitre 12.3 — Contrôler l'intégrité des fichiers avec AIDE</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_12/12.4-superviser-sentinel-prometheus/">Chapitre 12.4 — Superviser Sentinel avec Prometheus</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_12/12.5-concevoir-alertes-alertmanager/">Chapitre 12.5 — Concevoir des alertes avec Alertmanager</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_12/12.6-construire-tableau-bord-sentinel/">Chapitre 12.6 — Construire le tableau de bord Sentinel</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 13 - Attaques et défense</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.1-reconnaissance/">Chapitre 13.1 — Reconnaissance</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.2-scan-reseau/">Chapitre 13.2 — Scan réseau</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.3-brute-force-ssh/">Chapitre 13.3 — Brute force SSH</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.4-escalade-privileges/">Chapitre 13.4 — Escalade de privilèges</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.5-mouvements-lateraux/">Chapitre 13.5 — Mouvements latéraux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.6-persistance/">Chapitre 13.6 — Persistance</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.7-exfiltration/">Chapitre 13.7 — Exfiltration</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.8-etude-cas-complete/">Chapitre 13.8 — Étude de cas complète</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 14 - Projet final</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.1-deployer-sentinel-almalinux-minimale/">Chapitre 14.1 — Déployer Sentinel sur une AlmaLinux minimale</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.2-securiser-hote/">Chapitre 14.2 — Sécuriser l'hôte</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.3-integrer-freeipa/">Chapitre 14.3 — Intégrer FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.4-deployer-ansible/">Chapitre 14.4 — Déployer avec Ansible</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.5-packager-rpm/">Chapitre 14.5 — Packager avec RPM</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.6-conteneuriser-podman/">Chapitre 14.6 — Conteneuriser avec Podman</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.7-superviser-auditer/">Chapitre 14.7 — Superviser et auditer</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.8-audit-final-tests-kali/">Chapitre 14.8 — Audit final et tests depuis Kali</a>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</nav>
+<section class="wy-nav-content-wrap" data-toggle="wy-nav-shift">
+<nav aria-label="Mobile navigation menu" class="wy-nav-top" role="navigation">
+<i class="fa fa-bars" data-toggle="wy-nav-top"></i>
+<a href="../..">Formation Sentinel — AlmaLinux sécurisé</a>
+</nav>
+<div class="wy-nav-content">
+<div class="rst-content"><div aria-label="breadcrumbs navigation" role="navigation">
+<ul class="wy-breadcrumbs">
+<li><a aria-label="Docs" class="icon icon-home" href="../.."></a></li>
+<li class="breadcrumb-item">Campagnes</li>
+<li class="breadcrumb-item">Campagne 4 - SSH</li>
+<li class="breadcrumb-item active">Chapitre 4.1 — Architecture d'OpenSSH</li>
+<li class="wy-breadcrumbs-aside">
+<a href="https://github.com/tdelaclos/formations/edit/master/docs/campagne_04/4.1-architecture-openssh.md">Edit on tdelaclos/formations</a>
+</li>
+</ul>
+<hr/>
+</div>
+<div class="document" itemscope="itemscope" itemtype="http://schema.org/Article" role="main">
+<div class="section" itemprop="articleBody">
+<h1 id="chapitre-41-architecture-dopenssh">Chapitre 4.1 — Architecture d'OpenSSH</h1>
+<blockquote>
+<p><strong>Campagne 4 — SSH et accès distant</strong></p>
+<p><em>« SSH est souvent la première porte d'entrée d'un serveur. Sa sécurité conditionne celle de toute l'infrastructure. »</em></p>
+<p><em>« Pour sécuriser SSH, il faut d'abord comprendre ce qui se passe entre le moment où l'on tape <code>ssh serveur</code> et celui où l'on obtient un shell. »</em></p>
+</blockquote>
+<h2 id="vous-etes-ici">Vous êtes ici</h2>
+<pre><code class="language-text">Partie I — Construire un socle sécurisé
+
+Campagne 4 — SSH et accès distant
+
+    ► 4.1 Architecture d'OpenSSH
+      4.2 Authentification par mot de passe
+      4.3 Authentification par clés
+      4.4 Durcissement de sshd_config
+      4.5 Bastion d'administration
+      4.6 Journalisation et audit SSH
+      4.7 Protection contre les attaques
+      4.8 Mission : administration sécurisée de Sentinel
+</code></pre>
+<h2 id="objectifs-pedagogiques">Objectifs pédagogiques</h2>
+<p>À la fin de ce chapitre, vous serez capable de :</p>
+<ul>
+<li>comprendre l'architecture complète d'OpenSSH ;</li>
+<li>distinguer le client SSH du serveur SSH ;</li>
+<li>comprendre le déroulement d'une connexion SSH ;</li>
+<li>identifier les composants impliqués dans une authentification ;</li>
+<li>comprendre où interviennent le chiffrement, l'authentification et l'autorisation.</li>
+</ul>
+<h2 id="pourquoi-ce-chapitre-existe">Pourquoi ce chapitre existe</h2>
+<p>SSH est probablement le service le plus critique d'un serveur Linux. Pourquoi ? Parce qu'il permet d'obtenir un accès distant complet. Lorsqu'un administrateur se connecte en SSH, il possède généralement la capacité de :</p>
+<ul>
+<li>administrer le système ;</li>
+<li>modifier les fichiers ;</li>
+<li>installer des logiciels ;</li>
+<li>redémarrer des services ;</li>
+<li>gérer les utilisateurs ;</li>
+<li>consulter les journaux.</li>
+</ul>
+<p>Autrement dit, <strong>une compromission de SSH peut rapidement devenir une compromission du serveur tout entier.</strong> Pourtant, beaucoup d'administrateurs connaissent uniquement cette commande.</p>
+<pre><code class="language-bash">ssh serveur
+</code></pre>
+<p>Ils savent l'utiliser. Mais ils ignorent complètement ce qui se passe derrière. Or, un bon durcissement ne commence jamais par des options de configuration. Il commence par la compréhension de l'architecture.</p>
+<h2 id="theorie-detaillee">Théorie détaillée</h2>
+<h3 id="ssh-est-un-protocole">SSH est un protocole</h3>
+<p>Première idée importante. SSH n'est pas un logiciel. SSH est avant tout un protocole réseau. Son nom signifie : <code>Secure Shell</code> Il définit :</p>
+<ul>
+<li>comment deux machines communiquent ;</li>
+<li>comment elles se reconnaissent ;</li>
+<li>comment elles négocient un chiffrement ;</li>
+<li>comment elles authentifient les utilisateurs ;</li>
+<li>comment elles échangent des données.</li>
+</ul>
+<p>OpenSSH est simplement l'implémentation la plus répandue de ce protocole.</p>
+<h2 id="les-deux-cotes-dune-connexion">Les deux côtés d'une connexion</h2>
+<p>Une connexion SSH implique toujours deux acteurs.</p>
+<div class="mermaid">sequenceDiagram
+    participant C as Client SSH
+    participant S as Serveur sshd
+    C-&gt;&gt;S: Connexion TCP
+    C-&gt;&gt;S: Négociation des algorithmes
+    S--&gt;&gt;C: Clé d'hôte
+    C-&gt;&gt;S: Authentification utilisateur
+    S--&gt;&gt;C: Session chiffrée
+</div>
+<p>Sur votre poste de travail, vous utilisez : <code>ssh</code> C'est le client. Sur le serveur, un démon écoute en permanence. <code>sshd</code> C'est lui qui accepte les connexions. Il s'agit de deux programmes complètement différents.</p>
+<h2 id="openssh-cote-client">OpenSSH côté client</h2>
+<p>Le client est généralement représenté par cette commande.</p>
+<pre><code class="language-bash">ssh
+</code></pre>
+<p>Mais OpenSSH fournit bien plus que cela. Par exemple.</p>
+<pre><code class="language-bash">ssh
+</code></pre>
+<p>Connexion distante.</p>
+<pre><code class="language-bash">scp
+</code></pre>
+<p>Copie sécurisée.</p>
+<pre><code class="language-bash">sftp
+</code></pre>
+<p>Transfert de fichiers.</p>
+<pre><code class="language-bash">ssh-keygen
+</code></pre>
+<p>Génération de clés.</p>
+<pre><code class="language-bash">ssh-agent
+</code></pre>
+<p>Gestionnaire de clés.</p>
+<pre><code class="language-bash">ssh-add
+</code></pre>
+<p>Ajout de clés dans l'agent. Autrement dit, OpenSSH est une véritable suite d'outils, pas uniquement un client de connexion.</p>
+<h2 id="openssh-cote-serveur">OpenSSH côté serveur</h2>
+<p>Sur AlmaLinux, le serveur est assuré par : <code>sshd</code> Il s'agit d'un démon systemd. On retrouve généralement.</p>
+<pre><code class="language-bash">systemctl status sshd
+</code></pre>
+<p>Lorsqu'il démarre, il réalise notamment plusieurs actions.</p>
+<p>À partir de ce moment, le serveur reste passif. Il attend simplement qu'un client tente une connexion.</p>
+<h2 id="une-vision-globale">Une vision globale</h2>
+<p>L'architecture peut être représentée ainsi.</p>
+<div class="mermaid">flowchart TD
+    admin[Administrateur] --&gt; client[Client OpenSSH]
+    client --&gt;|TCP/IP| sshd[Serveur OpenSSH — sshd]
+    sshd --&gt; pam[Authentification et compte via PAM]
+    pam --&gt; session[Session, commande ou sous-système]
+    session --&gt; linux[Système Linux&lt;br/&gt;permissions, SELinux et journalisation]
+</div>
+<p>Nous retrouvons déjà plusieurs éléments étudiés dans les campagnes précédentes.</p>
+<ul>
+<li>PAM</li>
+<li>comptes utilisateurs</li>
+<li>systemd</li>
+<li>journalisation</li>
+<li>permissions UNIX</li>
+</ul>
+<p>SSH s'intègre naturellement dans tout l'écosystème Linux.</p>
+<h2 id="pourquoi-le-demon-sappelle-sshd">Pourquoi le démon s'appelle sshd ?</h2>
+<p>Le suffixe : <code>d</code> signifie : <code>daemon</code> Autrement dit, un service fonctionnant en arrière-plan. Comme :</p>
+<pre><code class="language-text">chronyd
+
+httpd
+
+firewalld
+
+systemd-journald
+</code></pre>
+<p>OpenSSH suit donc la nomenclature traditionnelle des services UNIX.</p>
+<h2 id="le-role-de-systemd">Le rôle de systemd</h2>
+<p>Depuis la campagne précédente, nous savons que presque tous les services Linux sont pilotés par systemd. SSH ne fait pas exception. Le démarrage suit la séquence suivante.</p>
+<div class="mermaid">flowchart TD
+    N0["Boot"]
+    N1["systemd"]
+    N2["sshd.service"]
+    N3["sshd"]
+    N4["Écoute TCP"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+    N2 --&gt; N3
+    N3 --&gt; N4
+</div>
+<p>Autrement dit, ce n'est pas sshd qui démarre seul. C'est systemd qui crée et supervise le service. Nous retrouverons d'ailleurs les mécanismes de redémarrage automatique, de sandboxing et de journalisation étudiés précédemment.</p>
+<h2 id="une-connexion-ssh-nest-pas-un-simple-echange-de-mots-de-passe">Une connexion SSH n'est pas un simple échange de mots de passe</h2>
+<p>C'est probablement la plus grande idée fausse. Beaucoup imaginent ceci.</p>
+<div class="mermaid">flowchart TD
+    N0["Client"]
+    N1["Envoie&lt;br/&gt;mot de passe"]
+    N2["Serveur"]
+    N3["Connexion"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+    N2 --&gt; N3
+</div>
+<p>En réalité, il ne se passe absolument pas cela. Avant même que l'utilisateur ne saisisse son identité, les deux machines vont :</p>
+<ul>
+<li>négocier les algorithmes cryptographiques ;</li>
+<li>vérifier l'identité du serveur ;</li>
+<li>établir un canal chiffré ;</li>
+<li>créer des clés de session.</li>
+</ul>
+<p>Ce n'est qu'après toutes ces étapes que l'authentification de l'utilisateur commence. Autrement dit, le mot de passe, lorsqu'il est utilisé, circule déjà dans un tunnel chiffré. C'est précisément ce qui distingue SSH des anciens protocoles comme Telnet.</p>
+<h2 id="les-grandes-etapes-dune-connexion-ssh">Les grandes étapes d'une connexion SSH</h2>
+<p>Lorsqu'un administrateur exécute :</p>
+<pre><code class="language-bash">ssh admin@sentinel
+</code></pre>
+<p>beaucoup d'opérations sont réalisées automatiquement. Visualisons la séquence complète.</p>
+<div class="mermaid">flowchart TD
+    N0["Client"]
+    N1["Connexion TCP"]
+    N2["Négociation du protocole SSH"]
+    N3["Échange des algorithmes"]
+    N4["Authentification du serveur"]
+    N5["Création des clés de session"]
+    N6["Canal chiffré"]
+    N7["Authentification utilisateur"]
+    N8["Ouverture de session"]
+    N9["Shell distant"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+    N2 --&gt; N3
+    N3 --&gt; N4
+    N4 --&gt; N5
+    N5 --&gt; N6
+    N6 --&gt; N7
+    N7 --&gt; N8
+    N8 --&gt; N9
+</div>
+<p>Chaque étape joue un rôle précis. Comprendre cette séquence permettra de comprendre ensuite chacune des options de <code>sshd_config</code>.</p>
+<h2 id="etape-1-ouverture-de-la-connexion-tcp">Étape 1 — Ouverture de la connexion TCP</h2>
+<p>Avant toute chose, SSH reste une application TCP. Le client ouvre une connexion vers :</p>
+<pre><code class="language-text">Adresse IP
+
++
+
+Port TCP
+</code></pre>
+<p>Par défaut. <code>22/TCP</code> Le noyau Linux transmet ensuite cette connexion au démon : <code>sshd</code> Nous retrouvons exactement le fonctionnement étudié dans la campagne consacrée au réseau.</p>
+<h2 id="etape-2-echange-des-versions">Étape 2 — Échange des versions</h2>
+<p>Avant même de parler de chiffrement, les deux machines annoncent leur version du protocole. Par exemple. <code>SSH-2.0-OpenSSH_9.x</code> Cet échange permet de vérifier que les deux parties parlent bien le même protocole. Aujourd'hui, la quasi-totalité des infrastructures utilisent : <code>SSH version 2</code> Le protocole SSHv1 est considéré comme obsolète depuis de nombreuses années.</p>
+<h2 id="etape-3-negociation-des-algorithmes">Étape 3 — Négociation des algorithmes</h2>
+<p>C'est une étape essentielle. Le client et le serveur proposent chacun une liste d'algorithmes qu'ils savent utiliser. Par exemple. Pour l'échange de clés.</p>
+<pre><code class="language-text">curve25519
+
+ecdh
+
+diffie-hellman
+</code></pre>
+<p>Pour le chiffrement.</p>
+<pre><code class="language-text">AES
+
+ChaCha20
+
+AES-GCM
+</code></pre>
+<p>Pour l'intégrité.</p>
+<pre><code class="language-text">SHA-2
+
+Poly1305
+</code></pre>
+<p>Les deux machines choisissent ensuite le meilleur algorithme commun. Cette négociation est entièrement automatique.</p>
+<h2 id="pourquoi-cette-negociation-existe-t-elle">Pourquoi cette négociation existe-t-elle ?</h2>
+<p>Imaginons deux ordinateurs. Le premier est très récent. Le second est plus ancien. Ils ne possèdent pas exactement les mêmes algorithmes. Sans mécanisme de négociation, ils seraient incapables de communiquer. Grâce à cette étape, ils choisissent automatiquement une combinaison compatible. Cette souplesse explique pourquoi OpenSSH évolue depuis plus de vingt ans sans casser la compatibilité.</p>
+<h2 id="etape-4-authentification-du-serveur">Étape 4 — Authentification du serveur</h2>
+<p>Avant de transmettre la moindre information sensible, le client doit répondre à une question.</p>
+<blockquote>
+<p>Suis-je réellement connecté au bon serveur ?</p>
+</blockquote>
+<p>Pour cela, le serveur présente sa clé publique. Le client la compare avec celle qu'il connaît déjà. Deux situations sont possibles.</p>
+<h3 id="premier-cas">Premier cas</h3>
+<p>La clé est connue.</p>
+<div class="mermaid">flowchart TD
+    N0["Client"]
+    N1["Empreinte identique"]
+    N2["Confiance"]
+    N3["Connexion"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+    N2 --&gt; N3
+</div>
+<h3 id="deuxieme-cas">Deuxième cas</h3>
+<p>Le serveur est inconnu. Le client affiche un message ressemblant à ceci.</p>
+<pre><code class="language-text">The authenticity of host ...
+
+can't be established.
+</code></pre>
+<p>Puis.</p>
+<pre><code class="language-text">Are you sure you want
+
+to continue connecting ?
+</code></pre>
+<p>C'est une étape extrêmement importante. Elle protège contre les attaques de type : <code>Man In The Middle</code> Nous détaillerons ce mécanisme plus loin dans cette campagne.</p>
+<p>Cette protection n'est réelle que si l'empreinte initiale est vérifiée par un canal indépendant. Répondre automatiquement « yes » à la première connexion transforme le mécanisme en simple confiance au premier usage (<em>Trust On First Use</em>). À grande échelle, une entreprise peut publier les empreintes dans un inventaire fiable ou signer les clés d'hôte avec une autorité de certification OpenSSH ; le client fait alors confiance à l'autorité plutôt qu'à chaque serveur isolé.</p>
+<h2 id="etape-5-creation-des-cles-de-session">Étape 5 — Création des clés de session</h2>
+<p>Une fois le serveur authentifié, les deux machines calculent une clé de session. Attention. Cette clé n'est pas la clé du serveur. Elle est créée spécialement pour cette connexion. Visualisons.</p>
+<div class="mermaid">flowchart TD
+    N0["Client"]
+    N1["Calcul"]
+    N2["Clé de session"]
+    N3["Calcul"]
+    N4["Serveur"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+    N2 --&gt; N3
+    N3 --&gt; N4
+</div>
+<p>Cette clé sera utilisée pour chiffrer tous les échanges suivants. Lors de la connexion suivante, une nouvelle clé sera créée. Chaque session possède donc son propre chiffrement.</p>
+<h2 id="pourquoi-ne-pas-utiliser-directement-la-cle-du-serveur">Pourquoi ne pas utiliser directement la clé du serveur ?</h2>
+<p>C'est une excellente question. Parce que les clés du serveur doivent rester stables. Elles servent à identifier la machine. Les clés de session, elles, doivent être temporaires. Elles sont détruites lorsque la connexion se termine. Cette séparation améliore considérablement la sécurité. Même si une clé de session était compromise, les autres connexions resteraient protégées.</p>
+<h2 id="etape-6-canal-securise">Étape 6 — Canal sécurisé</h2>
+<p>Nous arrivons maintenant à une étape fondamentale. Toutes les négociations précédentes avaient un objectif unique. Créer un tunnel sécurisé. À partir de cet instant, tout circule dans un canal chiffré.</p>
+<div class="mermaid">flowchart TD
+    N0["Utilisateur"]
+    N1["Mot de passe"]
+    N2["Commandes"]
+    N3["Résultats"]
+    N4["Copie de fichiers"]
+    N5["Tunnels TCP"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+    N2 --&gt; N3
+    N3 --&gt; N4
+    N4 --&gt; N5
+</div>
+<p>Tout est chiffré. Un observateur réseau ne peut plus lire le contenu des échanges.</p>
+<h2 id="etape-7-authentification-utilisateur">Étape 7 — Authentification utilisateur</h2>
+<p>Seulement maintenant, SSH cherche à identifier l'utilisateur. Cette authentification peut utiliser plusieurs méthodes. Par exemple. <code>Mot de passe</code> <code>Clé publique</code> <code>Certificat SSH</code> <code>Kerberos</code> <code>Authentification multifactorielle</code> Le protocole SSH est indépendant du mécanisme d'authentification. Cette souplesse explique pourquoi il est utilisé dans des environnements très variés.</p>
+<h2 id="etape-8-ouverture-de-session">Étape 8 — Ouverture de session</h2>
+<p>Une fois l'utilisateur authentifié, sshd crée une session. Cette étape comprend notamment :</p>
+<ul>
+<li>création d'un processus enfant ;</li>
+<li>ouverture du terminal (PTY) ;</li>
+<li>chargement de l'environnement ;</li>
+<li>lancement du shell.</li>
+</ul>
+<p>Schématiquement.</p>
+<div class="mermaid">flowchart TD
+    N0["sshd"]
+    N1["fork()"]
+    N2["Nouvelle session"]
+    N3["bash"]
+    N4["Administrateur connecté"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+    N2 --&gt; N3
+    N3 --&gt; N4
+</div>
+<p>À partir de ce moment, la connexion SSH fonctionne exactement comme si l'utilisateur était assis devant la machine. La seule différence est que toutes les communications continuent de passer dans le tunnel chiffré établi précédemment. Cette architecture explique pourquoi SSH permet non seulement d'exécuter des commandes, mais également de transférer des fichiers, d'ouvrir des tunnels, de lancer des applications distantes, ou encore de rediriger des connexions TCP de manière totalement transparente.</p>
+<h2 id="larchitecture-interne-dopenssh">L'architecture interne d'OpenSSH</h2>
+<p>Jusqu'à présent, nous avons observé la connexion du point de vue du protocole. Regardons maintenant ce qui se passe à l'intérieur du serveur. Lorsqu'une connexion arrive, le démon principal : <code>sshd</code> n'exécute pas directement la session utilisateur. Pourquoi ? Parce qu'il doit continuer à écouter les nouvelles connexions. Il adopte donc une architecture très classique sous UNIX.</p>
+<div class="mermaid">flowchart TD
+    parent[sshd principal&lt;br/&gt;attend les connexions] --&gt; connection[Nouvelle connexion TCP]
+    connection --&gt; fork[fork et séparation des responsabilités]
+    fork --&gt; parentAgain[Processus principal&lt;br/&gt;continue d'écouter]
+    fork --&gt; child[Processus de connexion&lt;br/&gt;gère l'authentification et la session]
+</div>
+<p>Cette architecture est utilisée depuis des décennies par de nombreux démons UNIX.</p>
+<h2 id="pourquoi-utiliser-un-processus-fils">Pourquoi utiliser un processus fils ?</h2>
+<p>Imaginons deux administrateurs. Alice se connecte. Quelques secondes plus tard, Bob se connecte. Si sshd ne créait qu'un seul processus, les deux sessions devraient partager le même contexte d'exécution. Ce serait catastrophique. Grâce au <code>fork()</code>, chaque utilisateur obtient son propre processus.</p>
+<div class="mermaid">flowchart TD
+    sshd[sshd principal] --&gt; alice[Session Alice]
+    sshd --&gt; bob[Session Bob]
+    sshd --&gt; charlie[Session Charlie]
+</div>
+<p>Chaque session devient totalement indépendante.</p>
+<h2 id="une-session-ssh-est-un-processus-linux">Une session SSH est un processus Linux</h2>
+<p>Une fois connecté, votre session n'a rien de magique. Elle devient simplement un ensemble de processus Linux. Par exemple.</p>
+<div class="mermaid">flowchart TD
+    N0["sshd"]
+    N1["bash"]
+    N2["ls"]
+    N3["vim"]
+    N4["python"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+    N2 --&gt; N3
+    N3 --&gt; N4
+</div>
+<p>Tous ces programmes sont des processus classiques. Ils apparaissent dans :</p>
+<pre><code class="language-bash">ps -ef
+</code></pre>
+<p>ou</p>
+<pre><code class="language-bash">pstree
+</code></pre>
+<p>SSH n'est donc qu'un moyen sécurisé de créer ces processus à distance.</p>
+<h2 id="ou-intervient-pam">Où intervient PAM ?</h2>
+<p>Nous avons étudié PAM dans la campagne précédente. SSH s'appuie directement dessus. La séquence devient alors.</p>
+<div class="mermaid">flowchart TD
+    N0["Connexion"]
+    N1["sshd"]
+    N2["PAM"]
+    N3["Authentification"]
+    N4["Compte valide ?"]
+    N5["Session ouverte"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+    N2 --&gt; N3
+    N3 --&gt; N4
+    N4 --&gt; N5
+</div>
+<p>Cela signifie qu'une grande partie de la politique de sécurité étudiée auparavant s'applique automatiquement à SSH. Par exemple.</p>
+<ul>
+<li>expiration des mots de passe ;</li>
+<li>complexité ;</li>
+<li>verrouillage des comptes ;</li>
+<li>restrictions PAM.</li>
+</ul>
+<p>Toutes ces règles sont héritées par OpenSSH.</p>
+<h2 id="le-shell-nest-pas-obligatoire">Le shell n'est pas obligatoire</h2>
+<p>Lorsqu'on pense à SSH, on imagine immédiatement un terminal. Pourtant, SSH peut fonctionner sans shell interactif. Par exemple.</p>
+<pre><code class="language-bash">ssh serveur uptime
+</code></pre>
+<p>Dans ce cas, la séquence est beaucoup plus courte.</p>
+<div class="mermaid">flowchart TD
+    N0["Connexion SSH"]
+    N1["Authentification"]
+    N2["Exécution"]
+    N3["uptime"]
+    N4["Déconnexion"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+    N2 --&gt; N3
+    N3 --&gt; N4
+</div>
+<p>Aucun terminal interactif n'est ouvert. Cette possibilité est très utilisée par les outils d'automatisation comme Ansible.</p>
+<h2 id="les-sous-systemes-ssh">Les sous-systèmes SSH</h2>
+<p>OpenSSH ne transporte pas uniquement un shell. Il peut également lancer des sous-systèmes. Par exemple. <code>SFTP</code> Visualisons.</p>
+<div class="mermaid">flowchart TD
+    N0["Client SFTP"]
+    N1["SSH"]
+    N2["sshd"]
+    N3["sftp-server"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+    N2 --&gt; N3
+</div>
+<p>L'utilisateur n'obtient jamais de shell. Il interagit uniquement avec le serveur SFTP. Cette architecture permet d'autoriser des transferts de fichiers tout en interdisant l'accès au terminal. Nous retrouverons ce mécanisme lorsque nous parlerons des comptes techniques.</p>
+<h2 id="ssh-est-un-multiplexeur">SSH est un multiplexeur</h2>
+<p>Une fois le canal sécurisé établi, SSH peut transporter plusieurs types de données. Par exemple.</p>
+<div class="mermaid">flowchart LR
+    channel[Connexion SSH chiffrée] --&gt; terminal[Terminal]
+    channel --&gt; scp[Copie SCP]
+    channel --&gt; sftp[SFTP]
+    channel --&gt; tcp[Forwarding TCP]
+    channel --&gt; x11[Forwarding X11]
+    channel --&gt; agent[Agent forwarding]
+</div>
+<p>Tout passe dans le même tunnel chiffré. Autrement dit, SSH n'est pas uniquement un terminal distant. C'est un véritable protocole de transport sécurisé. Cette polyvalence explique son immense succès dans les infrastructures Linux.</p>
+<p>Le nom d'un outil ne suffit pas à identifier le sous-protocole employé. Selon la version d'OpenSSH, la commande <code>scp</code> peut utiliser SFTP par défaut ou conserver un mode SCP historique sélectionnable. Pour un diagnostic ou une politique de sécurité, relevez la version, les options et le sous-système réellement utilisés au lieu de conclure à partir du seul nom de la commande.</p>
+<h2 id="une-representation-complete">Une représentation complète</h2>
+<p>Nous pouvons désormais représenter toute l'architecture.</p>
+<div class="mermaid">flowchart TD
+    admin[Administrateur] --&gt; client[Client SSH]
+    client --&gt;|TCP 22| parent[sshd principal]
+    parent --&gt; child[Processus de connexion]
+    child --&gt; auth[Authentification et compte PAM]
+    auth --&gt; identity[Identité Linux]
+    identity --&gt; shell[Bash ou commande]
+    identity --&gt; sftp[Sous-système SFTP]
+    identity --&gt; forwarding[Canal de forwarding autorisé]
+    shell --&gt; process[Processus utilisateur]
+    sftp --&gt; transfer[Transfert de fichiers]
+    forwarding --&gt; service[Service cible]
+</div>
+<p>Cette vision globale servira de référence pendant toute la campagne. Nous allons désormais étudier chacune de ces briques en détail, en commençant par le mécanisme d'authentification le plus ancien : <strong>l'authentification par mot de passe.</strong></p>
+<h2 id="approfondissement">Approfondissement</h2>
+<h3 id="ssh-est-avant-tout-un-protocole-de-transport-securise">SSH est avant tout un protocole de transport sécurisé</h3>
+<p>Lorsque l'on parle de SSH, la plupart des administrateurs pensent immédiatement :</p>
+<p>C'est historiquement vrai. Mais aujourd'hui, cette vision est beaucoup trop restrictive. En réalité, SSH est un protocole capable de transporter pratiquement n'importe quel flux. Le terminal n'est qu'une application parmi d'autres. Visualisons cela.</p>
+<div class="mermaid">flowchart TD
+    tunnel[Canal SSH] --&gt; terminal[Terminal]
+    tunnel --&gt; files[SFTP ou SCP]
+    tunnel --&gt; forward[TCP forwarding]
+    terminal --&gt; shell[Shell]
+    files --&gt; transfer[Transfert de fichiers]
+    forward --&gt; database[Base SQL]
+    forward --&gt; web[Interface web]
+    forward --&gt; api[API REST]
+</div>
+<p>Cette distinction est importante. Lorsqu'un ingénieur sécurise SSH, il ne sécurise pas uniquement un accès shell. Il sécurise un <strong>canal de communication universel</strong>.</p>
+<h3 id="la-session-ne-contourne-pas-les-privileges-linux">La session ne contourne pas les privilèges Linux</h3>
+<p><code>sshd</code> démarre avec des privilèges élevés parce qu'il doit écouter, lire ses clés d'hôte, authentifier des comptes puis créer une session sous l'identité demandée. OpenSSH réduit ce risque grâce à la séparation de privilèges et à des processus spécialisés. Une fois la session établie sous l'utilisateur, SSH ne lui accorde toutefois aucun passe-droit sur le système. Prenons une connexion.</p>
+<pre><code class="language-bash">ssh admin@serveur
+</code></pre>
+<p>Une fois connecté, si vous exécutez :</p>
+<pre><code class="language-bash">id
+</code></pre>
+<p>Le résultat provient simplement du noyau Linux. SSH ne décide plus de rien. Il a simplement créé une session. Toutes les décisions suivantes sont prises par :</p>
+<ul>
+<li>le noyau ;</li>
+<li>les permissions UNIX ;</li>
+<li>PAM ;</li>
+<li>SELinux ;</li>
+<li>sudo.</li>
+</ul>
+<p>Autrement dit, SSH n'est qu'un point d'entrée. Il ne remplace aucun des mécanismes de sécurité étudiés jusqu'à présent.</p>
+<h3 id="pourquoi-openssh-est-devenu-le-standard">Pourquoi OpenSSH est devenu le standard</h3>
+<p>Plusieurs implémentations du protocole SSH existent. Historiquement, on trouvait notamment :</p>
+<ul>
+<li>OpenSSH ;</li>
+<li>Tectia SSH ;</li>
+<li>Bitvise SSH Server (Windows) ;</li>
+<li>d'autres implémentations commerciales.</li>
+</ul>
+<p>Pourtant, OpenSSH s'est imposé presque partout. Pourquoi ? Parce qu'il possède plusieurs qualités essentielles.</p>
+<ul>
+<li>Open Source ;</li>
+<li>extrêmement audité ;</li>
+<li>portable ;</li>
+<li>compatible avec pratiquement tous les systèmes UNIX ;</li>
+<li>maintenu activement depuis plus de vingt-cinq ans.</li>
+</ul>
+<p>Aujourd'hui, la quasi-totalité des infrastructures Linux professionnelles utilisent OpenSSH. Maîtriser OpenSSH revient donc à maîtriser le fonctionnement réel de SSH sur la majorité des serveurs.</p>
+<h3 id="le-demon-ssh-est-volontairement-minimal">Le démon SSH est volontairement minimal</h3>
+<p>Une philosophie importante d'OpenSSH consiste à réduire au maximum la surface d'attaque. Le démon principal : <code>sshd</code> réalise uniquement ce qui est nécessaire. Par exemple.</p>
+<ul>
+<li>accepter les connexions ;</li>
+<li>négocier le protocole ;</li>
+<li>authentifier ;</li>
+<li>créer la session.</li>
+</ul>
+<p>Le véritable travail est ensuite confié :</p>
+<ul>
+<li>au shell ;</li>
+<li>à PAM ;</li>
+<li>au noyau ;</li>
+<li>à systemd ;</li>
+<li>aux sous-systèmes.</li>
+</ul>
+<p>Cette séparation simplifie énormément les audits de sécurité. Plus un composant est petit, plus il est facile à vérifier.</p>
+<h2 id="concevoir-la-politique">Concevoir la politique</h2>
+<p>Pour un architecte, SSH n'est jamais considéré comme un simple service. Il constitue le <strong>plan de contrôle</strong> (<em>Control Plane</em>) de l'infrastructure. Prenons notre laboratoire Sentinel.</p>
+<div class="mermaid">flowchart TD
+    N0["Internet"]
+    N1["Firewalld"]
+    N2["SSH (22/TCP)"]
+    N3["Administrateur"]
+    N4["Configuration système"]
+    N5["Tous les services"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+    N2 --&gt; N3
+    N3 --&gt; N4
+    N4 --&gt; N5
+</div>
+<p>Autrement dit, compromettre SSH revient souvent à prendre le contrôle de toute la plateforme. C'est pourquoi un architecte accorde une attention particulière à :</p>
+<ul>
+<li>son exposition réseau ;</li>
+<li>ses méthodes d'authentification ;</li>
+<li>ses journaux ;</li>
+<li>sa supervision ;</li>
+<li>ses mises à jour.</li>
+</ul>
+<h3 id="ssh-est-souvent-le-premier-service-durci">SSH est souvent le premier service durci</h3>
+<p>Dans une nouvelle infrastructure, l'ordre de sécurisation ressemble souvent à ceci.</p>
+<div class="mermaid">flowchart TD
+    N0["Installation"]
+    N1["Mises à jour"]
+    N2["SSH"]
+    N3["Firewalld"]
+    N4["SELinux"]
+    N5["Applications"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+    N2 --&gt; N3
+    N3 --&gt; N4
+    N4 --&gt; N5
+</div>
+<p>Pourquoi commencer par SSH ? Parce que tant que le point d'administration n'est pas sécurisé, toutes les autres protections peuvent être contournées par une compromission distante. SSH constitue donc généralement la première brique de sécurité réellement opérationnelle.</p>
+<h2 id="point-de-vue-offensif">Point de vue offensif</h2>
+<p>Un attaquant ne voit pas SSH comme un terminal. Il le voit comme un objectif. Sa réflexion ressemble souvent à ceci.</p>
+<div class="mermaid">flowchart TD
+    N0["Le port 22 est-il ouvert ?"]
+    N1["Quelle version ?"]
+    N2["Quelles méthodes d'authentification ?"]
+    N3["Root est-il autorisé ?"]
+    N4["Mots de passe ?"]
+    N5["Clés ?"]
+    N6["Failles connues ?"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+    N2 --&gt; N3
+    N3 --&gt; N4
+    N4 --&gt; N5
+    N5 --&gt; N6
+</div>
+<p>Autrement dit, avant même de chercher une vulnérabilité applicative, il cherche souvent à comprendre comment l'administration distante est protégée.</p>
+<h3 id="pourquoi-ssh-est-autant-cible">Pourquoi SSH est autant ciblé</h3>
+<p>Sur Internet, des robots analysent en permanence les adresses IP. Leur logique est très simple.</p>
+<div class="mermaid">flowchart TD
+    N0["Port 22 ouvert ?"]
+    N1["Oui"]
+    N2["Tentatives de connexion"]
+    N3["Brute Force"]
+    N4["Dictionnaires"]
+    N5["Credential Stuffing"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+    N2 --&gt; N3
+    N3 --&gt; N4
+    N4 --&gt; N5
+</div>
+<p>Des milliers de tentatives peuvent être observées chaque jour sur un simple serveur exposé. Cette réalité explique pourquoi nous consacrerons plusieurs chapitres :</p>
+<ul>
+<li>au durcissement ;</li>
+<li>aux clés publiques ;</li>
+<li>à Fail2ban ;</li>
+<li>à l'audit ;</li>
+<li>aux bastions d'administration.</li>
+</ul>
+<p>SSH est l'un des services les plus attaqués au monde. Le considérer comme un simple terminal serait une erreur majeure.</p>
+<h2 id="en-entreprise">En entreprise</h2>
+<p>Dans une entreprise, SSH est rarement ouvert à tous les utilisateurs. Il est considéré comme un <strong>point d'administration privilégié</strong>. Une architecture professionnelle ressemble souvent à ceci.</p>
+<div class="mermaid">flowchart TD
+    internet[Internet] --&gt; vpn[VPN d'entreprise]
+    vpn --&gt; bastion[Bastion SSH]
+    bastion --&gt; web[Serveur web]
+    bastion --&gt; ipa[Serveur IPA]
+    bastion --&gt; sentinel[Sentinel]
+</div>
+<p>L'administrateur ne se connecte jamais directement aux serveurs de production. Il passe par un bastion, dont nous étudierons l'architecture au chapitre 4.5. Cette approche permet :</p>
+<ul>
+<li>de centraliser les accès ;</li>
+<li>de journaliser toutes les connexions ;</li>
+<li>de limiter l'exposition réseau ;</li>
+<li>de simplifier les audits.</li>
+</ul>
+<h3 id="une-connexion-ssh-est-un-evenement-de-securite">Une connexion SSH est un événement de sécurité</h3>
+<p>Dans un environnement professionnel, une connexion SSH n'est jamais considérée comme un simple accès utilisateur. Elle constitue un événement sensible. Elle est généralement :</p>
+<ul>
+<li>journalisée ;</li>
+<li>horodatée ;</li>
+<li>corrélée avec l'identité de l'administrateur ;</li>
+<li>parfois enregistrée intégralement.</li>
+</ul>
+<p>Certaines entreprises vont jusqu'à conserver :</p>
+<ul>
+<li>les commandes exécutées ;</li>
+<li>les transferts SCP/SFTP ;</li>
+<li>les ouvertures de tunnels ;</li>
+<li>les changements de privilèges (<code>sudo</code>).</li>
+</ul>
+<p>L'objectif est simple : <strong>être capable de reconstruire précisément toute action d'administration.</strong></p>
+<h3 id="ssh-et-lautomatisation">SSH et l'automatisation</h3>
+<p>Aujourd'hui, la majorité des connexions SSH ne proviennent plus d'humains. Elles proviennent d'outils comme :</p>
+<ul>
+<li>Ansible ;</li>
+<li>GitLab Runner ;</li>
+<li>Jenkins ;</li>
+<li>Terraform ;</li>
+<li>scripts d'administration.</li>
+</ul>
+<p>Pour ces outils, SSH devient une API d'administration sécurisée. Par exemple.</p>
+<div class="mermaid">flowchart TD
+    N0["Ansible"]
+    N1["SSH"]
+    N2["Commande distante"]
+    N3["Résultat"]
+    N4["Connexion fermée"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+    N2 --&gt; N3
+    N3 --&gt; N4
+</div>
+<p>Des milliers de connexions SSH peuvent ainsi être ouvertes chaque jour sans qu'aucun administrateur ne tape une seule commande. C'est pourquoi la stabilité, la rapidité et la sécurité d'OpenSSH sont devenues essentielles dans les infrastructures modernes.</p>
+<h2 id="culture-technique">Culture technique</h2>
+<h3 id="pourquoi-le-port-22">Pourquoi le port 22 ?</h3>
+<p>Le choix du port : <code>22/TCP</code> n'a rien de technique. Il s'agit simplement du numéro attribué historiquement par l'IANA au protocole SSH. Le protocole fonctionnerait exactement de la même manière sur :</p>
+<pre><code class="language-text">2222
+
+2022
+
+22022
+</code></pre>
+<p>ou n'importe quel autre port TCP. Changer de port ne renforce donc pas le chiffrement. Il modifie uniquement le point d'écoute. Nous reviendrons sur ce sujet lors du durcissement de <code>sshd_config</code>.</p>
+<h3 id="pourquoi-openssh-remplace-t-il-telnet">Pourquoi OpenSSH remplace-t-il Telnet ?</h3>
+<p>Avant SSH, les administrateurs utilisaient principalement : <code>Telnet</code> Le fonctionnement était très simple.</p>
+<div class="mermaid">flowchart TD
+    N0["Client"]
+    N1["TCP"]
+    N2["Serveur"]
+    N3["Mot de passe"]
+    N4["Shell"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+    N2 --&gt; N3
+    N3 --&gt; N4
+</div>
+<p>Le problème était dramatique. Tout circulait en clair. Un simple analyseur réseau suffisait à récupérer :</p>
+<ul>
+<li>le mot de passe ;</li>
+<li>toutes les commandes ;</li>
+<li>toutes les réponses.</li>
+</ul>
+<p>SSH a complètement changé ce modèle. Aujourd'hui, même si un attaquant capture tous les paquets réseau, il ne voit qu'un flux chiffré. Cette évolution a profondément transformé l'administration des systèmes UNIX.</p>
+<h3 id="pourquoi-ssh-est-il-devenu-indispensable">Pourquoi SSH est-il devenu indispensable ?</h3>
+<p>Au fil des années, SSH a remplacé une multitude de protocoles.</p>
+<table>
+<thead>
+<tr>
+<th>Ancien protocole</th>
+<th>Remplacé par</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Telnet</td>
+<td>SSH</td>
+</tr>
+<tr>
+<td>rlogin</td>
+<td>SSH</td>
+</tr>
+<tr>
+<td>rsh</td>
+<td>SSH</td>
+</tr>
+<tr>
+<td>rcp</td>
+<td>SCP / SFTP</td>
+</tr>
+<tr>
+<td>FTP (administration)</td>
+<td>SFTP</td>
+</tr>
+</tbody>
+</table>
+<p>OpenSSH est progressivement devenu le standard universel d'administration des systèmes UNIX. Aujourd'hui, il est difficile d'imaginer une infrastructure Linux sans SSH.</p>
+<h2 id="piege-classique">Piège classique</h2>
+<h3 id="confondre-ssh-et-openssh">Confondre SSH et OpenSSH</h3>
+<p>Beaucoup utilisent les deux termes comme des synonymes. Ils ne le sont pas.</p>
+<p>Cette distinction est importante. Lorsqu'on lit la documentation officielle, certaines recommandations concernent le protocole, d'autres uniquement OpenSSH.</p>
+<h3 id="croire-que-le-chiffrement-commence-apres-lauthentification">Croire que le chiffrement commence après l'authentification</h3>
+<p>Cette erreur est extrêmement fréquente. Beaucoup imaginent encore :</p>
+<div class="mermaid">flowchart TD
+    N0["Mot de passe"]
+    N1["Création du tunnel"]
+    N2["Session"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+</div>
+<p>C'est faux. L'ordre réel est :</p>
+<div class="mermaid">flowchart TD
+    N0["Négociation"]
+    N1["Authentification du serveur"]
+    N2["Création du tunnel"]
+    N3["Authentification utilisateur"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+    N2 --&gt; N3
+</div>
+<p>Le mot de passe, lorsqu'il existe, circule donc déjà dans un canal chiffré. Cette propriété explique pourquoi SSH reste sûr, même lorsqu'il utilise encore une authentification par mot de passe. Le véritable problème du mot de passe n'est pas son transport, mais sa robustesse et sa résistance aux attaques par force brute.</p>
+<h2 id="tp-1-observer-le-service-et-ses-processus">TP 1 — Observer le service et ses processus</h2>
+<h3 id="objectif">Objectif</h3>
+<p>Observer l'architecture réelle d'OpenSSH sur un serveur AlmaLinux.</p>
+<h3 id="etape-1-verifier-le-service">Étape 1 — Vérifier le service</h3>
+<p>Afficher l'état du démon.</p>
+<pre><code class="language-bash">systemctl status sshd
+</code></pre>
+<p>Identifier :</p>
+<ul>
+<li>le PID ;</li>
+<li>l'état du service ;</li>
+<li>le fichier d'unité systemd utilisé.</li>
+</ul>
+<h3 id="etape-2-observer-les-processus">Étape 2 — Observer les processus</h3>
+<p>Lister les processus SSH.</p>
+<pre><code class="language-bash">ps -ef | grep sshd
+</code></pre>
+<p>Puis ouvrir une connexion SSH depuis une seconde machine. Observer l'apparition d'un nouveau processus fils. Identifier la différence entre :</p>
+<ul>
+<li>le démon principal ;</li>
+<li>le processus associé à la session.</li>
+</ul>
+<h2 id="tp-2-relier-le-port-decoute-aux-processus">TP 2 — Relier le port d'écoute aux processus</h2>
+<h3 id="etape-3-observer-le-port-decoute">Étape 3 — Observer le port d'écoute</h3>
+<p>Afficher les sockets réseau.</p>
+<pre><code class="language-bash">ss -ltnp
+</code></pre>
+<p>Repérer :</p>
+<ul>
+<li>le port TCP 22 ;</li>
+<li>le processus associé ;</li>
+<li>les adresses IP d'écoute.</li>
+</ul>
+<p>Faire le lien avec les chapitres consacrés au réseau.</p>
+<h3 id="etape-4-visualiser-larbre-des-processus">Étape 4 — Visualiser l'arbre des processus</h3>
+<p>Afficher l'arborescence.</p>
+<pre><code class="language-bash">pstree -p
+</code></pre>
+<p>Observer la relation entre :</p>
+<ul>
+<li>systemd ;</li>
+<li>sshd ;</li>
+<li>bash ;</li>
+<li>les commandes exécutées.</li>
+</ul>
+<p>Cette représentation permettra de mieux comprendre les chapitres suivants.</p>
+<h2 id="mission-dingenieur">Mission d'ingénieur</h2>
+<p>Votre entreprise déploie une nouvelle plateforme Sentinel. Avant toute configuration de sécurité, vous devez produire un document expliquant précisément le fonctionnement interne d'une connexion SSH. Votre schéma devra montrer :</p>
+<ul>
+<li>le client OpenSSH ;</li>
+<li>le démon <code>sshd</code> ;</li>
+<li>le rôle de systemd ;</li>
+<li>le rôle de PAM ;</li>
+<li>la création du tunnel chiffré ;</li>
+<li>l'ouverture de session ;</li>
+<li>le lancement du shell.</li>
+</ul>
+<p>L'objectif est de fournir aux futurs administrateurs une vision claire de toute la chaîne de traitement avant d'aborder les mécanismes de durcissement.</p>
+<h2 id="impact-sur-sentinel">Impact sur Sentinel</h2>
+<p>Sentinel sera administré exclusivement via SSH. Toutes les opérations sensibles passeront par cette chaîne de confiance. Comprendre son architecture est donc indispensable avant de modifier la moindre option de sécurité. Les prochains chapitres porteront précisément sur les différents mécanismes d'authentification proposés par OpenSSH. Nous commencerons par le plus ancien : l'authentification par mot de passe.</p>
+<h2 id="synthese">Synthèse</h2>
+<ul>
+<li>SSH est un protocole ; OpenSSH en est l'implémentation la plus répandue.</li>
+<li>Une connexion SSH comporte plusieurs étapes avant même l'authentification de l'utilisateur.</li>
+<li>Le chiffrement est établi avant l'envoi du mot de passe.</li>
+<li><code>sshd</code> est supervisé par <code>systemd</code> et crée un processus dédié pour chaque session.</li>
+<li>OpenSSH est une suite d'outils : <code>ssh</code>, <code>scp</code>, <code>sftp</code>, <code>ssh-keygen</code>, <code>ssh-agent</code>, etc.</li>
+<li>SSH est aujourd'hui le principal plan d'administration des infrastructures Linux.</li>
+<li>Comprendre son architecture est indispensable avant d'aborder son durcissement.</li>
+</ul>
+<h2 id="pour-aller-plus-loin">Pour aller plus loin</h2>
+<p>Les pages de manuel <code>ssh(1)</code>, <code>sshd(8)</code> et <code>sshd_config(5)</code> détaillent les composants et les étapes observés. Le chapitre suivant suit une première méthode d'authentification dans ce canal déjà chiffré : le mot de passe et son traitement par PAM.</p>
+<p><a href="../4.2-authentification-mot-de-passe/">4.2 — Authentification par mot de passe</a> →</p>
+<h2 id="schema-recapitulatif">Schéma récapitulatif</h2>
+<p><img alt="Récapitulatif du chapitre 4.1" src="../media/recap-4.1.png"/></p>
+</div>
+</div><footer>
+<div aria-label="Footer Navigation" class="rst-footer-buttons" role="navigation">
+<a class="btn btn-neutral float-left" href="../../campagne_03/3.10-politique-reseau-sentinel/" title="Chapitre 3.10 — Concevoir la politique réseau de Sentinel"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+<a class="btn btn-neutral float-right" href="../4.2-authentification-mot-de-passe/" title="Chapitre 4.2 — Authentification par mot de passe">Next <span class="icon icon-circle-arrow-right"></span></a>
+</div>
+<hr/>
+<div role="contentinfo">
+<!-- Copyright etc -->
+</div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+</div>
+</div>
+</section>
+</div>
+<div aria-label="Versions" class="rst-versions" role="note">
+<span class="rst-current-version" data-toggle="rst-current-version">
+<span>
+<a class="fa fa-code-fork" href="https://github.com/tdelaclos/formations" style="color: #fcfcfc"> tdelaclos/formations</a>
+</span>
+<span><a href="../../campagne_03/3.10-politique-reseau-sentinel/" style="color: #fcfcfc">« Previous</a></span>
+<span><a href="../4.2-authentification-mot-de-passe/" style="color: #fcfcfc">Next »</a></span>
+</span>
+</div>
+<script src="../../js/jquery-3.6.0.min.js"></script>
+<script>var base_url = "../..";</script>
+<script src="../../js/theme_extra.js"></script>
+<script src="../../js/theme.js"></script>
+<script src="../../search/main.js"></script>
+<script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+<script type="module">import mermaid from "https://unpkg.com/mermaid@10.4.0/dist/mermaid.esm.min.mjs";
+mermaid.initialize({});</script></body>
+</html>

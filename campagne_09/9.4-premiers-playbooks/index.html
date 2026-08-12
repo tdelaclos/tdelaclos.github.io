@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+
+<html class="writer-html5" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="IE=edge" http-equiv="X-UA-Compatible"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="../../img/favicon.ico" rel="shortcut icon"/>
+<title>Chapitre 9.4 — Écrire les premiers playbooks - Formation Sentinel — AlmaLinux sécurisé</title>
+<link href="../../css/theme.css" rel="stylesheet"/>
+<link href="../../css/theme_extra.css" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" rel="stylesheet"/>
+<script>
+        // Current page data
+        var mkdocs_page_name = "Chapitre 9.4 \u2014 \u00c9crire les premiers playbooks";
+        var mkdocs_page_input_path = "campagne_09/9.4-premiers-playbooks.md";
+        var mkdocs_page_url = null;
+      </script>
+<!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+<script>hljs.highlightAll();</script>
+</head>
+<body class="wy-body-for-nav" role="document">
+<div class="wy-grid-for-nav">
+<nav class="wy-nav-side stickynav" data-toggle="wy-nav-shift">
+<div class="wy-side-scroll">
+<div class="wy-side-nav-search">
+<a class="icon icon-home" href="../.."> Formation Sentinel — AlmaLinux sécurisé
+        </a><div role="search">
+<form action="../../search.html" class="wy-form" id="rtd-search-form" method="get">
+<input aria-label="Search docs" name="q" placeholder="Search docs" title="Type search term here" type="text"/>
+</form>
+</div>
+</div>
+<div aria-label="Navigation menu" class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../..">Accueil</a>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">A propos</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../GUIDE-REDACTION/">Guide de rédaction</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../PARCOURS-SENTINEL/">Parcours applicatif Sentinel</a>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Campagnes</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal">Campagne 1 - Sécuriser le socle Linux</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.1-pourquoi-securiser-socle-linux/">Chapitre 1.1 — Pourquoi sécuriser un socle Linux ?</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.2-installation-almalinux-minimal/">Chapitre 1.2 — Installer AlmaLinux minimal</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.3-composants-systeme-linux/">Chapitre 1.3 — Comprendre les composants d'un système Linux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.4-premier-demarrage-verifications/">Chapitre 1.4 — Établir la baseline du serveur</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.5-mise-a-jour-gestion-depots/">Chapitre 1.5 — Mettre à jour et gérer les dépôts</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.6-architecture-systemes-fichiers/">Chapitre 1.6 — Organiser les systèmes de fichiers</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.7-utilisateurs-groupes-permissions/">Chapitre 1.7 — Comprendre identités et permissions</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.8-sudo-moindre-privilege/">Chapitre 1.8 — Administrer avec sudo</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.9-premiere-mise-en-securite-serveur/">Chapitre 1.9 — Mission : mettre le serveur en sécurité</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.10-creation-laboratoire-sentinel/">Chapitre 1.10 — Créer le laboratoire Sentinel</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 2 - Gestion des permissions et des identités</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.1-permissions-unix/">Chapitre 2.1 — Les permissions UNIX</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.2-acl/">Chapitre 2.2 — Les ACL</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.3-umask/">Chapitre 2.3 — L'umask</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.4-attributs-etendus/">Chapitre 2.4 — Les attributs étendus</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.5-pam/">Chapitre 2.5 — PAM</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.6-politique-mots-de-passe/">Chapitre 2.6 — Politique de mots de passe</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.7-comptes-systeme/">Chapitre 2.7 — Les comptes système</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.8-sudo-avance/">Chapitre 2.8 — sudo avancé</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.9-fichiers-identites-linux/">Chapitre 2.9 — Comprendre les fichiers d'identités Linux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.10-synthese-securiser-identites/">Chapitre 2.10 — Synthèse : sécuriser les identités</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 3 - TCP/IP et Firewalld</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.1-tcp-ip-administrateur/">Chapitre 3.1 — TCP/IP côté administrateur</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.2-architecture-firewalld/">Chapitre 3.2 — Architecture de Firewalld</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.3-zones-firewalld/">Chapitre 3.3 — Les zones Firewalld</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.4-services-firewalld/">Chapitre 3.4 — Les services Firewalld</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.5-conntrack-filtrage-etats/">Chapitre 3.5 — Conntrack et le filtrage par états</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.6-rich-rules-firewalld/">Chapitre 3.6 — Les Rich Rules Firewalld</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.7-journalisation-firewalld/">Chapitre 3.7 — Journalisation et analyse Firewalld</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.8-ip-sets-firewalld/">Chapitre 3.8 — Les IP Sets Firewalld</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.9-runtime-permanent/">Chapitre 3.9 — Runtime et Permanent</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.10-politique-reseau-sentinel/">Chapitre 3.10 — Concevoir la politique réseau de Sentinel</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 4 - SSH</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_04/4.1-architecture-openssh/">Chapitre 4.1 — Architecture d'OpenSSH</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_04/4.2-authentification-mot-de-passe/">Chapitre 4.2 — Authentification par mot de passe</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_04/4.3-authentification-par-cles/">Chapitre 4.3 — Authentification par clés</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_04/4.4-durcissement-sshd-config/">Chapitre 4.4 — Durcissement de sshd_config</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_04/4.5-bastion-administration/">Chapitre 4.5 — Bastion d'administration</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_04/4.6-journalisation-audit-ssh/">Chapitre 4.6 — Journalisation et audit SSH</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_04/4.7-protection-attaques-ssh/">Chapitre 4.7 — Protection contre les attaques SSH</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_04/4.8-mission-administration-sentinel/">Chapitre 4.8 — Mission : administrer Sentinel en sécurité</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 5 - Systemd</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.1-comprendre-systemd/">Chapitre 5.1 — Comprendre systemd</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.2-unites-systemd/">Chapitre 5.2 — Les unités systemd</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.3-creer-service-sentinel/">Chapitre 5.3 — Créer le service Sentinel</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.4-sandboxing-systemd/">Chapitre 5.4 — Sandboxing systemd</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.5-capacites-linux/">Chapitre 5.5 — Les capacités Linux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.6-journalisation-journald/">Chapitre 5.6 — Journalisation avec journald</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.7-supervision-redemarrage/">Chapitre 5.7 — Supervision et redémarrage automatique</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.8-mission-sentinel-resilient/">Chapitre 5.8 — Mission : rendre Sentinel résilient</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 6 - SELinux</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_06/6.1-pourquoi-selinux-existe/">Chapitre 6.1 — Pourquoi SELinux existe</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_06/6.2-contextes-selinux/">Chapitre 6.2 — Comprendre les contextes SELinux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_06/6.3-politiques-selinux/">Chapitre 6.3 — Les politiques SELinux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_06/6.4-diagnostic-refus-selinux/">Chapitre 6.4 — Diagnostiquer les refus SELinux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_06/6.5-creation-regles-selinux/">Chapitre 6.5 — Créer des règles SELinux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_06/6.6-securiser-sentinel-selinux/">Chapitre 6.6 — Sécuriser Sentinel avec SELinux</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 7 - TLS et PKI</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.1-comprendre-cryptographie-appliquee/">Chapitre 7.1 — Comprendre la cryptographie appliquée</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.2-lire-verifier-certificats-x509/">Chapitre 7.2 — Lire et vérifier les certificats X.509</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.3-construire-autorite-certification/">Chapitre 7.3 — Construire une autorité de certification</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.4-authentification-mutuelle-tls/">Chapitre 7.4 — Authentifier les deux extrémités avec mTLS</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.5-preparer-integration-freeipa/">Chapitre 7.5 — Préparer l'intégration à FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.6-renouveler-revoquer-certificats/">Chapitre 7.6 — Renouveler et révoquer les certificats</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.7-securiser-sentinel-tls/">Chapitre 7.7 — Sécuriser Sentinel avec TLS</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 8 - FreeIPA</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.1-presentation-freeipa/">Chapitre 8.1 — Découvrir FreeIPA et la gestion centralisée des identités</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.2-architecture-interne-freeipa/">Chapitre 8.2 — Comprendre l'architecture interne de FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.3-installation-freeipa/">Chapitre 8.3 — Installer un serveur FreeIPA de laboratoire</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.4-gestion-utilisateurs/">Chapitre 8.4 — Gérer le cycle de vie des utilisateurs FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.5-groupes-roles/">Chapitre 8.5 — Organiser les groupes et les rôles FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.6-politiques-sudo/">Chapitre 8.6 — Centraliser les politiques sudo avec FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.7-gestion-hotes/">Chapitre 8.7 — Enrôler les hôtes et contrôler les accès avec HBAC</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.8-certificats/">Chapitre 8.8 — Gérer les certificats de service avec FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.9-integration-sentinel/">Chapitre 8.9 — Intégrer Sentinel à FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.10-mission-administration-freeipa/">Chapitre 8.10 — Mission : administrer Sentinel avec FreeIPA</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal current">Campagne 9 - Déploiement avec Ansible</a>
+<ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../9.1-architecture-ansible/">Chapitre 9.1 — Comprendre l'architecture Ansible</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../9.2-composants-ansible/">Chapitre 9.2 — Comprendre les composants et l'idempotence Ansible</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../9.3-inventaires/">Chapitre 9.3 — Construire les inventaires Ansible</a>
+</li>
+<li class="toctree-l2 current"><a class="reference internal current" href="#">Chapitre 9.4 — Écrire les premiers playbooks</a>
+<ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="#vous-etes-ici">Vous êtes ici</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#objectifs-pedagogiques">Objectifs pédagogiques</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pourquoi-ce-chapitre-existe">Pourquoi ce chapitre existe</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#anatomie-dun-play">Anatomie d'un play</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#yaml-indentation-et-types">YAML : indentation et types</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#ordre-parallelisme-et-portee-dun-echec">Ordre, parallélisme et portée d'un échec</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#elevation-avec-become">Élévation avec become</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#faits-et-conditions">Faits et conditions</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#enregistrer-et-exploiter-un-resultat">Enregistrer et exploiter un résultat</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#les-handlers-agir-seulement-apres-un-changement">Les handlers : agir seulement après un changement</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#blocs-secours-et-nettoyage">Blocs, secours et nettoyage</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#tags-et-execution-partielle">Tags et exécution partielle</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#commandes-ad-hoc-et-playbooks">Commandes ad hoc et playbooks</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#laboratoire-preparer-verifier-provoquer-un-refus">Laboratoire — préparer, vérifier, provoquer un refus</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#impact-sur-sentinel">Impact sur Sentinel</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#synthese">Synthèse</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pour-aller-plus-loin">Pour aller plus loin</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../9.5-variables-templates/">Chapitre 9.5 — Piloter la configuration avec variables et templates</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../9.6-roles-ansible/">Chapitre 9.6 — Concevoir des rôles Ansible réutilisables</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../9.7-deployer-sentinel-ansible/">Chapitre 9.7 — Déployer Sentinel avec Ansible</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../9.8-integrer-sentinel-freeipa/">Chapitre 9.8 — Automatiser l'intégration de Sentinel à FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../9.9-industrialiser-laboratoire/">Chapitre 9.9 — Industrialiser le projet Ansible</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../9.10-mission-deploiement-sentinel/">Chapitre 9.10 — Mission : reconstruire Sentinel avec Ansible</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 10 - Packaging RPM</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_10/10.1-construire-paquet-rpm/">Chapitre 10.1 — Construire un paquet RPM</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_10/10.2-gerer-dependances-rpm/">Chapitre 10.2 — Gérer les dépendances RPM</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_10/10.3-gerer-fichiers-configuration-rpm/">Chapitre 10.3 — Gérer les fichiers de configuration RPM</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_10/10.4-signer-paquets-rpm/">Chapitre 10.4 — Signer les paquets RPM</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_10/10.5-exploiter-depot-rpm-prive/">Chapitre 10.5 — Exploiter un dépôt RPM privé</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_10/10.6-packager-sentinel/">Chapitre 10.6 — Packager Sentinel</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 11 - Conteneurs Podman</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_11/11.1-decouvrir-podman/">Chapitre 11.1 — Découvrir Podman</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_11/11.2-conteneurs-rootless/">Chapitre 11.2 — Exécuter des conteneurs rootless</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_11/11.3-construire-images-securisees/">Chapitre 11.3 — Construire des images sécurisées</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_11/11.4-reseaux-conteneurs/">Chapitre 11.4 — Concevoir les réseaux de conteneurs</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_11/11.5-gerer-secrets-podman/">Chapitre 11.5 — Gérer les secrets avec Podman</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_11/11.6-executer-sentinel-securite/">Chapitre 11.6 — Exécuter Sentinel en sécurité</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 12 - Supervision et audit</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_12/12.1-centraliser-journaux-rsyslog/">Chapitre 12.1 — Centraliser les journaux avec Rsyslog</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_12/12.2-auditer-systeme-auditd/">Chapitre 12.2 — Auditer le système avec auditd</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_12/12.3-controler-integrite-fichiers-aide/">Chapitre 12.3 — Contrôler l'intégrité des fichiers avec AIDE</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_12/12.4-superviser-sentinel-prometheus/">Chapitre 12.4 — Superviser Sentinel avec Prometheus</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_12/12.5-concevoir-alertes-alertmanager/">Chapitre 12.5 — Concevoir des alertes avec Alertmanager</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_12/12.6-construire-tableau-bord-sentinel/">Chapitre 12.6 — Construire le tableau de bord Sentinel</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 13 - Attaques et défense</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.1-reconnaissance/">Chapitre 13.1 — Reconnaissance</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.2-scan-reseau/">Chapitre 13.2 — Scan réseau</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.3-brute-force-ssh/">Chapitre 13.3 — Brute force SSH</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.4-escalade-privileges/">Chapitre 13.4 — Escalade de privilèges</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.5-mouvements-lateraux/">Chapitre 13.5 — Mouvements latéraux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.6-persistance/">Chapitre 13.6 — Persistance</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.7-exfiltration/">Chapitre 13.7 — Exfiltration</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.8-etude-cas-complete/">Chapitre 13.8 — Étude de cas complète</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 14 - Projet final</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.1-deployer-sentinel-almalinux-minimale/">Chapitre 14.1 — Déployer Sentinel sur une AlmaLinux minimale</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.2-securiser-hote/">Chapitre 14.2 — Sécuriser l'hôte</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.3-integrer-freeipa/">Chapitre 14.3 — Intégrer FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.4-deployer-ansible/">Chapitre 14.4 — Déployer avec Ansible</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.5-packager-rpm/">Chapitre 14.5 — Packager avec RPM</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.6-conteneuriser-podman/">Chapitre 14.6 — Conteneuriser avec Podman</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.7-superviser-auditer/">Chapitre 14.7 — Superviser et auditer</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.8-audit-final-tests-kali/">Chapitre 14.8 — Audit final et tests depuis Kali</a>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</nav>
+<section class="wy-nav-content-wrap" data-toggle="wy-nav-shift">
+<nav aria-label="Mobile navigation menu" class="wy-nav-top" role="navigation">
+<i class="fa fa-bars" data-toggle="wy-nav-top"></i>
+<a href="../..">Formation Sentinel — AlmaLinux sécurisé</a>
+</nav>
+<div class="wy-nav-content">
+<div class="rst-content"><div aria-label="breadcrumbs navigation" role="navigation">
+<ul class="wy-breadcrumbs">
+<li><a aria-label="Docs" class="icon icon-home" href="../.."></a></li>
+<li class="breadcrumb-item">Campagnes</li>
+<li class="breadcrumb-item">Campagne 9 - Déploiement avec Ansible</li>
+<li class="breadcrumb-item active">Chapitre 9.4 — Écrire les premiers playbooks</li>
+<li class="wy-breadcrumbs-aside">
+<a href="https://github.com/tdelaclos/formations/edit/master/docs/campagne_09/9.4-premiers-playbooks.md">Edit on tdelaclos/formations</a>
+</li>
+</ul>
+<hr/>
+</div>
+<div class="document" itemscope="itemscope" itemtype="http://schema.org/Article" role="main">
+<div class="section" itemprop="articleBody">
+<h1 id="chapitre-94-ecrire-les-premiers-playbooks">Chapitre 9.4 — Écrire les premiers playbooks</h1>
+<blockquote>
+<p><strong>Campagne 9 — Déploiement avec Ansible</strong></p>
+<p><em>« Un playbook est une procédure exécutable dont le périmètre, les décisions et les preuves sont relisibles. »</em></p>
+</blockquote>
+<h2 id="vous-etes-ici">Vous êtes ici</h2>
+<pre><code class="language-text">Partie II — Industrialiser la sécurité
+
+Campagne 9 — Déploiement avec Ansible
+
+      9.1 Architecture Ansible
+      9.2 Composants et idempotence
+      9.3 Inventaires
+    ► 9.4 Premiers playbooks
+      9.5 Variables et templates
+      9.6 Rôles Ansible
+      9.7 Déploiement de Sentinel
+      9.8 Intégration à FreeIPA
+      9.9 Industrialisation du projet
+      9.10 Mission de déploiement
+</code></pre>
+<h2 id="objectifs-pedagogiques">Objectifs pédagogiques</h2>
+<p>À la fin de ce chapitre, vous serez capable de :</p>
+<ul>
+<li>structurer un play et ses tâches ;</li>
+<li>utiliser privilèges, conditions, handlers et tags ;</li>
+<li>enregistrer puis interpréter un résultat ;</li>
+<li>contrôler l'échec avec <code>block</code>, <code>rescue</code> et <code>always</code> ;</li>
+<li>limiter le risque d'un déploiement multi-hôte.</li>
+</ul>
+<h2 id="pourquoi-ce-chapitre-existe">Pourquoi ce chapitre existe</h2>
+<p>Les commandes <em>ad hoc</em> sont utiles pour observer ou intervenir ponctuellement. Elles ne suffisent pas à expliquer l'ordre, les conditions, les notifications et les validations d'un déploiement Sentinel.</p>
+<p>Un playbook versionne cette orchestration. Il peut être relu avant exécution, testé en mode check et rejoué par un autre administrateur.</p>
+<h2 id="anatomie-dun-play">Anatomie d'un play</h2>
+<pre><code class="language-yaml">---
+- name: Préparer les serveurs Sentinel
+  hosts: sentinel_servers
+  become: true
+  gather_facts: true
+
+  tasks:
+    - name: Installer Python
+      ansible.builtin.package:
+        name: python3
+        state: present
+</code></pre>
+<p>Un <strong>play</strong> associe :</p>
+<ul>
+<li>un ensemble d'hôtes ;</li>
+<li>des variables et paramètres d'exécution ;</li>
+<li>une liste ordonnée de tâches ;</li>
+<li>éventuellement des handlers, rôles ou stratégies.</li>
+</ul>
+<p>Un fichier peut contenir plusieurs plays. Gardez toutefois une intention claire : préparer les clients IdM, déployer Sentinel puis vérifier ne sont pas nécessairement la même responsabilité.</p>
+<h2 id="yaml-indentation-et-types">YAML : indentation et types</h2>
+<p>YAML représente listes et dictionnaires. Ici, le playbook est une liste de plays, et <code>tasks</code> une liste de tâches.</p>
+<pre><code class="language-yaml">sentinel_allowed_dns_names:
+  - healthcheck.sentinel.example.test
+  - agent01.sentinel.example.test
+
+sentinel_tls_enabled: true
+sentinel_listen_port: 8443
+</code></pre>
+<p><code>true</code> est un booléen et <code>8443</code> un entier. Les chaînes qui ressemblent à des versions doivent être citées : <code>"0.6.0"</code>. Une indentation valide peut encore exprimer une structure incorrecte ; utilisez un linter et relisez les types.</p>
+<h2 id="ordre-parallelisme-et-portee-dun-echec">Ordre, parallélisme et portée d'un échec</h2>
+<p>Les tâches sont parcourues dans l'ordre. Par défaut, Ansible avance sur plusieurs hôtes selon sa stratégie et son nombre de <em>forks</em>. Si une tâche échoue sur <code>sentinel02</code>, cet hôte sort normalement du play tandis que les autres peuvent continuer.</p>
+<div class="mermaid">sequenceDiagram
+    participant C as Contrôleur
+    participant S1 as sentinel01
+    participant S2 as sentinel02
+    C-&gt;&gt;S1: tâche 1
+    C-&gt;&gt;S2: tâche 1
+    S1--&gt;&gt;C: ok
+    S2--&gt;&gt;C: failed
+    C-&gt;&gt;S1: tâche 2
+    Note over S2: hôte retiré du play
+</div>
+<p>Ce comportement évite qu'une panne locale bloque systématiquement tout le parc, mais il peut créer une version partiellement déployée. Pour une mise à jour contrôlée :</p>
+<pre><code class="language-yaml">- name: Mettre à jour Sentinel par lot
+  hosts: sentinel_servers
+  serial: 1
+  max_fail_percentage: 0
+</code></pre>
+<p><code>serial: 1</code> traite un hôte à la fois. Ce n'est pas une haute disponibilité automatique : les contrôles fonctionnels et la capacité restante doivent être conçus.</p>
+<h2 id="elevation-avec-become">Élévation avec <code>become</code></h2>
+<p>Placez <code>become: true</code> au niveau du play lorsque la majorité des tâches le nécessite. Une tâche d'observation peut le désactiver localement.</p>
+<p>Ansible ne contourne pas <code>sudo</code>. Le compte distant doit recevoir exactement les droits nécessaires. Un playbook qui fonctionne seulement avec <code>NOPASSWD: ALL</code> révèle une politique trop large ou une séparation de tâches insuffisante.</p>
+<h2 id="faits-et-conditions">Faits et conditions</h2>
+<p>Lorsque <code>gather_facts</code> est actif, Ansible collecte des informations avant les tâches. Elles permettent d'expliquer une décision :</p>
+<pre><code class="language-yaml">- name: Installer le paquet de politique SELinux
+  ansible.builtin.package:
+    name: policycoreutils-python-utils
+    state: present
+  when:
+    - ansible_facts.os_family == "RedHat"
+    - ansible_facts.selinux.status == "enabled"
+</code></pre>
+<p>Une condition ne doit pas cacher un périmètre incohérent. Si le rôle supporte uniquement AlmaLinux 9, une assertion explicite est préférable à des dizaines de tâches silencieusement ignorées.</p>
+<h2 id="enregistrer-et-exploiter-un-resultat">Enregistrer et exploiter un résultat</h2>
+<pre><code class="language-yaml">- name: Lire la version déployée
+  ansible.builtin.command:
+    argv:
+      - /usr/bin/python3
+      - /opt/sentinel/src/sentinel.py
+      - --version
+  register: sentinel_version_output
+  changed_when: false
+
+- name: Vérifier la version attendue
+  ansible.builtin.assert:
+    that:
+      - sentinel_version in sentinel_version_output.stdout
+    fail_msg: &gt;-
+      Version attendue {{ sentinel_version }},
+      sortie reçue {{ sentinel_version_output.stdout }}.
+</code></pre>
+<p><code>register</code> crée une variable pour l'hôte courant. Elle n'est pas une base durable et disparaît après l'exécution. Utilisez-la pour décider ou prouver, pas pour inventer un état parallèle.</p>
+<h2 id="les-handlers-agir-seulement-apres-un-changement">Les handlers : agir seulement après un changement</h2>
+<p>Un handler est une tâche déclenchée par <code>notify</code>. Il s'exécute généralement à la fin du bloc de tâches du play et une seule fois, même si plusieurs tâches le notifient.</p>
+<pre><code class="language-yaml">tasks:
+  - name: Déployer la configuration Sentinel
+    ansible.builtin.template:
+      src: sentinel.conf.j2
+      dest: /etc/sentinel/sentinel.conf
+      owner: root
+      group: sentinel
+      mode: "0640"
+    notify: Redémarrer Sentinel
+
+handlers:
+  - name: Redémarrer Sentinel
+    ansible.builtin.systemd_service:
+      name: sentinel.service
+      state: restarted
+</code></pre>
+<p>Le template notifie uniquement si son contenu ou ses métadonnées changent. Un redémarrage inconditionnel à chaque passage détruirait l'idempotence et la disponibilité.</p>
+<p>Un handler n'est pas appelé si une tâche ultérieure échoue avant la phase des handlers. <code>meta: flush_handlers</code> peut forcer un point d'application, mais son emplacement doit correspondre à une frontière cohérente et validée.</p>
+<h2 id="blocs-secours-et-nettoyage">Blocs, secours et nettoyage</h2>
+<p>Les blocs regroupent des tâches et partagent des directives :</p>
+<pre><code class="language-yaml">- name: Déployer puis vérifier Sentinel
+  block:
+    - name: Appliquer le rôle Sentinel
+      ansible.builtin.include_role:
+        name: sentinel
+
+    - name: Vérifier la disponibilité
+      ansible.builtin.command:
+        argv:
+          - /usr/bin/python3
+          - /opt/sentinel/src/sentinel.py
+          - --config
+          - /etc/sentinel/sentinel.conf
+          - --healthcheck
+      changed_when: false
+
+  rescue:
+    - name: Collecter le statut du service
+      ansible.builtin.command: systemctl status sentinel.service --no-pager
+      register: failed_service
+      changed_when: false
+      failed_when: false
+
+  always:
+    - name: Afficher l'hôte traité
+      ansible.builtin.debug:
+        msg: "Fin du scénario sur {{ inventory_hostname }}"
+</code></pre>
+<p><code>rescue</code> sert ici à collecter un diagnostic, pas à déclarer artificiellement le déploiement réussi. Après le secours, utilisez une tâche qui fait échouer clairement le scénario ou laissez le statut refléter le résultat attendu.</p>
+<p>⚠️ <strong>Piège classique</strong> — placer <code>ignore_errors: true</code> sur une installation pour « finir le playbook ». Les tâches suivantes travaillent alors sur un état inconnu et le récapitulatif devient trompeur.</p>
+<h2 id="tags-et-execution-partielle">Tags et exécution partielle</h2>
+<p>Les tags aident à sélectionner des étapes :</p>
+<pre><code class="language-yaml">- name: Vérifier Sentinel
+  ansible.builtin.import_tasks: verify.yml
+  tags:
+    - verify
+</code></pre>
+<pre><code class="language-bash">ansible-playbook playbooks/deploy-sentinel.yml --tags verify
+ansible-playbook playbooks/deploy-sentinel.yml --list-tags
+</code></pre>
+<p>Une exécution partielle doit rester cohérente. Taguer chaque tâche différemment permet des combinaisons que personne ne teste. Préférez quelques frontières : <code>install</code>, <code>configure</code>, <code>verify</code>.</p>
+<h2 id="commandes-ad-hoc-et-playbooks">Commandes ad hoc et playbooks</h2>
+<p>Une commande ad hoc est adaptée à une question :</p>
+<pre><code class="language-bash">ansible sentinel_servers -m ansible.builtin.setup \
+  -a 'filter=ansible_distribution*'
+ansible sentinel_servers -m ansible.builtin.command \
+  -a 'systemctl is-active sentinel.service'
+</code></pre>
+<p>Si l'opération doit être rejouée, revue, ordonnée ou testée, elle appartient à un playbook ou à un rôle.</p>
+<h2 id="laboratoire-preparer-verifier-provoquer-un-refus">Laboratoire — préparer, vérifier, provoquer un refus</h2>
+<p>Écrivez <code>playbooks/prepare.yml</code> avec trois tâches :</p>
+<ol>
+<li>assertion de la famille <code>RedHat</code> ;</li>
+<li>installation de Python ;</li>
+<li>création du compte système <code>sentinel</code>.</li>
+</ol>
+<p>Puis exécutez :</p>
+<pre><code class="language-bash">ansible-playbook playbooks/prepare.yml --syntax-check
+ansible-playbook playbooks/prepare.yml --check --diff
+ansible-playbook playbooks/prepare.yml --limit sentinel01.sentinel.example.test
+ansible-playbook playbooks/prepare.yml
+ansible-playbook playbooks/prepare.yml
+</code></pre>
+<p>Échec attendu : remplacez temporairement la distribution admise dans l'assertion. Le playbook doit s'arrêter avec un message utile avant toute modification. Restaurez ensuite la condition correcte.</p>
+<h2 id="impact-sur-sentinel">Impact sur Sentinel</h2>
+<p>Le parcours complet prend forme : préparer, configurer, notifier puis vérifier. Le chapitre 9.7 l'appliquera à Sentinel <code>0.6.0</code> avec un rôle réutilisable et un test fonctionnel, pas seulement un processus <code>active</code>.</p>
+<h2 id="synthese">Synthèse</h2>
+<ul>
+<li>un play définit un périmètre, des privilèges et une orchestration ;</li>
+<li>les tâches s'ordonnent tandis que plusieurs hôtes peuvent avancer en parallèle ;</li>
+<li><code>serial</code> réduit le lot mais ne remplace pas la conception de disponibilité ;</li>
+<li>les handlers réagissent aux vrais changements ;</li>
+<li>faits, conditions, résultats enregistrés et assertions rendent les décisions visibles ;</li>
+<li><code>rescue</code> collecte ou corrige, il ne doit pas masquer une panne ;</li>
+<li>tags et commandes ad hoc restent des outils de sélection, pas une procédure parallèle.</li>
+</ul>
+<h2 id="pour-aller-plus-loin">Pour aller plus loin</h2>
+<p>Les playbooks savent orchestrer. Il faut maintenant séparer les données du comportement et produire des fichiers adaptés à chaque environnement sans copier leur contenu.</p>
+<p><a href="../9.5-variables-templates/">Continuer vers le chapitre 9.5 — Variables et templates</a></p>
+<p>Références : <a href="https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_intro.html">Ansible playbooks</a>, <a href="https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_handlers.html">Handlers</a>, <a href="https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_blocks.html">Blocks</a> et <a href="https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_tags.html">Tags</a>.</p>
+</div>
+</div><footer>
+<div aria-label="Footer Navigation" class="rst-footer-buttons" role="navigation">
+<a class="btn btn-neutral float-left" href="../9.3-inventaires/" title="Chapitre 9.3 — Construire les inventaires Ansible"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+<a class="btn btn-neutral float-right" href="../9.5-variables-templates/" title="Chapitre 9.5 — Piloter la configuration avec variables et templates">Next <span class="icon icon-circle-arrow-right"></span></a>
+</div>
+<hr/>
+<div role="contentinfo">
+<!-- Copyright etc -->
+</div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+</div>
+</div>
+</section>
+</div>
+<div aria-label="Versions" class="rst-versions" role="note">
+<span class="rst-current-version" data-toggle="rst-current-version">
+<span>
+<a class="fa fa-code-fork" href="https://github.com/tdelaclos/formations" style="color: #fcfcfc"> tdelaclos/formations</a>
+</span>
+<span><a href="../9.3-inventaires/" style="color: #fcfcfc">« Previous</a></span>
+<span><a href="../9.5-variables-templates/" style="color: #fcfcfc">Next »</a></span>
+</span>
+</div>
+<script src="../../js/jquery-3.6.0.min.js"></script>
+<script>var base_url = "../..";</script>
+<script src="../../js/theme_extra.js"></script>
+<script src="../../js/theme.js"></script>
+<script src="../../search/main.js"></script>
+<script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+<script type="module">import mermaid from "https://unpkg.com/mermaid@10.4.0/dist/mermaid.esm.min.mjs";
+mermaid.initialize({});</script></body>
+</html>

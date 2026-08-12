@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+
+<html class="writer-html5" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="IE=edge" http-equiv="X-UA-Compatible"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="../../img/favicon.ico" rel="shortcut icon"/>
+<title>Chapitre 14.6 — Conteneuriser avec Podman - Formation Sentinel — AlmaLinux sécurisé</title>
+<link href="../../css/theme.css" rel="stylesheet"/>
+<link href="../../css/theme_extra.css" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" rel="stylesheet"/>
+<script>
+        // Current page data
+        var mkdocs_page_name = "Chapitre 14.6 \u2014 Conteneuriser avec Podman";
+        var mkdocs_page_input_path = "campagne_14/14.6-conteneuriser-podman.md";
+        var mkdocs_page_url = null;
+      </script>
+<!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+<script>hljs.highlightAll();</script>
+</head>
+<body class="wy-body-for-nav" role="document">
+<div class="wy-grid-for-nav">
+<nav class="wy-nav-side stickynav" data-toggle="wy-nav-shift">
+<div class="wy-side-scroll">
+<div class="wy-side-nav-search">
+<a class="icon icon-home" href="../.."> Formation Sentinel — AlmaLinux sécurisé
+        </a><div role="search">
+<form action="../../search.html" class="wy-form" id="rtd-search-form" method="get">
+<input aria-label="Search docs" name="q" placeholder="Search docs" title="Type search term here" type="text"/>
+</form>
+</div>
+</div>
+<div aria-label="Navigation menu" class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../..">Accueil</a>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">A propos</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../GUIDE-REDACTION/">Guide de rédaction</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../PARCOURS-SENTINEL/">Parcours applicatif Sentinel</a>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Campagnes</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal">Campagne 1 - Sécuriser le socle Linux</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.1-pourquoi-securiser-socle-linux/">Chapitre 1.1 — Pourquoi sécuriser un socle Linux ?</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.2-installation-almalinux-minimal/">Chapitre 1.2 — Installer AlmaLinux minimal</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.3-composants-systeme-linux/">Chapitre 1.3 — Comprendre les composants d'un système Linux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.4-premier-demarrage-verifications/">Chapitre 1.4 — Établir la baseline du serveur</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.5-mise-a-jour-gestion-depots/">Chapitre 1.5 — Mettre à jour et gérer les dépôts</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.6-architecture-systemes-fichiers/">Chapitre 1.6 — Organiser les systèmes de fichiers</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.7-utilisateurs-groupes-permissions/">Chapitre 1.7 — Comprendre identités et permissions</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.8-sudo-moindre-privilege/">Chapitre 1.8 — Administrer avec sudo</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.9-premiere-mise-en-securite-serveur/">Chapitre 1.9 — Mission : mettre le serveur en sécurité</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.10-creation-laboratoire-sentinel/">Chapitre 1.10 — Créer le laboratoire Sentinel</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 2 - Gestion des permissions et des identités</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.1-permissions-unix/">Chapitre 2.1 — Les permissions UNIX</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.2-acl/">Chapitre 2.2 — Les ACL</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.3-umask/">Chapitre 2.3 — L'umask</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.4-attributs-etendus/">Chapitre 2.4 — Les attributs étendus</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.5-pam/">Chapitre 2.5 — PAM</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.6-politique-mots-de-passe/">Chapitre 2.6 — Politique de mots de passe</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.7-comptes-systeme/">Chapitre 2.7 — Les comptes système</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.8-sudo-avance/">Chapitre 2.8 — sudo avancé</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.9-fichiers-identites-linux/">Chapitre 2.9 — Comprendre les fichiers d'identités Linux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.10-synthese-securiser-identites/">Chapitre 2.10 — Synthèse : sécuriser les identités</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 3 - TCP/IP et Firewalld</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.1-tcp-ip-administrateur/">Chapitre 3.1 — TCP/IP côté administrateur</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.2-architecture-firewalld/">Chapitre 3.2 — Architecture de Firewalld</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.3-zones-firewalld/">Chapitre 3.3 — Les zones Firewalld</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.4-services-firewalld/">Chapitre 3.4 — Les services Firewalld</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.5-conntrack-filtrage-etats/">Chapitre 3.5 — Conntrack et le filtrage par états</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.6-rich-rules-firewalld/">Chapitre 3.6 — Les Rich Rules Firewalld</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.7-journalisation-firewalld/">Chapitre 3.7 — Journalisation et analyse Firewalld</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.8-ip-sets-firewalld/">Chapitre 3.8 — Les IP Sets Firewalld</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.9-runtime-permanent/">Chapitre 3.9 — Runtime et Permanent</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.10-politique-reseau-sentinel/">Chapitre 3.10 — Concevoir la politique réseau de Sentinel</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 4 - SSH</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_04/4.1-architecture-openssh/">Chapitre 4.1 — Architecture d'OpenSSH</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_04/4.2-authentification-mot-de-passe/">Chapitre 4.2 — Authentification par mot de passe</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_04/4.3-authentification-par-cles/">Chapitre 4.3 — Authentification par clés</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_04/4.4-durcissement-sshd-config/">Chapitre 4.4 — Durcissement de sshd_config</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_04/4.5-bastion-administration/">Chapitre 4.5 — Bastion d'administration</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_04/4.6-journalisation-audit-ssh/">Chapitre 4.6 — Journalisation et audit SSH</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_04/4.7-protection-attaques-ssh/">Chapitre 4.7 — Protection contre les attaques SSH</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_04/4.8-mission-administration-sentinel/">Chapitre 4.8 — Mission : administrer Sentinel en sécurité</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 5 - Systemd</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.1-comprendre-systemd/">Chapitre 5.1 — Comprendre systemd</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.2-unites-systemd/">Chapitre 5.2 — Les unités systemd</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.3-creer-service-sentinel/">Chapitre 5.3 — Créer le service Sentinel</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.4-sandboxing-systemd/">Chapitre 5.4 — Sandboxing systemd</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.5-capacites-linux/">Chapitre 5.5 — Les capacités Linux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.6-journalisation-journald/">Chapitre 5.6 — Journalisation avec journald</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.7-supervision-redemarrage/">Chapitre 5.7 — Supervision et redémarrage automatique</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.8-mission-sentinel-resilient/">Chapitre 5.8 — Mission : rendre Sentinel résilient</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 6 - SELinux</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_06/6.1-pourquoi-selinux-existe/">Chapitre 6.1 — Pourquoi SELinux existe</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_06/6.2-contextes-selinux/">Chapitre 6.2 — Comprendre les contextes SELinux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_06/6.3-politiques-selinux/">Chapitre 6.3 — Les politiques SELinux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_06/6.4-diagnostic-refus-selinux/">Chapitre 6.4 — Diagnostiquer les refus SELinux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_06/6.5-creation-regles-selinux/">Chapitre 6.5 — Créer des règles SELinux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_06/6.6-securiser-sentinel-selinux/">Chapitre 6.6 — Sécuriser Sentinel avec SELinux</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 7 - TLS et PKI</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.1-comprendre-cryptographie-appliquee/">Chapitre 7.1 — Comprendre la cryptographie appliquée</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.2-lire-verifier-certificats-x509/">Chapitre 7.2 — Lire et vérifier les certificats X.509</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.3-construire-autorite-certification/">Chapitre 7.3 — Construire une autorité de certification</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.4-authentification-mutuelle-tls/">Chapitre 7.4 — Authentifier les deux extrémités avec mTLS</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.5-preparer-integration-freeipa/">Chapitre 7.5 — Préparer l'intégration à FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.6-renouveler-revoquer-certificats/">Chapitre 7.6 — Renouveler et révoquer les certificats</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.7-securiser-sentinel-tls/">Chapitre 7.7 — Sécuriser Sentinel avec TLS</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 8 - FreeIPA</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.1-presentation-freeipa/">Chapitre 8.1 — Découvrir FreeIPA et la gestion centralisée des identités</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.2-architecture-interne-freeipa/">Chapitre 8.2 — Comprendre l'architecture interne de FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.3-installation-freeipa/">Chapitre 8.3 — Installer un serveur FreeIPA de laboratoire</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.4-gestion-utilisateurs/">Chapitre 8.4 — Gérer le cycle de vie des utilisateurs FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.5-groupes-roles/">Chapitre 8.5 — Organiser les groupes et les rôles FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.6-politiques-sudo/">Chapitre 8.6 — Centraliser les politiques sudo avec FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.7-gestion-hotes/">Chapitre 8.7 — Enrôler les hôtes et contrôler les accès avec HBAC</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.8-certificats/">Chapitre 8.8 — Gérer les certificats de service avec FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.9-integration-sentinel/">Chapitre 8.9 — Intégrer Sentinel à FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.10-mission-administration-freeipa/">Chapitre 8.10 — Mission : administrer Sentinel avec FreeIPA</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 9 - Déploiement avec Ansible</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.1-architecture-ansible/">Chapitre 9.1 — Comprendre l'architecture Ansible</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.2-composants-ansible/">Chapitre 9.2 — Comprendre les composants et l'idempotence Ansible</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.3-inventaires/">Chapitre 9.3 — Construire les inventaires Ansible</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.4-premiers-playbooks/">Chapitre 9.4 — Écrire les premiers playbooks</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.5-variables-templates/">Chapitre 9.5 — Piloter la configuration avec variables et templates</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.6-roles-ansible/">Chapitre 9.6 — Concevoir des rôles Ansible réutilisables</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.7-deployer-sentinel-ansible/">Chapitre 9.7 — Déployer Sentinel avec Ansible</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.8-integrer-sentinel-freeipa/">Chapitre 9.8 — Automatiser l'intégration de Sentinel à FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.9-industrialiser-laboratoire/">Chapitre 9.9 — Industrialiser le projet Ansible</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.10-mission-deploiement-sentinel/">Chapitre 9.10 — Mission : reconstruire Sentinel avec Ansible</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 10 - Packaging RPM</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_10/10.1-construire-paquet-rpm/">Chapitre 10.1 — Construire un paquet RPM</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_10/10.2-gerer-dependances-rpm/">Chapitre 10.2 — Gérer les dépendances RPM</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_10/10.3-gerer-fichiers-configuration-rpm/">Chapitre 10.3 — Gérer les fichiers de configuration RPM</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_10/10.4-signer-paquets-rpm/">Chapitre 10.4 — Signer les paquets RPM</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_10/10.5-exploiter-depot-rpm-prive/">Chapitre 10.5 — Exploiter un dépôt RPM privé</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_10/10.6-packager-sentinel/">Chapitre 10.6 — Packager Sentinel</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 11 - Conteneurs Podman</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_11/11.1-decouvrir-podman/">Chapitre 11.1 — Découvrir Podman</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_11/11.2-conteneurs-rootless/">Chapitre 11.2 — Exécuter des conteneurs rootless</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_11/11.3-construire-images-securisees/">Chapitre 11.3 — Construire des images sécurisées</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_11/11.4-reseaux-conteneurs/">Chapitre 11.4 — Concevoir les réseaux de conteneurs</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_11/11.5-gerer-secrets-podman/">Chapitre 11.5 — Gérer les secrets avec Podman</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_11/11.6-executer-sentinel-securite/">Chapitre 11.6 — Exécuter Sentinel en sécurité</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 12 - Supervision et audit</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_12/12.1-centraliser-journaux-rsyslog/">Chapitre 12.1 — Centraliser les journaux avec Rsyslog</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_12/12.2-auditer-systeme-auditd/">Chapitre 12.2 — Auditer le système avec auditd</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_12/12.3-controler-integrite-fichiers-aide/">Chapitre 12.3 — Contrôler l'intégrité des fichiers avec AIDE</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_12/12.4-superviser-sentinel-prometheus/">Chapitre 12.4 — Superviser Sentinel avec Prometheus</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_12/12.5-concevoir-alertes-alertmanager/">Chapitre 12.5 — Concevoir des alertes avec Alertmanager</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_12/12.6-construire-tableau-bord-sentinel/">Chapitre 12.6 — Construire le tableau de bord Sentinel</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 13 - Attaques et défense</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.1-reconnaissance/">Chapitre 13.1 — Reconnaissance</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.2-scan-reseau/">Chapitre 13.2 — Scan réseau</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.3-brute-force-ssh/">Chapitre 13.3 — Brute force SSH</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.4-escalade-privileges/">Chapitre 13.4 — Escalade de privilèges</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.5-mouvements-lateraux/">Chapitre 13.5 — Mouvements latéraux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.6-persistance/">Chapitre 13.6 — Persistance</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.7-exfiltration/">Chapitre 13.7 — Exfiltration</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.8-etude-cas-complete/">Chapitre 13.8 — Étude de cas complète</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal current">Campagne 14 - Projet final</a>
+<ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../14.1-deployer-sentinel-almalinux-minimale/">Chapitre 14.1 — Déployer Sentinel sur une AlmaLinux minimale</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../14.2-securiser-hote/">Chapitre 14.2 — Sécuriser l'hôte</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../14.3-integrer-freeipa/">Chapitre 14.3 — Intégrer FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../14.4-deployer-ansible/">Chapitre 14.4 — Déployer avec Ansible</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../14.5-packager-rpm/">Chapitre 14.5 — Packager avec RPM</a>
+</li>
+<li class="toctree-l2 current"><a class="reference internal current" href="#">Chapitre 14.6 — Conteneuriser avec Podman</a>
+<ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="#vous-etes-ici">Vous êtes ici</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#objectifs-pedagogiques">Objectifs pédagogiques</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pourquoi-ce-chapitre-existe">Pourquoi ce chapitre existe</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#construire-limage-110">Construire l'image 1.1.0</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#qualifier-limage-avant-promotion">Qualifier l'image avant promotion</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#utiliser-un-digest-qualifie">Utiliser un digest qualifié</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#preparer-le-compte-rootless">Préparer le compte rootless</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#preparer-configuration-etat-et-secrets">Préparer configuration, état et secrets</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#declarer-le-service-avec-quadlet">Déclarer le service avec Quadlet</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#valider-la-generation">Valider la génération</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#prouver-le-confinement">Prouver le confinement</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#verifier-le-reseau">Vérifier le réseau</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#verifier-le-contrat-110">Vérifier le contrat 1.1.0</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#scenario-dechec-systeme-de-fichiers-en-lecture-seule">Scénario d'échec — système de fichiers en lecture seule</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#scenario-dechec-client-non-autorise">Scénario d'échec — client non autorisé</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#mettre-a-jour-et-revenir-au-digest-precedent">Mettre à jour et revenir au digest précédent</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#preuves-a-conserver">Preuves à conserver</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#synthese">Synthèse</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#navigation">Navigation</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../14.7-superviser-auditer/">Chapitre 14.7 — Superviser et auditer</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../14.8-audit-final-tests-kali/">Chapitre 14.8 — Audit final et tests depuis Kali</a>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</nav>
+<section class="wy-nav-content-wrap" data-toggle="wy-nav-shift">
+<nav aria-label="Mobile navigation menu" class="wy-nav-top" role="navigation">
+<i class="fa fa-bars" data-toggle="wy-nav-top"></i>
+<a href="../..">Formation Sentinel — AlmaLinux sécurisé</a>
+</nav>
+<div class="wy-nav-content">
+<div class="rst-content"><div aria-label="breadcrumbs navigation" role="navigation">
+<ul class="wy-breadcrumbs">
+<li><a aria-label="Docs" class="icon icon-home" href="../.."></a></li>
+<li class="breadcrumb-item">Campagnes</li>
+<li class="breadcrumb-item">Campagne 14 - Projet final</li>
+<li class="breadcrumb-item active">Chapitre 14.6 — Conteneuriser avec Podman</li>
+<li class="wy-breadcrumbs-aside">
+<a href="https://github.com/tdelaclos/formations/edit/master/docs/campagne_14/14.6-conteneuriser-podman.md">Edit on tdelaclos/formations</a>
+</li>
+</ul>
+<hr/>
+</div>
+<div class="document" itemscope="itemscope" itemtype="http://schema.org/Article" role="main">
+<div class="section" itemprop="articleBody">
+<h1 id="chapitre-146-conteneuriser-avec-podman">Chapitre 14.6 — Conteneuriser avec Podman</h1>
+<blockquote>
+<p><strong>Campagne 14 — Projet final</strong></p>
+<p><em>« Une variante de déploiement est qualifiée lorsqu'elle conserve le contrat du service tout en assumant ses propres frontières. »</em></p>
+</blockquote>
+<h2 id="vous-etes-ici">Vous êtes ici</h2>
+<pre><code class="language-text">PARTIE III — Mise en situation
+
+Campagne 14 — Projet final
+
+  14.1 Déployer Sentinel sur une AlmaLinux minimale ✔
+  14.2 Sécuriser l'hôte ✔
+  14.3 Intégrer FreeIPA ✔
+  14.4 Déployer avec Ansible ✔
+  14.5 Packager avec RPM ✔
+► 14.6 Conteneuriser avec Podman
+  14.7 Superviser et auditer
+  14.8 Audit final et tests depuis Kali
+</code></pre>
+<h2 id="objectifs-pedagogiques">Objectifs pédagogiques</h2>
+<p>À l'issue de ce chapitre, vous serez capable de :</p>
+<ul>
+<li>construire une image Sentinel à partir du checkpoint courant <code>1.1.0</code> ;</li>
+<li>expliquer pourquoi Podman est une variante d'exécution et non une couche ajoutée au service RPM actif ;</li>
+<li>exploiter Sentinel rootless avec Quadlet, digest, secrets et limites de ressources ;</li>
+<li>vérifier identité, capacités, système de fichiers, réseau, SELinux et santé ;</li>
+<li>démontrer que <code>/metrics</code> et le contrat mTLS restent disponibles ;</li>
+<li>revenir au digest qualifié précédent en cas d'échec.</li>
+</ul>
+<h2 id="pourquoi-ce-chapitre-existe">Pourquoi ce chapitre existe</h2>
+<p>La campagne 11 a construit une image à partir de Sentinel <code>1.0.0</code>. Depuis, la campagne 12 a introduit le checkpoint <code>1.1.0</code> et <code>/metrics</code>. Le projet final doit donc reconstruire la <strong>variante conteneurisée du contrat actuel</strong>, sans modifier le code.</p>
+<p>Deux instances peuvent être qualifiées dans le laboratoire :</p>
+<div class="mermaid">flowchart LR
+    Contract["Contrat Sentinel 1.1.0"] --&gt; Native["Variante native\nRPM + systemd"]
+    Contract --&gt; Container["Variante conteneur\nPodman rootless + Quadlet"]
+    Native --&gt; Tests["Même acceptation fonctionnelle"]
+    Container --&gt; Tests
+</div>
+<p>Sur un même hôte et le même port, ne démarrez pas simultanément les deux variantes. Le dossier de preuves doit indiquer laquelle est active pendant chaque test.</p>
+<h2 id="construire-limage-110">Construire l'image <code>1.1.0</code></h2>
+<p>Reprenez le <code>Containerfile</code> qualifié en campagne 11 et remplacez les sources applicatives par le checkpoint <code>1.1.0</code>. Le contexte doit contenir les modules actuels, notamment <code>metrics.py</code>, mais aucun secret.</p>
+<pre><code class="language-bash">find sentinel-image -maxdepth 2 -type f -print | sort
+podman build --no-cache \
+  --tag localhost/sentinel:1.1.0 sentinel-image
+</code></pre>
+<p>Vérifiez immédiatement :</p>
+<pre><code class="language-bash">podman run --rm localhost/sentinel:1.1.0 --version
+podman image inspect localhost/sentinel:1.1.0
+</code></pre>
+<p>Le processus de l'image reste non privilégié, par exemple UID <code>10001</code>, et le code n'a pas besoin d'être inscriptible.</p>
+<h2 id="qualifier-limage-avant-promotion">Qualifier l'image avant promotion</h2>
+<pre><code class="language-bash">podman history --no-trunc localhost/sentinel:1.1.0
+podman image inspect localhost/sentinel:1.1.0
+podman run --rm --entrypoint /bin/sh localhost/sentinel:1.1.0 \
+  -c 'id; find /opt/sentinel -maxdepth 1 -type f -print | sort'
+</code></pre>
+<p>Vérifiez :</p>
+<ul>
+<li>présence des modules <code>1.1.0</code>, dont <code>metrics.py</code> ;</li>
+<li>absence de <code>.git</code>, <code>.env</code>, clés privées et caches de build ;</li>
+<li>UID applicatif non root ;</li>
+<li>image de base identifiée par provenance et digest ;</li>
+<li>aucune donnée d'état préchargée.</li>
+</ul>
+<h2 id="utiliser-un-digest-qualifie">Utiliser un digest qualifié</h2>
+<p>Après promotion vers le registre interne, relevez le digest :</p>
+<pre><code class="language-bash">skopeo inspect docker://registry.sentinel.lab/sentinel/sentinel:1.1.0
+</code></pre>
+<p>Le Quadlet final référence :</p>
+<pre><code class="language-text">registry.sentinel.lab/sentinel/sentinel@sha256:DIGEST_QUALIFIE
+</code></pre>
+<p>Le tag reste utile aux humains ; le digest identifie l'artefact réellement exécuté.</p>
+<h2 id="preparer-le-compte-rootless">Préparer le compte rootless</h2>
+<p>La campagne 11 utilise un compte dédié <code>sentinel-container</code>. Vérifiez :</p>
+<pre><code class="language-bash">id
+podman info --format '{{.Host.Security.Rootless}}'
+grep '^sentinel-container:' /etc/subuid /etc/subgid
+loginctl show-user sentinel-container -p Linger
+</code></pre>
+<p>Le linger est une décision d'exploitation permettant au gestionnaire systemd utilisateur de survivre sans session interactive.</p>
+<h2 id="preparer-configuration-etat-et-secrets">Préparer configuration, état et secrets</h2>
+<p>Sous le compte rootless :</p>
+<pre><code class="language-bash">install -d -m 0700 ~/.config/containers/systemd
+install -d -m 0750 ~/.config/sentinel
+install -d -m 0750 ~/.local/share/sentinel
+install -m 0644 sentinel.conf ~/.config/sentinel/sentinel.conf
+</code></pre>
+<p>Les certificats et clés ne sont pas ajoutés à l'image. Réutilisez les secrets Podman de la campagne 11 :</p>
+<pre><code class="language-bash">podman secret ls
+podman secret inspect sentinel-tls-cert
+podman secret inspect sentinel-tls-key
+</code></pre>
+<p>La preuve porte sur les métadonnées, jamais sur la valeur du secret.</p>
+<h2 id="declarer-le-service-avec-quadlet">Déclarer le service avec Quadlet</h2>
+<p>Le fichier <code>~/.config/containers/systemd/sentinel.container</code> reprend le contrat sécurisé :</p>
+<pre><code class="language-ini">[Unit]
+Description=Sentinel rootless container
+
+[Container]
+ContainerName=sentinel
+Image=registry.sentinel.lab/sentinel/sentinel@sha256:DIGEST_QUALIFIE
+User=10001
+Group=10001
+Network=sentinel.network
+Volume=sentinel.volume:/var/lib/sentinel:U,Z
+Volume=/home/sentinel-container/.config/sentinel/sentinel.conf:/etc/sentinel/sentinel.conf:ro,Z
+Secret=sentinel-tls-cert,type=mount,target=tls.crt,uid=10001,gid=10001,mode=0444
+Secret=sentinel-tls-key,type=mount,target=tls.key,uid=10001,gid=10001,mode=0400
+PublishPort=127.0.0.1:8443:8443
+ReadOnly=true
+ReadOnlyTmpfs=true
+Tmpfs=/tmp:rw,noexec,nosuid,nodev,size=16m
+NoNewPrivileges=true
+DropCapability=all
+PidsLimit=200
+Memory=256m
+PodmanArgs=--cpus=1
+
+[Service]
+Restart=on-failure
+RestartSec=5s
+TimeoutStopSec=30s
+
+[Install]
+WantedBy=default.target
+</code></pre>
+<p>Vérifiez les clés avec <code>man podman-systemd.unit</code> sur la version AlmaLinux utilisée. Si une directive Quadlet n'existe pas, utilisez l'équivalent documenté plutôt que de supprimer le contrôle.</p>
+<h2 id="valider-la-generation">Valider la génération</h2>
+<pre><code class="language-bash">systemctl --user daemon-reload
+systemctl --user list-unit-files | grep sentinel
+systemctl --user cat sentinel.service
+systemd-analyze --user verify sentinel.service
+</code></pre>
+<p>Puis :</p>
+<pre><code class="language-bash">systemctl --user enable --now sentinel.service
+systemctl --user status sentinel.service --no-pager
+podman ps
+</code></pre>
+<h2 id="prouver-le-confinement">Prouver le confinement</h2>
+<pre><code class="language-bash">podman exec sentinel id
+podman exec sentinel grep '^Cap' /proc/1/status
+podman exec sentinel sh -c 'touch /usr/probe' || true
+podman exec sentinel sh -c 'test -w /var/lib/sentinel'
+podman inspect sentinel
+</code></pre>
+<p><strong>Résultat attendu :</strong></p>
+<ul>
+<li>processus non root selon le contrat ;</li>
+<li>capacités supprimées ;</li>
+<li>racine non inscriptible ;</li>
+<li>état persistant inscriptible ;</li>
+<li>limites de ressources visibles.</li>
+</ul>
+<p>Contrôlez SELinux :</p>
+<pre><code class="language-bash">ps -eZ | grep '[s]entinel\|[c]onmon'
+sudo ausearch -m AVC,USER_AVC -ts recent
+</code></pre>
+<h2 id="verifier-le-reseau">Vérifier le réseau</h2>
+<pre><code class="language-bash">ss -lnt | grep ':8443'
+podman port sentinel
+</code></pre>
+<p>Le port interne est publié sur <code>127.0.0.1</code> uniquement si l'architecture retient un point d'entrée externe distinct.</p>
+<p>Depuis Kali :</p>
+<pre><code class="language-bash">nmap -Pn -p 8443 SENTINEL_IP
+</code></pre>
+<p>Le port ne doit pas être exposé directement. Testez ensuite le véritable point d'entrée autorisé, généralement 443.</p>
+<h2 id="verifier-le-contrat-110">Vérifier le contrat <code>1.1.0</code></h2>
+<p>Avec le client mTLS autorisé, vérifiez :</p>
+<pre><code class="language-text">GET /health        → 200
+GET /ready         → 200 lorsque l'état est prêt
+GET /api/v1/status → 200 lorsque l'état est lisible
+GET /metrics       → métriques Prometheus
+</code></pre>
+<p>Les métriques doivent notamment exposer les familles réellement présentes dans le checkpoint :</p>
+<pre><code class="language-text">sentinel_build_info
+sentinel_http_requests_total
+sentinel_http_requests_in_flight
+sentinel_http_request_duration_seconds
+sentinel_dependency_up
+sentinel_last_success_unixtime
+</code></pre>
+<p>N'ajoutez pas de métrique fictive pour faire correspondre un dashboard.</p>
+<h2 id="scenario-dechec-systeme-de-fichiers-en-lecture-seule">Scénario d'échec — système de fichiers en lecture seule</h2>
+<pre><code class="language-bash">podman exec sentinel sh -c 'echo fail &gt; /opt/sentinel/probe' || true
+</code></pre>
+<p>L'écriture doit échouer sans rendre l'état <code>/var/lib/sentinel</code> inutilisable.</p>
+<h2 id="scenario-dechec-client-non-autorise">Scénario d'échec — client non autorisé</h2>
+<p>Rejouez le cas <code>agent02</code> signé par la CA mais absent de <code>allowed_dns_names</code>.</p>
+<p><strong>Résultat attendu :</strong> la négociation TLS réussit, puis Sentinel répond <code>403</code>.</p>
+<p>Cette preuve doit être identique conceptuellement entre variante native et variante Podman.</p>
+<h2 id="mettre-a-jour-et-revenir-au-digest-precedent">Mettre à jour et revenir au digest précédent</h2>
+<div class="mermaid">stateDiagram-v2
+    [*] --&gt; DigestN
+    DigestN --&gt; N1Préparé: pull + qualification
+    N1Préparé --&gt; N1Actif: modifier Quadlet + restart
+    N1Actif --&gt; Validé: santé + mTLS + metrics
+    N1Actif --&gt; RetourN: échec
+    RetourN --&gt; DigestN
+    Validé --&gt; [*]
+</div>
+<p>Conservez l'ancien digest. Pour revenir :</p>
+<ol>
+<li>remplacez le digest dans le fichier <code>.container</code> ;</li>
+<li><code>systemctl --user daemon-reload</code> ;</li>
+<li>redémarrez l'unité ;</li>
+<li>rejouez santé, mTLS et métriques ;</li>
+<li>vérifiez la compatibilité de l'état persistant.</li>
+</ol>
+<p>Un changement de format de données demanderait une stratégie distincte ; le simple retour de digest ne restaure pas les données.</p>
+<h2 id="preuves-a-conserver">Preuves à conserver</h2>
+<pre><code class="language-text">05-podman/
+├── build.txt
+├── image-inspect.txt
+├── digest.txt
+├── quadlet.txt
+├── identite-capacites.txt
+├── reseau.txt
+├── selinux.txt
+├── health-mtls-metrics.txt
+└── rollback-digest.md
+</code></pre>
+<h2 id="synthese">Synthèse</h2>
+<ul>
+<li>l'image finale utilise le checkpoint <code>1.1.0</code> afin de conserver <code>/metrics</code> ;</li>
+<li>Podman est une variante du runtime natif, pas une seconde instance superposée ;</li>
+<li>l'exécution reste rootless, sans capacités et avec racine en lecture seule ;</li>
+<li>les secrets arrivent à l'exécution, jamais pendant le build ;</li>
+<li>le port interne reste borné par l'architecture ;</li>
+<li>la promotion et le retour arrière utilisent des digests identifiables.</li>
+</ul>
+<h2 id="navigation">Navigation</h2>
+<p><a href="../14.5-packager-rpm/">← 14.5 — Packager avec RPM</a> · <a href="../14.7-superviser-auditer/">14.7 — Superviser et auditer →</a></p>
+</div>
+</div><footer>
+<div aria-label="Footer Navigation" class="rst-footer-buttons" role="navigation">
+<a class="btn btn-neutral float-left" href="../14.5-packager-rpm/" title="Chapitre 14.5 — Packager avec RPM"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+<a class="btn btn-neutral float-right" href="../14.7-superviser-auditer/" title="Chapitre 14.7 — Superviser et auditer">Next <span class="icon icon-circle-arrow-right"></span></a>
+</div>
+<hr/>
+<div role="contentinfo">
+<!-- Copyright etc -->
+</div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+</div>
+</div>
+</section>
+</div>
+<div aria-label="Versions" class="rst-versions" role="note">
+<span class="rst-current-version" data-toggle="rst-current-version">
+<span>
+<a class="fa fa-code-fork" href="https://github.com/tdelaclos/formations" style="color: #fcfcfc"> tdelaclos/formations</a>
+</span>
+<span><a href="../14.5-packager-rpm/" style="color: #fcfcfc">« Previous</a></span>
+<span><a href="../14.7-superviser-auditer/" style="color: #fcfcfc">Next »</a></span>
+</span>
+</div>
+<script src="../../js/jquery-3.6.0.min.js"></script>
+<script>var base_url = "../..";</script>
+<script src="../../js/theme_extra.js"></script>
+<script src="../../js/theme.js"></script>
+<script src="../../search/main.js"></script>
+<script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+<script type="module">import mermaid from "https://unpkg.com/mermaid@10.4.0/dist/mermaid.esm.min.mjs";
+mermaid.initialize({});</script></body>
+</html>

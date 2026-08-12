@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+
+<html class="writer-html5" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="IE=edge" http-equiv="X-UA-Compatible"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="../../img/favicon.ico" rel="shortcut icon"/>
+<title>Chapitre 6.4 — Diagnostiquer les refus SELinux - Formation Sentinel — AlmaLinux sécurisé</title>
+<link href="../../css/theme.css" rel="stylesheet"/>
+<link href="../../css/theme_extra.css" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" rel="stylesheet"/>
+<script>
+        // Current page data
+        var mkdocs_page_name = "Chapitre 6.4 \u2014 Diagnostiquer les refus SELinux";
+        var mkdocs_page_input_path = "campagne_06/6.4-diagnostic-refus-selinux.md";
+        var mkdocs_page_url = null;
+      </script>
+<!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+<script>hljs.highlightAll();</script>
+</head>
+<body class="wy-body-for-nav" role="document">
+<div class="wy-grid-for-nav">
+<nav class="wy-nav-side stickynav" data-toggle="wy-nav-shift">
+<div class="wy-side-scroll">
+<div class="wy-side-nav-search">
+<a class="icon icon-home" href="../.."> Formation Sentinel — AlmaLinux sécurisé
+        </a><div role="search">
+<form action="../../search.html" class="wy-form" id="rtd-search-form" method="get">
+<input aria-label="Search docs" name="q" placeholder="Search docs" title="Type search term here" type="text"/>
+</form>
+</div>
+</div>
+<div aria-label="Navigation menu" class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../..">Accueil</a>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">A propos</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../GUIDE-REDACTION/">Guide de rédaction</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../PARCOURS-SENTINEL/">Parcours applicatif Sentinel</a>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Campagnes</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal">Campagne 1 - Sécuriser le socle Linux</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.1-pourquoi-securiser-socle-linux/">Chapitre 1.1 — Pourquoi sécuriser un socle Linux ?</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.2-installation-almalinux-minimal/">Chapitre 1.2 — Installer AlmaLinux minimal</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.3-composants-systeme-linux/">Chapitre 1.3 — Comprendre les composants d'un système Linux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.4-premier-demarrage-verifications/">Chapitre 1.4 — Établir la baseline du serveur</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.5-mise-a-jour-gestion-depots/">Chapitre 1.5 — Mettre à jour et gérer les dépôts</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.6-architecture-systemes-fichiers/">Chapitre 1.6 — Organiser les systèmes de fichiers</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.7-utilisateurs-groupes-permissions/">Chapitre 1.7 — Comprendre identités et permissions</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.8-sudo-moindre-privilege/">Chapitre 1.8 — Administrer avec sudo</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.9-premiere-mise-en-securite-serveur/">Chapitre 1.9 — Mission : mettre le serveur en sécurité</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.10-creation-laboratoire-sentinel/">Chapitre 1.10 — Créer le laboratoire Sentinel</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 2 - Gestion des permissions et des identités</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.1-permissions-unix/">Chapitre 2.1 — Les permissions UNIX</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.2-acl/">Chapitre 2.2 — Les ACL</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.3-umask/">Chapitre 2.3 — L'umask</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.4-attributs-etendus/">Chapitre 2.4 — Les attributs étendus</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.5-pam/">Chapitre 2.5 — PAM</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.6-politique-mots-de-passe/">Chapitre 2.6 — Politique de mots de passe</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.7-comptes-systeme/">Chapitre 2.7 — Les comptes système</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.8-sudo-avance/">Chapitre 2.8 — sudo avancé</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.9-fichiers-identites-linux/">Chapitre 2.9 — Comprendre les fichiers d'identités Linux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.10-synthese-securiser-identites/">Chapitre 2.10 — Synthèse : sécuriser les identités</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 3 - TCP/IP et Firewalld</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.1-tcp-ip-administrateur/">Chapitre 3.1 — TCP/IP côté administrateur</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.2-architecture-firewalld/">Chapitre 3.2 — Architecture de Firewalld</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.3-zones-firewalld/">Chapitre 3.3 — Les zones Firewalld</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.4-services-firewalld/">Chapitre 3.4 — Les services Firewalld</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.5-conntrack-filtrage-etats/">Chapitre 3.5 — Conntrack et le filtrage par états</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.6-rich-rules-firewalld/">Chapitre 3.6 — Les Rich Rules Firewalld</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.7-journalisation-firewalld/">Chapitre 3.7 — Journalisation et analyse Firewalld</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.8-ip-sets-firewalld/">Chapitre 3.8 — Les IP Sets Firewalld</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.9-runtime-permanent/">Chapitre 3.9 — Runtime et Permanent</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.10-politique-reseau-sentinel/">Chapitre 3.10 — Concevoir la politique réseau de Sentinel</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 4 - SSH</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_04/4.1-architecture-openssh/">Chapitre 4.1 — Architecture d'OpenSSH</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_04/4.2-authentification-mot-de-passe/">Chapitre 4.2 — Authentification par mot de passe</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_04/4.3-authentification-par-cles/">Chapitre 4.3 — Authentification par clés</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_04/4.4-durcissement-sshd-config/">Chapitre 4.4 — Durcissement de sshd_config</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_04/4.5-bastion-administration/">Chapitre 4.5 — Bastion d'administration</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_04/4.6-journalisation-audit-ssh/">Chapitre 4.6 — Journalisation et audit SSH</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_04/4.7-protection-attaques-ssh/">Chapitre 4.7 — Protection contre les attaques SSH</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_04/4.8-mission-administration-sentinel/">Chapitre 4.8 — Mission : administrer Sentinel en sécurité</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 5 - Systemd</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.1-comprendre-systemd/">Chapitre 5.1 — Comprendre systemd</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.2-unites-systemd/">Chapitre 5.2 — Les unités systemd</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.3-creer-service-sentinel/">Chapitre 5.3 — Créer le service Sentinel</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.4-sandboxing-systemd/">Chapitre 5.4 — Sandboxing systemd</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.5-capacites-linux/">Chapitre 5.5 — Les capacités Linux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.6-journalisation-journald/">Chapitre 5.6 — Journalisation avec journald</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.7-supervision-redemarrage/">Chapitre 5.7 — Supervision et redémarrage automatique</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.8-mission-sentinel-resilient/">Chapitre 5.8 — Mission : rendre Sentinel résilient</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal current">Campagne 6 - SELinux</a>
+<ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../6.1-pourquoi-selinux-existe/">Chapitre 6.1 — Pourquoi SELinux existe</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../6.2-contextes-selinux/">Chapitre 6.2 — Comprendre les contextes SELinux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../6.3-politiques-selinux/">Chapitre 6.3 — Les politiques SELinux</a>
+</li>
+<li class="toctree-l2 current"><a class="reference internal current" href="#">Chapitre 6.4 — Diagnostiquer les refus SELinux</a>
+<ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="#vous-etes-ici">Vous êtes ici</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#objectifs-pedagogiques">Objectifs pédagogiques</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pourquoi-ce-chapitre-existe">Pourquoi ce chapitre existe</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#toutes-les-pannes-ne-sont-pas-des-refus-selinux">Toutes les pannes ne sont pas des refus SELinux</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#une-methode-en-sept-etapes">Une méthode en sept étapes</a>
+<ul>
+<li class="toctree-l4"><a class="reference internal" href="#1-reproduire-une-seule-fois">1. Reproduire une seule fois</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#2-lire-letat-du-service">2. Lire l'état du service</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#3-verifier-les-deux-controles-dacces">3. Vérifier les deux contrôles d'accès</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#4-chercher-les-avc-recents">4. Chercher les AVC récents</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#5-decoder-levenement">5. Décoder l'événement</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#6-classer-la-cause">6. Classer la cause</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#7-corriger-au-plus-petit-perimetre-et-retester">7. Corriger au plus petit périmètre et retester</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#permissif-un-instrument-de-mesure-pas-un-etat-final">Permissif : un instrument de mesure, pas un état final</a>
+<ul>
+<li class="toctree-l4"><a class="reference internal" href="#le-cas-des-regles-dontaudit">Le cas des règles dontaudit</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#mise-en-pratique-provoquer-puis-corriger-un-mauvais-contexte">Mise en pratique — provoquer puis corriger un mauvais contexte</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#le-piege-audit2allow">Le piège audit2allow</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#impact-sur-sentinel">Impact sur Sentinel</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#synthese">Synthèse</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#schema-recapitulatif">Schéma récapitulatif</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pour-aller-plus-loin">Pour aller plus loin</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../6.5-creation-regles-selinux/">Chapitre 6.5 — Créer des règles SELinux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../6.6-securiser-sentinel-selinux/">Chapitre 6.6 — Sécuriser Sentinel avec SELinux</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 7 - TLS et PKI</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.1-comprendre-cryptographie-appliquee/">Chapitre 7.1 — Comprendre la cryptographie appliquée</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.2-lire-verifier-certificats-x509/">Chapitre 7.2 — Lire et vérifier les certificats X.509</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.3-construire-autorite-certification/">Chapitre 7.3 — Construire une autorité de certification</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.4-authentification-mutuelle-tls/">Chapitre 7.4 — Authentifier les deux extrémités avec mTLS</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.5-preparer-integration-freeipa/">Chapitre 7.5 — Préparer l'intégration à FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.6-renouveler-revoquer-certificats/">Chapitre 7.6 — Renouveler et révoquer les certificats</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.7-securiser-sentinel-tls/">Chapitre 7.7 — Sécuriser Sentinel avec TLS</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 8 - FreeIPA</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.1-presentation-freeipa/">Chapitre 8.1 — Découvrir FreeIPA et la gestion centralisée des identités</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.2-architecture-interne-freeipa/">Chapitre 8.2 — Comprendre l'architecture interne de FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.3-installation-freeipa/">Chapitre 8.3 — Installer un serveur FreeIPA de laboratoire</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.4-gestion-utilisateurs/">Chapitre 8.4 — Gérer le cycle de vie des utilisateurs FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.5-groupes-roles/">Chapitre 8.5 — Organiser les groupes et les rôles FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.6-politiques-sudo/">Chapitre 8.6 — Centraliser les politiques sudo avec FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.7-gestion-hotes/">Chapitre 8.7 — Enrôler les hôtes et contrôler les accès avec HBAC</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.8-certificats/">Chapitre 8.8 — Gérer les certificats de service avec FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.9-integration-sentinel/">Chapitre 8.9 — Intégrer Sentinel à FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.10-mission-administration-freeipa/">Chapitre 8.10 — Mission : administrer Sentinel avec FreeIPA</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 9 - Déploiement avec Ansible</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.1-architecture-ansible/">Chapitre 9.1 — Comprendre l'architecture Ansible</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.2-composants-ansible/">Chapitre 9.2 — Comprendre les composants et l'idempotence Ansible</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.3-inventaires/">Chapitre 9.3 — Construire les inventaires Ansible</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.4-premiers-playbooks/">Chapitre 9.4 — Écrire les premiers playbooks</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.5-variables-templates/">Chapitre 9.5 — Piloter la configuration avec variables et templates</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.6-roles-ansible/">Chapitre 9.6 — Concevoir des rôles Ansible réutilisables</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.7-deployer-sentinel-ansible/">Chapitre 9.7 — Déployer Sentinel avec Ansible</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.8-integrer-sentinel-freeipa/">Chapitre 9.8 — Automatiser l'intégration de Sentinel à FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.9-industrialiser-laboratoire/">Chapitre 9.9 — Industrialiser le projet Ansible</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.10-mission-deploiement-sentinel/">Chapitre 9.10 — Mission : reconstruire Sentinel avec Ansible</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 10 - Packaging RPM</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_10/10.1-construire-paquet-rpm/">Chapitre 10.1 — Construire un paquet RPM</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_10/10.2-gerer-dependances-rpm/">Chapitre 10.2 — Gérer les dépendances RPM</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_10/10.3-gerer-fichiers-configuration-rpm/">Chapitre 10.3 — Gérer les fichiers de configuration RPM</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_10/10.4-signer-paquets-rpm/">Chapitre 10.4 — Signer les paquets RPM</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_10/10.5-exploiter-depot-rpm-prive/">Chapitre 10.5 — Exploiter un dépôt RPM privé</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_10/10.6-packager-sentinel/">Chapitre 10.6 — Packager Sentinel</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 11 - Conteneurs Podman</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_11/11.1-decouvrir-podman/">Chapitre 11.1 — Découvrir Podman</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_11/11.2-conteneurs-rootless/">Chapitre 11.2 — Exécuter des conteneurs rootless</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_11/11.3-construire-images-securisees/">Chapitre 11.3 — Construire des images sécurisées</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_11/11.4-reseaux-conteneurs/">Chapitre 11.4 — Concevoir les réseaux de conteneurs</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_11/11.5-gerer-secrets-podman/">Chapitre 11.5 — Gérer les secrets avec Podman</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_11/11.6-executer-sentinel-securite/">Chapitre 11.6 — Exécuter Sentinel en sécurité</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 12 - Supervision et audit</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_12/12.1-centraliser-journaux-rsyslog/">Chapitre 12.1 — Centraliser les journaux avec Rsyslog</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_12/12.2-auditer-systeme-auditd/">Chapitre 12.2 — Auditer le système avec auditd</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_12/12.3-controler-integrite-fichiers-aide/">Chapitre 12.3 — Contrôler l'intégrité des fichiers avec AIDE</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_12/12.4-superviser-sentinel-prometheus/">Chapitre 12.4 — Superviser Sentinel avec Prometheus</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_12/12.5-concevoir-alertes-alertmanager/">Chapitre 12.5 — Concevoir des alertes avec Alertmanager</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_12/12.6-construire-tableau-bord-sentinel/">Chapitre 12.6 — Construire le tableau de bord Sentinel</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 13 - Attaques et défense</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.1-reconnaissance/">Chapitre 13.1 — Reconnaissance</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.2-scan-reseau/">Chapitre 13.2 — Scan réseau</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.3-brute-force-ssh/">Chapitre 13.3 — Brute force SSH</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.4-escalade-privileges/">Chapitre 13.4 — Escalade de privilèges</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.5-mouvements-lateraux/">Chapitre 13.5 — Mouvements latéraux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.6-persistance/">Chapitre 13.6 — Persistance</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.7-exfiltration/">Chapitre 13.7 — Exfiltration</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.8-etude-cas-complete/">Chapitre 13.8 — Étude de cas complète</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 14 - Projet final</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.1-deployer-sentinel-almalinux-minimale/">Chapitre 14.1 — Déployer Sentinel sur une AlmaLinux minimale</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.2-securiser-hote/">Chapitre 14.2 — Sécuriser l'hôte</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.3-integrer-freeipa/">Chapitre 14.3 — Intégrer FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.4-deployer-ansible/">Chapitre 14.4 — Déployer avec Ansible</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.5-packager-rpm/">Chapitre 14.5 — Packager avec RPM</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.6-conteneuriser-podman/">Chapitre 14.6 — Conteneuriser avec Podman</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.7-superviser-auditer/">Chapitre 14.7 — Superviser et auditer</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.8-audit-final-tests-kali/">Chapitre 14.8 — Audit final et tests depuis Kali</a>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</nav>
+<section class="wy-nav-content-wrap" data-toggle="wy-nav-shift">
+<nav aria-label="Mobile navigation menu" class="wy-nav-top" role="navigation">
+<i class="fa fa-bars" data-toggle="wy-nav-top"></i>
+<a href="../..">Formation Sentinel — AlmaLinux sécurisé</a>
+</nav>
+<div class="wy-nav-content">
+<div class="rst-content"><div aria-label="breadcrumbs navigation" role="navigation">
+<ul class="wy-breadcrumbs">
+<li><a aria-label="Docs" class="icon icon-home" href="../.."></a></li>
+<li class="breadcrumb-item">Campagnes</li>
+<li class="breadcrumb-item">Campagne 6 - SELinux</li>
+<li class="breadcrumb-item active">Chapitre 6.4 — Diagnostiquer les refus SELinux</li>
+<li class="wy-breadcrumbs-aside">
+<a href="https://github.com/tdelaclos/formations/edit/master/docs/campagne_06/6.4-diagnostic-refus-selinux.md">Edit on tdelaclos/formations</a>
+</li>
+</ul>
+<hr/>
+</div>
+<div class="document" itemscope="itemscope" itemtype="http://schema.org/Article" role="main">
+<div class="section" itemprop="articleBody">
+<h1 id="chapitre-64-diagnostiquer-les-refus-selinux">Chapitre 6.4 — Diagnostiquer les refus SELinux</h1>
+<blockquote>
+<p><strong>Campagne 6 — SELinux</strong></p>
+<p><em>« Un AVC est une preuve à interpréter, pas une permission à recopier. »</em></p>
+</blockquote>
+<h2 id="vous-etes-ici">Vous êtes ici</h2>
+<pre><code class="language-text">Partie I — Construire un socle sécurisé
+
+Campagne 6 — SELinux
+
+      6.1 Pourquoi SELinux existe
+      6.2 Les contextes
+      6.3 Les politiques
+    ► 6.4 Diagnostic des refus
+      6.5 Création de règles
+      6.6 Sécuriser Sentinel avec SELinux
+</code></pre>
+<h2 id="objectifs-pedagogiques">Objectifs pédagogiques</h2>
+<p>À la fin de ce chapitre, vous serez capable de :</p>
+<ul>
+<li>vérifier qu'une panne vient réellement de SELinux ;</li>
+<li>retrouver un refus AVC dans <code>auditd</code> ou le journal ;</li>
+<li>décoder la source, la cible, la classe et la permission refusée ;</li>
+<li>distinguer erreur d'étiquetage et règle légitime manquante ;</li>
+<li>appliquer une méthode de diagnostic reproductible.</li>
+</ul>
+<h2 id="pourquoi-ce-chapitre-existe">Pourquoi ce chapitre existe</h2>
+<p>« Cela fonctionne en permissif » indique que SELinux participe au problème, mais ne dit ni pourquoi ni quelle correction est sûre. Le mauvais réflexe consiste à désactiver SELinux ou à transformer immédiatement les journaux en règles.</p>
+<p>Une enquête fiable remonte du symptôme vers l'interaction exacte, puis choisit entre correction du contexte, option de politique prévue, correction applicative ou nouvelle règle minimale.</p>
+<h2 id="toutes-les-pannes-ne-sont-pas-des-refus-selinux">Toutes les pannes ne sont pas des refus SELinux</h2>
+<p>Un service peut échouer pour de nombreuses raisons : droits Unix, répertoire absent, configuration invalide, dépendance indisponible, pare-feu, sandbox systemd ou port déjà occupé.</p>
+<div class="mermaid">flowchart TD
+    Symptom["Service ou requête en échec"] --&gt; App["État et journaux applicatifs"]
+    App --&gt; DAC["Propriétaire, groupe et modes Unix"]
+    DAC --&gt; Service["Contraintes systemd et réseau"]
+    Service --&gt; AVC{"AVC corrélé dans le temps ?"}
+    AVC --&gt;|non| Other["Continuer hors de SELinux"]
+    AVC --&gt;|oui| Decode["Décoder source, cible, classe, permission"]
+    Decode --&gt; Cause{"Cause comprise ?"}
+    Cause --&gt; Label["Contexte incorrect"]
+    Cause --&gt; Policy["Besoin légitime absent"]
+    Cause --&gt; Unexpected["Comportement indésirable ou attaque"]
+</div>
+<p>Commencez par établir une chronologie : heure du test, commande exécutée, résultat et identité du processus.</p>
+<h2 id="une-methode-en-sept-etapes">Une méthode en sept étapes</h2>
+<h3 id="1-reproduire-une-seule-fois">1. Reproduire une seule fois</h3>
+<p>Notez l'heure juste avant le test afin de réduire le bruit :</p>
+<pre><code class="language-bash">date --iso-8601=seconds
+sudo systemctl restart sentinel
+</code></pre>
+<p>Évitez une boucle de redémarrage : elle multiplie les événements sans apporter de nouvelle information.</p>
+<h3 id="2-lire-letat-du-service">2. Lire l'état du service</h3>
+<pre><code class="language-bash">systemctl status sentinel --no-pager
+journalctl -u sentinel --since '-5 minutes' --no-pager
+</code></pre>
+<p>Une erreur de syntaxe de configuration ou un <code>Permission denied</code> Unix peut être visible avant toute recherche SELinux.</p>
+<h3 id="3-verifier-les-deux-controles-dacces">3. Vérifier les deux contrôles d'accès</h3>
+<pre><code class="language-bash">getenforce
+namei -l /etc/sentinel/sentinel.conf
+ls -lZ /etc/sentinel/sentinel.conf
+ps -eZ | grep sentinel
+matchpathcon -V /etc/sentinel/sentinel.conf
+</code></pre>
+<p><code>namei -l</code> montre les permissions de chaque répertoire du chemin. <code>matchpathcon -V</code> compare le contexte observé au contexte attendu par la base d'étiquetage.</p>
+<h3 id="4-chercher-les-avc-recents">4. Chercher les AVC récents</h3>
+<p>Avec <code>auditd</code> actif :</p>
+<pre><code class="language-bash">sudo ausearch -m AVC,USER_AVC -ts recent -i
+sudo ausearch -m AVC,USER_AVC -ts recent -c sentinel -i
+</code></pre>
+<p>Selon le système, certains événements apparaissent aussi dans le journal du noyau :</p>
+<pre><code class="language-bash">journalctl -k --since '-5 minutes' | grep -i avc
+</code></pre>
+<p>L'absence de résultat ne prouve pas que SELinux est innocent : l'horodatage peut être mauvais, <code>auditd</code> peut être arrêté ou une règle <code>dontaudit</code> peut masquer un événement.</p>
+<h3 id="5-decoder-levenement">5. Décoder l'événement</h3>
+<p>Un événement simplifié ressemble à ceci :</p>
+<pre><code class="language-text">avc: denied { read } for pid=1842 comm="sentinel"
+name="sentinel.conf" dev="vda2" ino=8732
+scontext=system_u:system_r:sentinel_t:s0
+tcontext=system_u:object_r:etc_t:s0
+tclass=file permissive=0
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>Champ</th>
+<th>Question à poser</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>{ read }</code></td>
+<td>quelle permission a été refusée ?</td>
+</tr>
+<tr>
+<td><code>comm</code>, <code>exe</code>, <code>pid</code></td>
+<td>quel processus la demandait ?</td>
+</tr>
+<tr>
+<td><code>name</code>, <code>path</code>, <code>dev</code>, <code>ino</code></td>
+<td>quel objet était visé ?</td>
+</tr>
+<tr>
+<td><code>scontext</code></td>
+<td>dans quel domaine tournait la source ?</td>
+</tr>
+<tr>
+<td><code>tcontext</code></td>
+<td>quel type portait la cible ?</td>
+</tr>
+<tr>
+<td><code>tclass</code></td>
+<td>fichier, répertoire, socket ou autre objet ?</td>
+</tr>
+<tr>
+<td><code>permissive</code></td>
+<td>le refus a-t-il été appliqué ou seulement journalisé ?</td>
+</tr>
+</tbody>
+</table>
+<p><code>audit2why</code> résume la raison politique, sans décider si l'accès est souhaitable :</p>
+<pre><code class="language-bash">sudo ausearch -m AVC,USER_AVC -ts recent | audit2why
+</code></pre>
+<p>Avec <code>setroubleshoot-server</code>, <code>sealert</code> peut regrouper et commenter les événements :</p>
+<pre><code class="language-bash">sudo sealert -a /var/log/audit/audit.log
+</code></pre>
+<h3 id="6-classer-la-cause">6. Classer la cause</h3>
+<p>Trois cas couvrent la majorité des incidents :</p>
+<ol>
+<li><strong>mauvais contexte</strong> : un fichier de configuration porte <code>etc_t</code> au lieu du type applicatif ;</li>
+<li><strong>fonction prévue mais politique incomplète</strong> : l'application doit réellement réaliser l'opération ;</li>
+<li><strong>interaction inattendue</strong> : bug, mauvaise configuration ou comportement hostile que SELinux doit continuer à bloquer.</li>
+</ol>
+<p>Avant une nouvelle règle, cherchez un chemin standard, un type existant ou un booléen précisément documenté.</p>
+<h3 id="7-corriger-au-plus-petit-perimetre-et-retester">7. Corriger au plus petit périmètre et retester</h3>
+<p>Pour une erreur d'étiquetage :</p>
+<pre><code class="language-bash">sudo restorecon -v /etc/sentinel/sentinel.conf
+</code></pre>
+<p>Pour un emplacement personnalisé, définissez d'abord la règle persistante :</p>
+<pre><code class="language-bash">sudo semanage fcontext -a -t sentinel_conf_t '/srv/sentinel/config(/.*)?'
+sudo restorecon -Rv /srv/sentinel/config
+</code></pre>
+<p>Rejouez exactement le même test, puis vérifiez que l'AVC a disparu sans élargir d'autres accès.</p>
+<h2 id="permissif-un-instrument-de-mesure-pas-un-etat-final">Permissif : un instrument de mesure, pas un état final</h2>
+<p>Le mode permissif global journalise ce qui aurait été refusé, mais retire une protection à toutes les applications. Si le domaine existe déjà, rendez seulement celui-ci permissif :</p>
+<pre><code class="language-bash">sudo semanage permissive -a sentinel_t
+# tests contrôlés
+sudo semanage permissive -d sentinel_t
+</code></pre>
+<p>Cette technique reste temporaire et doit être tracée. Elle est préférable à <code>setenforce 0</code>, mais elle autorise tout de même les actions interdites du domaine pendant le test.</p>
+<h3 id="le-cas-des-regles-dontaudit">Le cas des règles <code>dontaudit</code></h3>
+<p>Certaines opérations refusées, jugées trop bruyantes, ne sont pas journalisées. Pour une investigation courte :</p>
+<pre><code class="language-bash">sudo semodule -DB
+# reproduire une fois et collecter les AVC
+sudo semodule -B
+</code></pre>
+<p><code>-DB</code> désactive les règles <code>dontaudit</code>; <code>-B</code> reconstruit la politique et les réactive. Ne laissez pas le système dans cet état de diagnostic.</p>
+<h2 id="mise-en-pratique-provoquer-puis-corriger-un-mauvais-contexte">Mise en pratique — provoquer puis corriger un mauvais contexte</h2>
+<p>Ce laboratoire utilise Apache parce que sa politique existe déjà. Il illustre un défaut d'étiquette, pas la création d'une règle.</p>
+<pre><code class="language-bash">sudo dnf install -y httpd policycoreutils-python-utils
+printf '%s\n' 'Sentinel AVC lab' | sudo tee /var/www/html/sentinel-avc-demo.html
+sudo chcon -t user_tmp_t /var/www/html/sentinel-avc-demo.html
+ls -Z /var/www/html/sentinel-avc-demo.html
+matchpathcon -V /var/www/html/sentinel-avc-demo.html
+</code></pre>
+<p>Démarrez le service et demandez la page localement :</p>
+<pre><code class="language-bash">sudo systemctl enable --now httpd
+curl -i http://127.0.0.1/sentinel-avc-demo.html
+sudo ausearch -m AVC,USER_AVC -ts recent -c httpd -i
+</code></pre>
+<p>Le résultat attendu est un refus HTTP et un AVC montrant <code>httpd_t</code> face à <code>user_tmp_t</code>. Si le service utilise un autre nom de commande, relancez la recherche sans <code>-c httpd</code>.</p>
+<p>La politique Apache sait déjà lire les contenus correctement étiquetés. La bonne correction est donc :</p>
+<pre><code class="language-bash">sudo restorecon -v /var/www/html/sentinel-avc-demo.html
+ls -Z /var/www/html/sentinel-avc-demo.html
+curl -i http://127.0.0.1/sentinel-avc-demo.html
+sudo ausearch -m AVC,USER_AVC -ts recent -c httpd -i
+</code></pre>
+<p>La seconde requête doit réussir et ne créer aucun nouvel AVC correspondant. Nettoyez ensuite :</p>
+<pre><code class="language-bash">sudo rm /var/www/html/sentinel-avc-demo.html
+</code></pre>
+<h2 id="le-piege-audit2allow">Le piège <code>audit2allow</code></h2>
+<p><code>audit2allow</code> traduit des événements en règles syntaxiquement plausibles. Il ne connaît ni l'architecture prévue ni la sensibilité de la cible. Si une application compromise tente de lire <code>/etc/shadow</code>, l'outil peut proposer la règle correspondant à cette tentative.</p>
+<p>La question correcte n'est donc pas « comment autoriser cet AVC ? », mais « cette interaction appartient-elle au contrat fonctionnel ? ».</p>
+<h2 id="impact-sur-sentinel">Impact sur Sentinel</h2>
+<p>Pour Sentinel, conservez une fiche d'incident minimale :</p>
+<pre><code class="language-text">Heure et commande de reproduction :
+Symptôme applicatif :
+Domaine source :
+Type et classe de la cible :
+Permission refusée :
+Besoin fonctionnel associé :
+Correction retenue :
+Preuve après correction :
+</code></pre>
+<p>Cette trace fera le lien entre la matrice du chapitre 6.3 et le module construit au chapitre 6.6. Un AVC sans besoin associé reste un refus attendu.</p>
+<h2 id="synthese">Synthèse</h2>
+<ul>
+<li>établissez d'abord que le problème vient de SELinux ;</li>
+<li>corrélez l'AVC avec une reproduction horodatée ;</li>
+<li>lisez source, cible, classe et permission avant tout outil de génération ;</li>
+<li>corrigez un mauvais contexte avec <code>restorecon</code> et une règle <code>fcontext</code> persistante ;</li>
+<li>préférez le permissif par domaine pour une observation temporaire ;</li>
+<li>une règle suggérée n'est jamais une preuve de légitimité.</li>
+</ul>
+<h2 id="schema-recapitulatif">Schéma récapitulatif</h2>
+<p><img alt="Récapitulatif visuel du chapitre 6.4" src="../media/recap-6.4.png"/></p>
+<h2 id="pour-aller-plus-loin">Pour aller plus loin</h2>
+<p>Le prochain chapitre montre comment écrire et empaqueter une autorisation réellement justifiée.</p>
+<p><a href="../6.5-creation-regles-selinux/">Continuer vers le chapitre 6.5 — Créer des règles SELinux</a></p>
+<p>Référence : <a href="https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/9/html/using_selinux/getting-started-with-selinux_using-selinux">Red Hat Enterprise Linux 9 — Using SELinux</a>.</p>
+</div>
+</div><footer>
+<div aria-label="Footer Navigation" class="rst-footer-buttons" role="navigation">
+<a class="btn btn-neutral float-left" href="../6.3-politiques-selinux/" title="Chapitre 6.3 — Les politiques SELinux"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+<a class="btn btn-neutral float-right" href="../6.5-creation-regles-selinux/" title="Chapitre 6.5 — Créer des règles SELinux">Next <span class="icon icon-circle-arrow-right"></span></a>
+</div>
+<hr/>
+<div role="contentinfo">
+<!-- Copyright etc -->
+</div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+</div>
+</div>
+</section>
+</div>
+<div aria-label="Versions" class="rst-versions" role="note">
+<span class="rst-current-version" data-toggle="rst-current-version">
+<span>
+<a class="fa fa-code-fork" href="https://github.com/tdelaclos/formations" style="color: #fcfcfc"> tdelaclos/formations</a>
+</span>
+<span><a href="../6.3-politiques-selinux/" style="color: #fcfcfc">« Previous</a></span>
+<span><a href="../6.5-creation-regles-selinux/" style="color: #fcfcfc">Next »</a></span>
+</span>
+</div>
+<script src="../../js/jquery-3.6.0.min.js"></script>
+<script>var base_url = "../..";</script>
+<script src="../../js/theme_extra.js"></script>
+<script src="../../js/theme.js"></script>
+<script src="../../search/main.js"></script>
+<script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+<script type="module">import mermaid from "https://unpkg.com/mermaid@10.4.0/dist/mermaid.esm.min.mjs";
+mermaid.initialize({});</script></body>
+</html>

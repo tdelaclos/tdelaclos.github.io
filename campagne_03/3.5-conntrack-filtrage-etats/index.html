@@ -1,0 +1,1288 @@
+<!DOCTYPE html>
+
+<html class="writer-html5" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="IE=edge" http-equiv="X-UA-Compatible"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="../../img/favicon.ico" rel="shortcut icon"/>
+<title>Chapitre 3.5 — Conntrack et le filtrage par états - Formation Sentinel — AlmaLinux sécurisé</title>
+<link href="../../css/theme.css" rel="stylesheet"/>
+<link href="../../css/theme_extra.css" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" rel="stylesheet"/>
+<script>
+        // Current page data
+        var mkdocs_page_name = "Chapitre 3.5 \u2014 Conntrack et le filtrage par \u00e9tats";
+        var mkdocs_page_input_path = "campagne_03/3.5-conntrack-filtrage-etats.md";
+        var mkdocs_page_url = null;
+      </script>
+<!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+<script>hljs.highlightAll();</script>
+</head>
+<body class="wy-body-for-nav" role="document">
+<div class="wy-grid-for-nav">
+<nav class="wy-nav-side stickynav" data-toggle="wy-nav-shift">
+<div class="wy-side-scroll">
+<div class="wy-side-nav-search">
+<a class="icon icon-home" href="../.."> Formation Sentinel — AlmaLinux sécurisé
+        </a><div role="search">
+<form action="../../search.html" class="wy-form" id="rtd-search-form" method="get">
+<input aria-label="Search docs" name="q" placeholder="Search docs" title="Type search term here" type="text"/>
+</form>
+</div>
+</div>
+<div aria-label="Navigation menu" class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../..">Accueil</a>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">A propos</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../GUIDE-REDACTION/">Guide de rédaction</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../PARCOURS-SENTINEL/">Parcours applicatif Sentinel</a>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Campagnes</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal">Campagne 1 - Sécuriser le socle Linux</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.1-pourquoi-securiser-socle-linux/">Chapitre 1.1 — Pourquoi sécuriser un socle Linux ?</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.2-installation-almalinux-minimal/">Chapitre 1.2 — Installer AlmaLinux minimal</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.3-composants-systeme-linux/">Chapitre 1.3 — Comprendre les composants d'un système Linux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.4-premier-demarrage-verifications/">Chapitre 1.4 — Établir la baseline du serveur</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.5-mise-a-jour-gestion-depots/">Chapitre 1.5 — Mettre à jour et gérer les dépôts</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.6-architecture-systemes-fichiers/">Chapitre 1.6 — Organiser les systèmes de fichiers</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.7-utilisateurs-groupes-permissions/">Chapitre 1.7 — Comprendre identités et permissions</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.8-sudo-moindre-privilege/">Chapitre 1.8 — Administrer avec sudo</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.9-premiere-mise-en-securite-serveur/">Chapitre 1.9 — Mission : mettre le serveur en sécurité</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.10-creation-laboratoire-sentinel/">Chapitre 1.10 — Créer le laboratoire Sentinel</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 2 - Gestion des permissions et des identités</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.1-permissions-unix/">Chapitre 2.1 — Les permissions UNIX</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.2-acl/">Chapitre 2.2 — Les ACL</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.3-umask/">Chapitre 2.3 — L'umask</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.4-attributs-etendus/">Chapitre 2.4 — Les attributs étendus</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.5-pam/">Chapitre 2.5 — PAM</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.6-politique-mots-de-passe/">Chapitre 2.6 — Politique de mots de passe</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.7-comptes-systeme/">Chapitre 2.7 — Les comptes système</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.8-sudo-avance/">Chapitre 2.8 — sudo avancé</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.9-fichiers-identites-linux/">Chapitre 2.9 — Comprendre les fichiers d'identités Linux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.10-synthese-securiser-identites/">Chapitre 2.10 — Synthèse : sécuriser les identités</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal current">Campagne 3 - TCP/IP et Firewalld</a>
+<ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../3.1-tcp-ip-administrateur/">Chapitre 3.1 — TCP/IP côté administrateur</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../3.2-architecture-firewalld/">Chapitre 3.2 — Architecture de Firewalld</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../3.3-zones-firewalld/">Chapitre 3.3 — Les zones Firewalld</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../3.4-services-firewalld/">Chapitre 3.4 — Les services Firewalld</a>
+</li>
+<li class="toctree-l2 current"><a class="reference internal current" href="#">Chapitre 3.5 — Conntrack et le filtrage par états</a>
+<ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="#vous-etes-ici">Vous êtes ici</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#objectifs-pedagogiques">Objectifs pédagogiques</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pourquoi-ce-chapitre-existe">Pourquoi ce chapitre existe</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#theorie-detaillee">Théorie détaillée</a>
+<ul>
+<li class="toctree-l4"><a class="reference internal" href="#le-probleme-fondamental-dun-pare-feu">Le problème fondamental d'un pare-feu</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#les-ports-ephemeres">Les ports éphémères</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#le-suivi-de-connexion">Le suivi de connexion</a>
+<ul>
+<li class="toctree-l4"><a class="reference internal" href="#un-pare-feu-stateful">Un pare-feu stateful</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#les-etats-conntrack">Les états Conntrack</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#new">NEW</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#established">ESTABLISHED</a>
+<ul>
+<li class="toctree-l4"><a class="reference internal" href="#pourquoi-cette-regle-est-quasiment-universelle">Pourquoi cette règle est quasiment universelle</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#related">RELATED</a>
+<ul>
+<li class="toctree-l4"><a class="reference internal" href="#related-et-icmp-un-cas-concret">RELATED et ICMP : un cas concret</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#invalid">INVALID</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#pourquoi-rejeter-invalid">Pourquoi rejeter INVALID ?</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#invalid-ne-signifie-pas-forcement-attaque">INVALID ne signifie pas forcément "attaque"</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#untracked">UNTRACKED</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#la-machine-a-etats-tcp">La machine à états TCP</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#que-contient-reellement-une-entree-conntrack">Que contient réellement une entrée Conntrack ?</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#les-timeouts">Les timeouts</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pourquoi-un-timeout-est-il-indispensable">Pourquoi un timeout est-il indispensable ?</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#la-taille-de-la-table-conntrack">La taille de la table Conntrack</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#lorsque-la-table-est-pleine">Lorsque la table est pleine</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#les-attaques-par-saturation-de-conntrack">Les attaques par saturation de Conntrack</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#observer-conntrack">Observer Conntrack</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#observer-les-statistiques">Observer les statistiques</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#firewalld-utilise-conntrack-sans-que-vous-lecriviez">Firewalld utilise Conntrack sans que vous l'écriviez</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#en-entreprise">En entreprise</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#culture-technique">Culture technique</a>
+<ul>
+<li class="toctree-l4"><a class="reference internal" href="#une-histoire-de-performances-devenue-une-histoire-de-securite">Une histoire de performances… devenue une histoire de sécurité</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#firewalld-nftables-et-conntrack">Firewalld, nftables et Conntrack</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#piege-classique">Piège classique</a>
+<ul>
+<li class="toctree-l4"><a class="reference internal" href="#jai-ouvert-le-port-donc-ca-doit-fonctionner">« J'ai ouvert le port, donc ça doit fonctionner. »</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#autre-erreur-frequente-ignorer-les-connexions-deja-etablies">Autre erreur fréquente : ignorer les connexions déjà établies</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#ne-pas-confondre-etat-tcp-et-etat-conntrack">Ne pas confondre état TCP et état Conntrack</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#tp-1-observer-une-connexion-dans-conntrack">TP 1 — Observer une connexion dans Conntrack</a>
+<ul>
+<li class="toctree-l4"><a class="reference internal" href="#objectif">Objectif</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#architecture">Architecture</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#etape-1-verifier-les-regles-firewalld">Étape 1 — Vérifier les règles Firewalld</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#etape-2-installer-les-outils-conntrack">Étape 2 — Installer les outils Conntrack</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#etape-3-observer-une-connexion-ssh">Étape 3 — Observer une connexion SSH</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#tp-2-etudier-le-cycle-de-vie-des-entrees">TP 2 — Étudier le cycle de vie des entrées</a>
+<ul>
+<li class="toctree-l4"><a class="reference internal" href="#etape-5-observer-la-disparition-dune-entree">Étape 5 — Observer la disparition d'une entrée</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#etape-6-experimenter-avec-sentinel">Étape 6 — Expérimenter avec Sentinel</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#mission-dingenieur">Mission d'ingénieur</a>
+<ul>
+<li class="toctree-l4"><a class="reference internal" href="#contexte">Contexte</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#votre-mission">Votre mission</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#impact-sur-sentinel">Impact sur Sentinel</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#synthese">Synthèse</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pour-aller-plus-loin">Pour aller plus loin</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../3.6-rich-rules-firewalld/">Chapitre 3.6 — Les Rich Rules Firewalld</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../3.7-journalisation-firewalld/">Chapitre 3.7 — Journalisation et analyse Firewalld</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../3.8-ip-sets-firewalld/">Chapitre 3.8 — Les IP Sets Firewalld</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../3.9-runtime-permanent/">Chapitre 3.9 — Runtime et Permanent</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../3.10-politique-reseau-sentinel/">Chapitre 3.10 — Concevoir la politique réseau de Sentinel</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 4 - SSH</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_04/4.1-architecture-openssh/">Chapitre 4.1 — Architecture d'OpenSSH</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_04/4.2-authentification-mot-de-passe/">Chapitre 4.2 — Authentification par mot de passe</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_04/4.3-authentification-par-cles/">Chapitre 4.3 — Authentification par clés</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_04/4.4-durcissement-sshd-config/">Chapitre 4.4 — Durcissement de sshd_config</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_04/4.5-bastion-administration/">Chapitre 4.5 — Bastion d'administration</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_04/4.6-journalisation-audit-ssh/">Chapitre 4.6 — Journalisation et audit SSH</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_04/4.7-protection-attaques-ssh/">Chapitre 4.7 — Protection contre les attaques SSH</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_04/4.8-mission-administration-sentinel/">Chapitre 4.8 — Mission : administrer Sentinel en sécurité</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 5 - Systemd</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.1-comprendre-systemd/">Chapitre 5.1 — Comprendre systemd</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.2-unites-systemd/">Chapitre 5.2 — Les unités systemd</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.3-creer-service-sentinel/">Chapitre 5.3 — Créer le service Sentinel</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.4-sandboxing-systemd/">Chapitre 5.4 — Sandboxing systemd</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.5-capacites-linux/">Chapitre 5.5 — Les capacités Linux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.6-journalisation-journald/">Chapitre 5.6 — Journalisation avec journald</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.7-supervision-redemarrage/">Chapitre 5.7 — Supervision et redémarrage automatique</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.8-mission-sentinel-resilient/">Chapitre 5.8 — Mission : rendre Sentinel résilient</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 6 - SELinux</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_06/6.1-pourquoi-selinux-existe/">Chapitre 6.1 — Pourquoi SELinux existe</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_06/6.2-contextes-selinux/">Chapitre 6.2 — Comprendre les contextes SELinux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_06/6.3-politiques-selinux/">Chapitre 6.3 — Les politiques SELinux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_06/6.4-diagnostic-refus-selinux/">Chapitre 6.4 — Diagnostiquer les refus SELinux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_06/6.5-creation-regles-selinux/">Chapitre 6.5 — Créer des règles SELinux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_06/6.6-securiser-sentinel-selinux/">Chapitre 6.6 — Sécuriser Sentinel avec SELinux</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 7 - TLS et PKI</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.1-comprendre-cryptographie-appliquee/">Chapitre 7.1 — Comprendre la cryptographie appliquée</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.2-lire-verifier-certificats-x509/">Chapitre 7.2 — Lire et vérifier les certificats X.509</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.3-construire-autorite-certification/">Chapitre 7.3 — Construire une autorité de certification</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.4-authentification-mutuelle-tls/">Chapitre 7.4 — Authentifier les deux extrémités avec mTLS</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.5-preparer-integration-freeipa/">Chapitre 7.5 — Préparer l'intégration à FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.6-renouveler-revoquer-certificats/">Chapitre 7.6 — Renouveler et révoquer les certificats</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.7-securiser-sentinel-tls/">Chapitre 7.7 — Sécuriser Sentinel avec TLS</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 8 - FreeIPA</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.1-presentation-freeipa/">Chapitre 8.1 — Découvrir FreeIPA et la gestion centralisée des identités</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.2-architecture-interne-freeipa/">Chapitre 8.2 — Comprendre l'architecture interne de FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.3-installation-freeipa/">Chapitre 8.3 — Installer un serveur FreeIPA de laboratoire</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.4-gestion-utilisateurs/">Chapitre 8.4 — Gérer le cycle de vie des utilisateurs FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.5-groupes-roles/">Chapitre 8.5 — Organiser les groupes et les rôles FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.6-politiques-sudo/">Chapitre 8.6 — Centraliser les politiques sudo avec FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.7-gestion-hotes/">Chapitre 8.7 — Enrôler les hôtes et contrôler les accès avec HBAC</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.8-certificats/">Chapitre 8.8 — Gérer les certificats de service avec FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.9-integration-sentinel/">Chapitre 8.9 — Intégrer Sentinel à FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.10-mission-administration-freeipa/">Chapitre 8.10 — Mission : administrer Sentinel avec FreeIPA</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 9 - Déploiement avec Ansible</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.1-architecture-ansible/">Chapitre 9.1 — Comprendre l'architecture Ansible</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.2-composants-ansible/">Chapitre 9.2 — Comprendre les composants et l'idempotence Ansible</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.3-inventaires/">Chapitre 9.3 — Construire les inventaires Ansible</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.4-premiers-playbooks/">Chapitre 9.4 — Écrire les premiers playbooks</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.5-variables-templates/">Chapitre 9.5 — Piloter la configuration avec variables et templates</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.6-roles-ansible/">Chapitre 9.6 — Concevoir des rôles Ansible réutilisables</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.7-deployer-sentinel-ansible/">Chapitre 9.7 — Déployer Sentinel avec Ansible</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.8-integrer-sentinel-freeipa/">Chapitre 9.8 — Automatiser l'intégration de Sentinel à FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.9-industrialiser-laboratoire/">Chapitre 9.9 — Industrialiser le projet Ansible</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.10-mission-deploiement-sentinel/">Chapitre 9.10 — Mission : reconstruire Sentinel avec Ansible</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 10 - Packaging RPM</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_10/10.1-construire-paquet-rpm/">Chapitre 10.1 — Construire un paquet RPM</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_10/10.2-gerer-dependances-rpm/">Chapitre 10.2 — Gérer les dépendances RPM</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_10/10.3-gerer-fichiers-configuration-rpm/">Chapitre 10.3 — Gérer les fichiers de configuration RPM</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_10/10.4-signer-paquets-rpm/">Chapitre 10.4 — Signer les paquets RPM</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_10/10.5-exploiter-depot-rpm-prive/">Chapitre 10.5 — Exploiter un dépôt RPM privé</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_10/10.6-packager-sentinel/">Chapitre 10.6 — Packager Sentinel</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 11 - Conteneurs Podman</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_11/11.1-decouvrir-podman/">Chapitre 11.1 — Découvrir Podman</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_11/11.2-conteneurs-rootless/">Chapitre 11.2 — Exécuter des conteneurs rootless</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_11/11.3-construire-images-securisees/">Chapitre 11.3 — Construire des images sécurisées</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_11/11.4-reseaux-conteneurs/">Chapitre 11.4 — Concevoir les réseaux de conteneurs</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_11/11.5-gerer-secrets-podman/">Chapitre 11.5 — Gérer les secrets avec Podman</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_11/11.6-executer-sentinel-securite/">Chapitre 11.6 — Exécuter Sentinel en sécurité</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 12 - Supervision et audit</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_12/12.1-centraliser-journaux-rsyslog/">Chapitre 12.1 — Centraliser les journaux avec Rsyslog</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_12/12.2-auditer-systeme-auditd/">Chapitre 12.2 — Auditer le système avec auditd</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_12/12.3-controler-integrite-fichiers-aide/">Chapitre 12.3 — Contrôler l'intégrité des fichiers avec AIDE</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_12/12.4-superviser-sentinel-prometheus/">Chapitre 12.4 — Superviser Sentinel avec Prometheus</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_12/12.5-concevoir-alertes-alertmanager/">Chapitre 12.5 — Concevoir des alertes avec Alertmanager</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_12/12.6-construire-tableau-bord-sentinel/">Chapitre 12.6 — Construire le tableau de bord Sentinel</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 13 - Attaques et défense</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.1-reconnaissance/">Chapitre 13.1 — Reconnaissance</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.2-scan-reseau/">Chapitre 13.2 — Scan réseau</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.3-brute-force-ssh/">Chapitre 13.3 — Brute force SSH</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.4-escalade-privileges/">Chapitre 13.4 — Escalade de privilèges</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.5-mouvements-lateraux/">Chapitre 13.5 — Mouvements latéraux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.6-persistance/">Chapitre 13.6 — Persistance</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.7-exfiltration/">Chapitre 13.7 — Exfiltration</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.8-etude-cas-complete/">Chapitre 13.8 — Étude de cas complète</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 14 - Projet final</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.1-deployer-sentinel-almalinux-minimale/">Chapitre 14.1 — Déployer Sentinel sur une AlmaLinux minimale</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.2-securiser-hote/">Chapitre 14.2 — Sécuriser l'hôte</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.3-integrer-freeipa/">Chapitre 14.3 — Intégrer FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.4-deployer-ansible/">Chapitre 14.4 — Déployer avec Ansible</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.5-packager-rpm/">Chapitre 14.5 — Packager avec RPM</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.6-conteneuriser-podman/">Chapitre 14.6 — Conteneuriser avec Podman</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.7-superviser-auditer/">Chapitre 14.7 — Superviser et auditer</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.8-audit-final-tests-kali/">Chapitre 14.8 — Audit final et tests depuis Kali</a>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</nav>
+<section class="wy-nav-content-wrap" data-toggle="wy-nav-shift">
+<nav aria-label="Mobile navigation menu" class="wy-nav-top" role="navigation">
+<i class="fa fa-bars" data-toggle="wy-nav-top"></i>
+<a href="../..">Formation Sentinel — AlmaLinux sécurisé</a>
+</nav>
+<div class="wy-nav-content">
+<div class="rst-content"><div aria-label="breadcrumbs navigation" role="navigation">
+<ul class="wy-breadcrumbs">
+<li><a aria-label="Docs" class="icon icon-home" href="../.."></a></li>
+<li class="breadcrumb-item">Campagnes</li>
+<li class="breadcrumb-item">Campagne 3 - TCP/IP et Firewalld</li>
+<li class="breadcrumb-item active">Chapitre 3.5 — Conntrack et le filtrage par états</li>
+<li class="wy-breadcrumbs-aside">
+<a href="https://github.com/tdelaclos/formations/edit/master/docs/campagne_03/3.5-conntrack-filtrage-etats.md">Edit on tdelaclos/formations</a>
+</li>
+</ul>
+<hr/>
+</div>
+<div class="document" itemscope="itemscope" itemtype="http://schema.org/Article" role="main">
+<div class="section" itemprop="articleBody">
+<h1 id="chapitre-35-conntrack-et-le-filtrage-par-etats">Chapitre 3.5 — Conntrack et le filtrage par états</h1>
+<blockquote>
+<p><strong>Campagne 3 — Réseau et exposition</strong></p>
+<p><em>« Le meilleur pare-feu n'est pas celui qui bloque le plus de paquets. C'est celui qui comprend les conversations. »</em></p>
+</blockquote>
+<h2 id="vous-etes-ici">Vous êtes ici</h2>
+<pre><code>Partie I ─ Construire un socle sécurisé
+        │
+        ├── Campagne 1 ─ Installation
+        ├── Campagne 2 ─ Comptes et privilèges
+        │
+        └── Campagne 3 ─ Sécurisation réseau
+                 │
+                 ├── 3.1 TCP/IP côté administrateur
+                 ├── 3.2 Firewalld
+                 ├── 3.3 Les zones
+                 ├── 3.4 Les services
+                 │
+                 ├──► 3.5 Conntrack et le filtrage par états
+                 ├── 3.6 Rich Rules
+                 ├── 3.7 Journalisation
+                 ├── 3.8 IP Sets
+                 ├── 3.9 Runtime vs Permanent
+                 └── 3.10 Architecture complète Firewalld
+</code></pre>
+<h2 id="objectifs-pedagogiques">Objectifs pédagogiques</h2>
+<p>À la fin de ce chapitre vous serez capable de :</p>
+<ul>
+<li>expliquer précisément le fonctionnement de Netfilter Conntrack ;</li>
+<li>comprendre pourquoi un pare-feu moderne est dit <strong>stateful</strong> ;</li>
+<li>distinguer les états NEW, ESTABLISHED, RELATED, INVALID et UNTRACKED ;</li>
+<li>analyser une table Conntrack ;</li>
+<li>comprendre comment Firewalld exploite automatiquement ces mécanismes ;</li>
+<li>diagnostiquer des comportements réseau apparemment "magiques" ;</li>
+<li>anticiper les limites du suivi de connexion dans un contexte de production.</li>
+</ul>
+<h2 id="pourquoi-ce-chapitre-existe">Pourquoi ce chapitre existe</h2>
+<p>La plupart des administrateurs savent qu'un flux TCP "fonctionne". Ils savent qu'il existe une règle autorisant SSH. Ils savent qu'un client peut se connecter. En revanche, très peu savent <strong>pourquoi les paquets de réponse reviennent sans qu'une règle explicite ne les autorise.</strong> Cette incompréhension conduit à des erreurs fréquentes :</p>
+<ul>
+<li>ouverture inutile de ports ;</li>
+<li>règles redondantes ;</li>
+<li>mauvaises politiques DROP ;</li>
+<li>diagnostics erronés lors d'incidents.</li>
+</ul>
+<p>Comprendre <strong>Conntrack</strong> est probablement l'une des compétences qui différencie un administrateur système d'un véritable ingénieur sécurité. Car ce n'est pas Firewalld qui décide réellement du sort des paquets. Firewalld produit une configuration. Netfilter applique cette configuration. Et Netfilter s'appuie sur un composant extrêmement sophistiqué : <strong>Connection Tracking</strong>, plus connu sous le nom de <strong>Conntrack</strong>.</p>
+<h2 id="theorie-detaillee">Théorie détaillée</h2>
+<h3 id="le-probleme-fondamental-dun-pare-feu">Le problème fondamental d'un pare-feu</h3>
+<p>Imaginons un serveur Sentinel. Il écoute sur le port TCP 8443. Un client ouvre une connexion.</p>
+<div class="mermaid">flowchart TD
+    N0["Client&lt;br/&gt;192.168.1.25:54821"]
+    N1["SYN"]
+    N2["Sentinel&lt;br/&gt;192.168.1.10:8443"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+</div>
+<p>Une règle Firewalld autorise :</p>
+<pre><code>tcp/8443
+</code></pre>
+<p>Le premier paquet est donc accepté. Très bien. Mais une question apparaît immédiatement. Comment le serveur peut-il répondre ?</p>
+<div class="mermaid">flowchart TD
+    N0["Serveur&lt;br/&gt;8443"]
+    N1["SYN/ACK"]
+    N2["Client&lt;br/&gt;54821"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+</div>
+<p>Le paquet de retour est destiné au port <strong>54821</strong>. Or ce port :</p>
+<ul>
+<li>n'est pas ouvert ;</li>
+<li>n'est pas déclaré dans Firewalld ;</li>
+<li>change à chaque connexion.</li>
+</ul>
+<p>Pourquoi le paquet est-il accepté ? Sans Conntrack... il ne devrait pas l'être.</p>
+<h3 id="les-ports-ephemeres">Les ports éphémères</h3>
+<p>Lorsqu'un client établit une connexion TCP, il choisit automatiquement un port source. Par exemple :</p>
+<pre><code>Client
+
+Source :
+54821
+
+Destination :
+8443
+</code></pre>
+<p>Le serveur répond ensuite vers ce même port.</p>
+<pre><code>Destination :
+54821
+</code></pre>
+<p>Le port 54821 n'a jamais été déclaré dans le pare-feu. Et pourtant... la communication fonctionne. La raison est simple. Le pare-feu mémorise la connexion.</p>
+<h2 id="le-suivi-de-connexion">Le suivi de connexion</h2>
+<p>Netfilter possède une immense table mémoire. Chaque nouvelle connexion crée une entrée. Exemple extrêmement simplifié :</p>
+<pre><code>+------------------------------------------------------------+
+| Source               Destination             Etat          |
++------------------------------------------------------------+
+|192.168.1.25:54821 -&gt; 192.168.1.10:8443       ESTABLISHED   |
++------------------------------------------------------------+
+</code></pre>
+<p>À partir de cet instant : tout paquet appartenant à cette conversation est immédiatement reconnu. Le pare-feu ne réévalue plus entièrement les règles. Il regarde d'abord :</p>
+<blockquote>
+<p>"Est-ce que ce paquet appartient à une conversation déjà connue ?"</p>
+</blockquote>
+<p>Si oui, il est traité beaucoup plus rapidement.</p>
+<h3 id="un-pare-feu-stateful">Un pare-feu stateful</h3>
+<p>On distingue deux familles.</p>
+<h4 id="stateless">Stateless</h4>
+<p>Chaque paquet est indépendant. Le pare-feu ignore totalement :</p>
+<ul>
+<li>les échanges précédents ;</li>
+<li>le contexte ;</li>
+<li>l'historique.</li>
+</ul>
+<p>Chaque paquet est jugé seul.</p>
+<div class="mermaid">flowchart TD
+    N0["Packet A"]
+    N1["Analyse complète"]
+    N2["Décision"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+</div>
+<p>Puis</p>
+<div class="mermaid">flowchart TD
+    N0["Packet B"]
+    N1["Analyse complète"]
+    N2["Décision"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+</div>
+<p>Encore et encore. Cela présente plusieurs inconvénients. Par exemple :</p>
+<pre><code>SYN
+
+ACK
+
+FIN
+
+RST
+</code></pre>
+<p>Tous sont vus comme des paquets totalement indépendants. Le pare-feu ne comprend jamais qu'ils appartiennent à la même connexion.</p>
+<h4 id="stateful">Stateful</h4>
+<p>Avec Conntrack :</p>
+<div class="mermaid">flowchart TD
+    N0["Premier paquet"]
+    N1["Création d'un état"]
+    N2["Enregistrement"]
+    N3["Tous les paquets suivants"]
+    N4["Reconnaissance immédiate"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+    N2 --&gt; N3
+    N3 --&gt; N4
+</div>
+<p>Le pare-feu comprend désormais :</p>
+<ul>
+<li>qui a initié la connexion ;</li>
+<li>quelles adresses participent ;</li>
+<li>quels ports sont utilisés ;</li>
+<li>où en est la conversation.</li>
+</ul>
+<p>Il devient capable de raisonner.</p>
+<h2 id="les-etats-conntrack">Les états Conntrack</h2>
+<p>Le noyau Linux attribue un état à chaque paquet. Les plus importants sont :</p>
+<pre><code>NEW
+
+ESTABLISHED
+
+RELATED
+
+INVALID
+</code></pre>
+<p>Un cinquième existe dans certains contextes :</p>
+<pre><code>UNTRACKED
+</code></pre>
+<p>Voyons chacun d'eux.</p>
+<h2 id="new">NEW</h2>
+<p>Le tout premier paquet d'une nouvelle connexion. Exemple :</p>
+<pre><code>Client
+
+SYN
+
+------------&gt;
+
+Serveur
+</code></pre>
+<p>Le noyau voit :</p>
+<pre><code>NEW
+</code></pre>
+<p>C'est à ce moment que Firewalld décide si la connexion est autorisée. Si la réponse est NON : la connexion n'existera jamais. Exemple SSH.</p>
+<div class="mermaid">flowchart TD
+    N0["22/TCP autorisé"]
+    N1["Premier SYN"]
+    N2["Etat NEW"]
+    N3["Accepté"]
+    N4["Entrée Conntrack créée"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+    N2 --&gt; N3
+    N3 --&gt; N4
+</div>
+<h2 id="established">ESTABLISHED</h2>
+<p>Une fois le handshake TCP terminé :</p>
+<pre><code>SYN
+
+SYN ACK
+
+ACK
+</code></pre>
+<p>La connexion devient :</p>
+<pre><code>ESTABLISHED
+</code></pre>
+<p>Tous les paquets suivants portent cet état. C'est pourquoi la règle implicite :</p>
+<pre><code>ESTABLISHED,RELATED ACCEPT
+</code></pre>
+<p>est probablement la règle la plus importante de tout Linux. Sans elle... la majorité des communications cesseraient immédiatement.</p>
+<h3 id="pourquoi-cette-regle-est-quasiment-universelle">Pourquoi cette règle est quasiment universelle</h3>
+<p>Sur presque toutes les distributions Linux, on retrouve une règle équivalente :</p>
+<pre><code>ct state established,related accept
+</code></pre>
+<p>ou historiquement :</p>
+<pre><code>-m state --state ESTABLISHED,RELATED
+</code></pre>
+<p>Cette règle permet au serveur de répondre librement aux connexions qu'il a déjà acceptées. Elle réduit énormément le nombre de règles nécessaires. Au lieu d'autoriser explicitement chaque port de retour, le pare-feu applique une logique beaucoup plus simple :</p>
+<blockquote>
+<p>« Si cette réponse appartient à une conversation déjà validée, elle est autorisée. »</p>
+</blockquote>
+<p>Cette approche est plus sûre, plus performante et beaucoup plus simple à maintenir.</p>
+<h2 id="related">RELATED</h2>
+<p>RELATED est souvent le plus mal compris. Il ne signifie pas :</p>
+<blockquote>
+<p>"le même flux"</p>
+</blockquote>
+<p>Il signifie :</p>
+<blockquote>
+<p>"un nouveau flux qui dépend directement d'un flux existant."</p>
+</blockquote>
+<p>La nuance est fondamentale. Prenons un exemple historique : FTP en mode actif. Le client ouvre d'abord une connexion de contrôle.</p>
+<p>Cette connexion est <strong>ESTABLISHED</strong>. Puis, au cours du dialogue, le serveur demande l'ouverture d'une nouvelle connexion de données. Cette seconde connexion est différente :</p>
+<ul>
+<li>nouveau port ;</li>
+<li>nouvelle socket ;</li>
+<li>nouveau flux.</li>
+</ul>
+<p>Pourtant, le noyau sait qu'elle découle directement de la première grâce à un module d'analyse du protocole (un <em>helper</em> Conntrack). Son état est donc :</p>
+<pre><code>RELATED
+</code></pre>
+<p>Sans cette notion, de nombreux protocoles historiques auraient nécessité des dizaines de règles spécifiques dans le pare-feu. Aujourd'hui, FTP est moins courant, mais le mécanisme RELATED reste utilisé dans plusieurs cas particuliers, notamment certains protocoles réseau complexes et les messages ICMP associés à une connexion existante.</p>
+<h3 id="related-et-icmp-un-cas-concret">RELATED et ICMP : un cas concret</h3>
+<p>Beaucoup d'administrateurs découvrent RELATED avec FTP, puis oublient rapidement son existence en pensant que ce mécanisme ne concerne que des protocoles anciens. Pourtant, il intervient encore quotidiennement. Prenons un cas très simple. Une connexion HTTPS est déjà établie.</p>
+<div class="mermaid">flowchart TD
+    N0["Client"]
+    N1["HTTPS"]
+    N2["Serveur"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+</div>
+<p>Pendant cette communication, un routeur intermédiaire détecte que le paquet est trop volumineux pour le prochain lien réseau. Il génère alors un message ICMP :</p>
+<pre><code>Destination Unreachable
+Fragmentation Needed
+</code></pre>
+<p>Ce paquet ICMP ne constitue pas une nouvelle communication indépendante. Il est directement lié à la connexion TCP existante. Le noyau le classe donc :</p>
+<pre><code>RELATED
+</code></pre>
+<p>Le pare-feu peut alors autoriser ce paquet sans ouvrir largement ICMP. Cette subtilité est essentielle. Sans RELATED, certains mécanismes indispensables au bon fonctionnement du réseau cesseraient de fonctionner.</p>
+<h3 id="invalid">INVALID</h3>
+<p>INVALID désigne un paquet qui ne peut être associé à aucune connexion valide. Cela peut provenir de nombreuses situations. Exemple :</p>
+<div class="mermaid">flowchart TD
+    N0["Paquet reçu"]
+    N1["Pas d'entrée Conntrack"]
+    N2["Impossible de reconstruire l'état TCP"]
+    N3["INVALID"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+    N2 --&gt; N3
+</div>
+<p>Quelques causes classiques :</p>
+<ul>
+<li>paquet corrompu ;</li>
+<li>checksum erronée ;</li>
+<li>paquet reçu hors séquence ;</li>
+<li>connexion expirée ;</li>
+<li>attaque réseau ;</li>
+<li>désynchronisation NAT ;</li>
+<li>saturation de la table Conntrack.</li>
+</ul>
+<p>Exemple. Le serveur reçoit directement un ACK.</p>
+<div class="mermaid">flowchart TD
+    N0["ACK"]
+    N1["Aucun SYN connu"]
+    N2["INVALID"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+</div>
+<p>Pour Conntrack, cette situation est impossible. Un ACK ne peut apparaître que dans une connexion déjà connue. Le paquet est donc classé INVALID.</p>
+<h3 id="pourquoi-rejeter-invalid">Pourquoi rejeter INVALID ?</h3>
+<p>Dans la plupart des politiques de sécurité, on retrouve très tôt :</p>
+<pre><code>INVALID → DROP
+</code></pre>
+<p>Pourquoi ? Parce qu'un paquet INVALID est rarement légitime. Au contraire, il est souvent le symptôme :</p>
+<ul>
+<li>d'une erreur réseau ;</li>
+<li>d'un logiciel défaillant ;</li>
+<li>d'une tentative d'évasion du pare-feu ;</li>
+<li>d'un scan sophistiqué.</li>
+</ul>
+<p>Il est donc généralement plus sûr de le supprimer immédiatement.</p>
+<h3 id="invalid-ne-signifie-pas-forcement-attaque">INVALID ne signifie pas forcément "attaque"</h3>
+<p>Attention néanmoins à une erreur de diagnostic fréquente. Des paquets INVALID apparaissent parfois dans des environnements parfaitement sains. Par exemple :</p>
+<ul>
+<li>lors d'une forte congestion réseau ;</li>
+<li>après un redémarrage du pare-feu ;</li>
+<li>lorsqu'une entrée Conntrack a expiré mais que le client continue d'envoyer des paquets ;</li>
+<li>lors d'une modification d'une règle NAT en production ;</li>
+<li>sur certains réseaux asymétriques.</li>
+</ul>
+<p>L'apparition ponctuelle de quelques INVALID n'est donc pas inquiétante. En revanche, une augmentation brutale mérite toujours une investigation.</p>
+<h2 id="untracked">UNTRACKED</h2>
+<p>UNTRACKED signifie que Conntrack ne suit volontairement pas cette communication. Ce cas est relativement rare. Il est principalement rencontré lorsque l'administrateur choisit explicitement de désactiver le suivi. Pourquoi faire cela ? Parce que Conntrack consomme :</p>
+<ul>
+<li>de la mémoire ;</li>
+<li>du CPU ;</li>
+<li>des structures internes du noyau.</li>
+</ul>
+<p>Sur des équipements traitant plusieurs millions de paquets par seconde, chaque optimisation compte. Certains flux peuvent donc être exclus volontairement du suivi. Par exemple :</p>
+<div class="mermaid">flowchart TD
+    N0["Raw Table"]
+    N1["NOTRACK"]
+    N2["UNTRACKED"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+</div>
+<p>Cette optimisation est réservée à des architectures très spécifiques. Dans une infrastructure d'entreprise classique, il est exceptionnel d'avoir à manipuler cet état.</p>
+<h2 id="la-machine-a-etats-tcp">La machine à états TCP</h2>
+<p>Pour comprendre Conntrack, il faut également comprendre que TCP lui-même est une machine à états. Une connexion n'est jamais simplement :</p>
+<pre><code>ouverte
+</code></pre>
+<p>ou</p>
+<pre><code>fermée
+</code></pre>
+<p>Elle traverse une succession d'étapes.</p>
+<div class="mermaid">flowchart TD
+    N0["CLOSED"]
+    N1["SYN_SENT"]
+    N2["SYN_RECEIVED"]
+    N3["ESTABLISHED"]
+    N4["FIN_WAIT"]
+    N5["TIME_WAIT"]
+    N6["CLOSED"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+    N2 --&gt; N3
+    N3 --&gt; N4
+    N4 --&gt; N5
+    N5 --&gt; N6
+</div>
+<p>Conntrack s'appuie sur cette logique. Il vérifie que les transitions observées sont cohérentes. Par exemple :</p>
+<div class="mermaid">flowchart TD
+    N0["ACK"]
+    N1["Sans SYN préalable"]
+    N2["Transition impossible"]
+    N3["INVALID"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+    N2 --&gt; N3
+</div>
+<p>Cette vérification participe à la robustesse globale du filtrage.</p>
+<h2 id="que-contient-reellement-une-entree-conntrack">Que contient réellement une entrée Conntrack ?</h2>
+<p>Contrairement à une idée reçue, Conntrack ne mémorise pas uniquement :</p>
+<ul>
+<li>une adresse IP ;</li>
+<li>un port.</li>
+</ul>
+<p>Une entrée contient beaucoup plus d'informations. Schématiquement :</p>
+<pre><code>Connexion TCP
+
+Adresse source
+
+Adresse destination
+
+Port source
+
+Port destination
+
+Protocole
+
+Etat TCP
+
+Timeout
+
+Direction
+
+Informations NAT
+
+Marques (marks)
+
+Zones
+
+Compteurs
+
+Options diverses
+</code></pre>
+<p>Une représentation simplifiée pourrait ressembler à ceci :</p>
+<p>En réalité, la structure interne du noyau est beaucoup plus riche. Elle permet notamment de suivre simultanément les deux sens de circulation d'un même échange.</p>
+<h2 id="les-timeouts">Les timeouts</h2>
+<p>Toutes les connexions finissent par disparaître. Conntrack ne conserve pas les entrées indéfiniment. Chaque protocole possède ses propres temporisations. Par exemple :</p>
+<p>Alors qu'un paquet UDP inactif peut disparaître beaucoup plus rapidement. Lorsque le délai expire :</p>
+<p>Cette politique permet au noyau de limiter la consommation mémoire.</p>
+<h2 id="pourquoi-un-timeout-est-il-indispensable">Pourquoi un timeout est-il indispensable ?</h2>
+<p>Imaginons un serveur exposé sur Internet. Chaque seconde :</p>
+<pre><code>1000 nouvelles connexions
+</code></pre>
+<p>Au bout d'une journée :</p>
+<pre><code>86 millions de connexions
+</code></pre>
+<p>Si aucune entrée n'était supprimée :</p>
+<div class="mermaid">flowchart TD
+    N0["Mémoire"]
+    N1["Saturation"]
+    N2["Crash"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+</div>
+<p>Le nettoyage automatique est donc indispensable.</p>
+<h2 id="la-taille-de-la-table-conntrack">La taille de la table Conntrack</h2>
+<p>Le noyau réserve une capacité maximale. On la retrouve notamment via :</p>
+<pre><code class="language-bash">sysctl net.netfilter.nf_conntrack_max
+</code></pre>
+<p>Exemple : <code>262144</code> Cela signifie que le noyau peut suivre simultanément environ 262 000 connexions. Cette valeur dépend :</p>
+<ul>
+<li>de la mémoire disponible ;</li>
+<li>de la configuration du système ;</li>
+<li>des paramètres noyau.</li>
+</ul>
+<p>Sur un serveur web important, cette limite peut être augmentée.</p>
+<h2 id="lorsque-la-table-est-pleine">Lorsque la table est pleine</h2>
+<p>Voici une situation extrêmement intéressante. Imaginons :</p>
+<pre><code>Table Conntrack
+
+262144 / 262144
+</code></pre>
+<p>Puis un nouveau client tente d'ouvrir une connexion.</p>
+<div class="mermaid">flowchart TD
+    N0["SYN"]
+    N1["Impossible de créer une entrée"]
+    N2["Connexion refusée"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+</div>
+<p>Le serveur est pourtant :</p>
+<ul>
+<li>allumé ;</li>
+<li>joignable ;</li>
+<li>Firewalld fonctionne.</li>
+</ul>
+<p>Mais aucune nouvelle connexion n'est possible. Ce type d'incident existe réellement. Il est souvent confondu avec :</p>
+<ul>
+<li>une panne réseau ;</li>
+<li>une surcharge CPU ;</li>
+<li>un problème applicatif.</li>
+</ul>
+<p>Alors que la cause est simplement :</p>
+<pre><code>Conntrack plein
+</code></pre>
+<h2 id="les-attaques-par-saturation-de-conntrack">Les attaques par saturation de Conntrack</h2>
+<p>Un attaquant n'a pas nécessairement besoin de faire tomber un serveur. Il peut viser une ressource plus discrète. Par exemple :</p>
+<pre><code>Table Conntrack
+</code></pre>
+<p>En ouvrant un très grand nombre de connexions incomplètes ou très longues, il cherche à remplir progressivement cette table. Lorsque celle-ci atteint sa limite :</p>
+<div class="mermaid">flowchart TD
+    N0["Nouvelle connexion"]
+    N1["Impossible"]
+    N2["Déni de service"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+</div>
+<p>Cette attaque est particulièrement efficace contre :</p>
+<ul>
+<li>des passerelles NAT ;</li>
+<li>des reverse proxies ;</li>
+<li>des pare-feu ;</li>
+<li>des VPN concentrateurs ;</li>
+<li>des équilibreurs de charge.</li>
+</ul>
+<p>Le serveur applicatif n'est parfois jamais directement attaqué. C'est l'infrastructure de sécurité qui est épuisée.</p>
+<h2 id="observer-conntrack">Observer Conntrack</h2>
+<p>Sous AlmaLinux, plusieurs outils permettent d'observer ce mécanisme. Le plus connu est :</p>
+<pre><code class="language-bash">conntrack
+</code></pre>
+<p>Après installation du paquet correspondant :</p>
+<pre><code class="language-bash">dnf install conntrack-tools
+</code></pre>
+<p>On peut afficher les connexions suivies :</p>
+<pre><code class="language-bash">conntrack -L
+</code></pre>
+<p>Exemple simplifié : <code>tcp 6 431 ESTABLISHED src=192.168.10.15 dst=192.168.10.20 sport=53124 dport=8443</code> Chaque ligne représente une entrée de la table Conntrack. Lorsqu'un administrateur comprend réellement cette sortie, il possède un niveau de diagnostic très supérieur à la moyenne.</p>
+<h2 id="observer-les-statistiques">Observer les statistiques</h2>
+<p>Conntrack fournit également des statistiques utiles. Par exemple :</p>
+<pre><code class="language-bash">conntrack -S
+</code></pre>
+<p>On y retrouve notamment :</p>
+<ul>
+<li>le nombre d'entrées créées ;</li>
+<li>les suppressions ;</li>
+<li>les collisions de hachage ;</li>
+<li>les échecs d'allocation ;</li>
+<li>les insertions refusées ;</li>
+<li>les erreurs internes.</li>
+</ul>
+<p>Ces informations sont précieuses lors d'un incident de production. Elles permettent de distinguer rapidement :</p>
+<ul>
+<li>une saturation ;</li>
+<li>un problème de configuration ;</li>
+<li>un comportement anormal du trafic.</li>
+</ul>
+<h2 id="firewalld-utilise-conntrack-sans-que-vous-lecriviez">Firewalld utilise Conntrack sans que vous l'écriviez</h2>
+<p>Un point surprend souvent les administrateurs qui découvrent <code>nftables</code> après avoir utilisé Firewalld pendant des années. Ils ne trouvent aucune règle explicite ressemblant à :</p>
+<pre><code>ESTABLISHED ACCEPT
+</code></pre>
+<p>Pourtant, tout fonctionne. La raison est simple. Firewalld génère automatiquement un ensemble cohérent de règles <code>nftables</code> qui exploitent Conntrack. Lorsque vous exécutez simplement :</p>
+<pre><code class="language-bash">firewall-cmd --add-service=https
+</code></pre>
+<p>vous n'autorisez pas uniquement :</p>
+<pre><code>TCP/443
+</code></pre>
+<p>Vous autorisez implicitement tout le dialogue réseau nécessaire :</p>
+<ul>
+<li>création de la connexion ;</li>
+<li>suivi de l'état ;</li>
+<li>réponses ;</li>
+<li>fermeture propre de la session.</li>
+</ul>
+<p>C'est précisément ce qui rend Firewalld beaucoup plus simple à administrer qu'une écriture manuelle complète de règles Netfilter.</p>
+<h2 id="en-entreprise">En entreprise</h2>
+<p>Un incident réel ressemble rarement à un exercice de laboratoire. Voici une situation typique. Une entreprise déploie une nouvelle version de Sentinel. Cette version conserve désormais les connexions TLS ouvertes beaucoup plus longtemps afin d'éviter les renégociations cryptographiques. Les tests unitaires sont excellents. Les performances applicatives progressent. Quelques jours plus tard, la supervision signale :</p>
+<ul>
+<li>refus de nouvelles connexions ;</li>
+<li>pics d'erreurs TLS ;</li>
+<li>saturation intermittente des passerelles.</li>
+</ul>
+<p>L'équipe applicative soupçonne immédiatement un problème de certificat. L'équipe réseau pense à une panne de switch. L'équipe système redémarre plusieurs services. Aucun effet. Après plusieurs heures d'analyse, un ingénieur examine les statistiques Conntrack. Il constate :</p>
+<pre><code>Utilisation :
+
+99,8 %
+</code></pre>
+<p>La nouvelle version de Sentinel n'était pas plus lente. Elle gardait simplement beaucoup plus de connexions ouvertes simultanément. Le noyau fonctionnait exactement comme prévu. L'architecture, elle, n'avait pas été dimensionnée pour ce nouveau comportement. Cette situation illustre une réalité importante. Les performances applicatives et les performances de l'infrastructure ne sont pas toujours alignées. Une optimisation locale peut produire une dégradation globale.</p>
+<p>L'architecte doit constamment raisonner à l'échelle de l'ensemble du système.</p>
+<h2 id="culture-technique">Culture technique</h2>
+<h3 id="une-histoire-de-performances-devenue-une-histoire-de-securite">Une histoire de performances… devenue une histoire de sécurité</h3>
+<p>Les premiers pare-feu IP étaient essentiellement <strong>stateless</strong>. Chaque paquet était traité indépendamment. Cette approche fonctionnait correctement tant que les réseaux étaient relativement simples :</p>
+<ul>
+<li>peu de connexions simultanées ;</li>
+<li>peu de NAT ;</li>
+<li>peu de protocoles complexes ;</li>
+<li>peu de services exposés.</li>
+</ul>
+<p>Avec la généralisation d'Internet, plusieurs phénomènes sont apparus simultanément :</p>
+<ul>
+<li>explosion du nombre de connexions TCP ;</li>
+<li>démocratisation du NAT ;</li>
+<li>multiplication des protocoles applicatifs ;</li>
+<li>augmentation des débits réseau.</li>
+</ul>
+<p>Les performances des pare-feu stateless ont commencé à devenir insuffisantes. L'idée de mémoriser les conversations n'est donc pas née d'un objectif de sécurité. Elle est née d'un objectif de <strong>performance</strong>. En mémorisant une connexion déjà validée, le noyau évite de retraiter chaque paquet comme s'il s'agissait d'un nouveau flux. Très rapidement, cette mémoire des connexions a offert d'autres possibilités :</p>
+<ul>
+<li>filtrage beaucoup plus fin ;</li>
+<li>traduction d'adresses (NAT) fiable ;</li>
+<li>inspection de certains protocoles ;</li>
+<li>limitation des attaques ;</li>
+<li>journalisation plus pertinente.</li>
+</ul>
+<p>Aujourd'hui, il est difficile d'imaginer un système Linux moderne sans Conntrack. Il est utilisé dans pratiquement tous les environnements :</p>
+<ul>
+<li>serveurs physiques ;</li>
+<li>machines virtuelles ;</li>
+<li>routeurs ;</li>
+<li>hyperviseurs ;</li>
+<li>conteneurs Podman ;</li>
+<li>clusters Kubernetes ;</li>
+<li>appliances de sécurité.</li>
+</ul>
+<h3 id="firewalld-nftables-et-conntrack">Firewalld, nftables et Conntrack</h3>
+<p>Une idée reçue consiste à croire que Firewalld « fait » le suivi de connexion. Ce n'est pas le cas. Chaque composant possède son rôle.</p>
+<div class="mermaid">stateDiagram-v2
+    [*] --&gt; NEW: premier paquet
+    NEW --&gt; ESTABLISHED: réponse valide
+    ESTABLISHED --&gt; ESTABLISHED: échanges suivants
+    ESTABLISHED --&gt; RELATED: flux associé
+    ESTABLISHED --&gt; [*]: fin ou expiration
+    NEW --&gt; INVALID: paquet incohérent
+    INVALID --&gt; [*]: abandon
+</div>
+<p>Cette séparation est importante. Si demain Firewalld disparaissait, Conntrack continuerait d'exister. Inversement, sans Conntrack, Firewalld perdrait une grande partie de son intérêt. Comprendre cette architecture permet de mieux diagnostiquer les incidents. Un problème observé avec Firewalld n'est pas nécessairement causé par Firewalld. Il peut provenir :</p>
+<ul>
+<li>du noyau ;</li>
+<li>de Netfilter ;</li>
+<li>de nftables ;</li>
+<li>d'une saturation Conntrack ;</li>
+<li>d'une interaction avec le NAT.</li>
+</ul>
+<p>L'ingénieur sécurité cherche toujours <strong>à quel niveau de la pile</strong> se situe réellement le problème.</p>
+<h2 id="piege-classique">Piège classique</h2>
+<h3 id="jai-ouvert-le-port-donc-ca-doit-fonctionner">« J'ai ouvert le port, donc ça doit fonctionner. »</h3>
+<p>C'est probablement l'une des phrases les plus entendues lors d'un incident. Pourtant, ouvrir un port ne garantit absolument pas qu'une communication fonctionnera. Prenons un exemple.</p>
+<pre><code>TCP 8443 autorisé
+</code></pre>
+<p>L'administrateur vérifie :</p>
+<pre><code>firewall-cmd --list-services
+</code></pre>
+<p>Le service apparaît. Pour lui :</p>
+<blockquote>
+<p>« Le pare-feu n'est pas en cause. »</p>
+</blockquote>
+<p>Pourtant, plusieurs éléments peuvent empêcher la communication :</p>
+<ul>
+<li>saturation de Conntrack ;</li>
+<li>saturation des sockets ;</li>
+<li>SELinux ;</li>
+<li>application non démarrée ;</li>
+<li>certificat TLS invalide ;</li>
+<li>mauvaise zone Firewalld ;</li>
+<li>règle nftables personnalisée ;</li>
+<li>politique de routage ;</li>
+<li>MTU incorrecte.</li>
+</ul>
+<p>L'ouverture d'un port n'est qu'une condition parmi beaucoup d'autres.</p>
+<h3 id="autre-erreur-frequente-ignorer-les-connexions-deja-etablies">Autre erreur fréquente : ignorer les connexions déjà établies</h3>
+<p>Lorsqu'un administrateur modifie une règle Firewalld, il est souvent surpris. Il supprime une autorisation. Pourtant… les utilisateurs déjà connectés continuent à travailler. Pourquoi ? Parce que leur connexion est déjà présente dans Conntrack. Elle est :</p>
+<pre><code>ESTABLISHED
+</code></pre>
+<p>Le pare-feu continue donc à accepter les paquets appartenant à cette conversation. Les nouvelles connexions, elles, seront refusées. Ce comportement est parfaitement normal. Il explique pourquoi certains changements semblent « ne pas fonctionner immédiatement ». L'ingénieur sécurité ne l'oublie jamais lorsqu'il planifie une opération de maintenance.</p>
+<h2 id="ne-pas-confondre-etat-tcp-et-etat-conntrack">Ne pas confondre état TCP et état Conntrack</h2>
+<p>TCP possède ses propres états (<code>SYN_SENT</code>, <code>ESTABLISHED</code>, <code>TIME_WAIT</code>, etc.) visibles avec <code>ss</code>. Conntrack classe les paquets selon leur relation avec une entrée suivie (<code>NEW</code>, <code>ESTABLISHED</code>, <code>RELATED</code>, <code>INVALID</code>, <code>UNTRACKED</code>). Les vocabulaires se recoupent sans décrire exactement la même machine à états. Un paquet TCP marqué <code>NEW</code> par Conntrack n'implique donc pas qu'une application ait déjà accepté une connexion.</p>
+<p>Conntrack ne se limite pas à TCP. Pour UDP, il mémorise temporairement les tuples observés afin d'autoriser les réponses attendues malgré l'absence de handshake. Pour ICMP, il peut relier une erreur au flux qui l'a provoquée ; c'est l'une des origines de l'état <code>RELATED</code>. Les timeouts et les informations disponibles varient selon le protocole.</p>
+<div class="mermaid">flowchart LR
+    Packet["Paquet"] --&gt; Tuple["Famille, protocole, adresses et ports ou identifiants"]
+    Tuple --&gt; Lookup{"Entrée Conntrack ?"}
+    Lookup --&gt;|non| New["NEW ou INVALID"]
+    Lookup --&gt;|oui| Direction["Sens original ou réponse"]
+    Direction --&gt; State["ESTABLISHED ou RELATED"]
+</div>
+<p>Une table pleine ne signifie pas automatiquement une attaque : une hausse légitime de trafic, des timeouts trop longs ou une application qui conserve ses sessions peuvent suffire. Avant de modifier <code>nf_conntrack_max</code>, mesurez le taux de création, la durée des entrées, la mémoire disponible et la capacité réelle de Sentinel.</p>
+<h2 id="tp-1-observer-une-connexion-dans-conntrack">TP 1 — Observer une connexion dans Conntrack</h2>
+<h3 id="objectif">Objectif</h3>
+<p>Observer concrètement le fonctionnement de Conntrack et comprendre comment Firewalld exploite automatiquement le suivi de connexion.</p>
+<h3 id="architecture">Architecture</h3>
+<h3 id="etape-1-verifier-les-regles-firewalld">Étape 1 — Vérifier les règles Firewalld</h3>
+<p>Sur AlmaLinux :</p>
+<pre><code class="language-bash">firewall-cmd --list-all
+</code></pre>
+<p>Identifier :</p>
+<ul>
+<li>la zone active ;</li>
+<li>les services autorisés ;</li>
+<li>les ports ouverts.</li>
+</ul>
+<p>Ne modifiez encore aucune règle.</p>
+<h3 id="etape-2-installer-les-outils-conntrack">Étape 2 — Installer les outils Conntrack</h3>
+<pre><code class="language-bash">sudo dnf install conntrack-tools
+</code></pre>
+<p>Vérifier ensuite :</p>
+<pre><code class="language-bash">conntrack -L
+</code></pre>
+<p>La table doit être quasiment vide.</p>
+<h3 id="etape-3-observer-une-connexion-ssh">Étape 3 — Observer une connexion SSH</h3>
+<p>Depuis Kali :</p>
+<pre><code class="language-bash">ssh utilisateur@192.168.10.10
+</code></pre>
+<p>Laisser la session ouverte. Sur AlmaLinux :</p>
+<pre><code class="language-bash">conntrack -L
+</code></pre>
+<p>Identifier l'entrée correspondant à la connexion SSH. Observer notamment :</p>
+<ul>
+<li>les adresses IP ;</li>
+<li>les ports ;</li>
+<li>l'état ;</li>
+<li>le protocole.</li>
+</ul>
+<h2 id="tp-2-etudier-le-cycle-de-vie-des-entrees">TP 2 — Étudier le cycle de vie des entrées</h2>
+<p>Ouvrir une seconde session SSH. Puis une troisième. Comparer :</p>
+<pre><code class="language-bash">conntrack -L
+</code></pre>
+<p>Chaque nouvelle session crée une nouvelle entrée. Demandez-vous : Pourquoi une seconde fenêtre SSH ne réutilise-t-elle pas la première connexion ?</p>
+<h3 id="etape-5-observer-la-disparition-dune-entree">Étape 5 — Observer la disparition d'une entrée</h3>
+<p>Fermer une session SSH. Attendre quelques secondes. Observer :</p>
+<pre><code class="language-bash">conntrack -L
+</code></pre>
+<p>Comparer le délai entre la fermeture de la session et la disparition effective de l'entrée. Ce délai dépend de l'état TCP et des temporisations du noyau.</p>
+<h3 id="etape-6-experimenter-avec-sentinel">Étape 6 — Expérimenter avec Sentinel</h3>
+<p>Lancer Sentinel. Depuis Kali : effectuer plusieurs connexions successives. Observer :</p>
+<ul>
+<li>le nombre d'entrées ;</li>
+<li>les ports sources ;</li>
+<li>les états.</li>
+</ul>
+<p>Comparer ensuite deux scénarios :</p>
+<ul>
+<li>Sentinel ferme immédiatement chaque connexion ;</li>
+<li>Sentinel conserve les connexions ouvertes plusieurs minutes.</li>
+</ul>
+<p>Analyser les différences observées dans Conntrack.</p>
+<h2 id="mission-dingenieur">Mission d'ingénieur</h2>
+<h3 id="contexte">Contexte</h3>
+<p>Votre entreprise déploie Sentinel dans plusieurs usines. Chaque site possède :</p>
+<ul>
+<li>un serveur AlmaLinux ;</li>
+<li>environ 2 000 agents Sentinel ;</li>
+<li>une authentification FreeIPA ;</li>
+<li>un accès d'administration SSH ;</li>
+<li>une supervision centralisée.</li>
+</ul>
+<p>Après quelques semaines, plusieurs sites remontent un comportement étrange. À certaines heures :</p>
+<ul>
+<li>plus aucun nouvel agent ne parvient à se connecter ;</li>
+<li>les agents déjà connectés continuent pourtant d'échanger leurs données ;</li>
+<li>SSH reste fonctionnel ;</li>
+<li>le serveur répond au ping ;</li>
+<li>aucune alerte CPU ou mémoire n'est remontée.</li>
+</ul>
+<p>Le redémarrage du serveur résout temporairement le problème. Quelques heures plus tard, il réapparaît.</p>
+<h3 id="votre-mission">Votre mission</h3>
+<p>Vous êtes chargé de produire un diagnostic technique argumenté. Vous devez notamment :</p>
+<ul>
+<li>identifier les hypothèses plausibles ;</li>
+<li>déterminer quelles commandes utiliser pour confirmer ou infirmer chacune d'elles ;</li>
+<li>expliquer pourquoi les connexions existantes continuent de fonctionner alors que les nouvelles échouent ;</li>
+<li>proposer une stratégie de supervision permettant de détecter le problème avant qu'il n'impacte la production.</li>
+</ul>
+<p><strong>Contraintes :</strong></p>
+<ul>
+<li>aucun redémarrage n'est autorisé pendant l'investigation ;</li>
+<li>aucune interruption de service n'est acceptable ;</li>
+<li>la solution devra être industrialisable par Ansible sur l'ensemble du parc.</li>
+</ul>
+<blockquote>
+<p><strong>Remarque :</strong> il n'existe pas une unique réponse. Une bonne réponse est une réponse argumentée, reproductible et compatible avec les contraintes d'exploitation.</p>
+</blockquote>
+<h2 id="impact-sur-sentinel">Impact sur Sentinel</h2>
+<p>Jusqu'à présent, Sentinel était simplement une application réseau. À partir de ce chapitre, il devient un <strong>acteur</strong> de l'infrastructure. Ses choix de conception influencent directement :</p>
+<ul>
+<li>la consommation de la table Conntrack ;</li>
+<li>la charge du noyau ;</li>
+<li>les performances TLS ;</li>
+<li>la capacité maximale du serveur.</li>
+</ul>
+<p>Dans les chapitres suivants, plusieurs décisions architecturales seront motivées par cette réalité. Par exemple :</p>
+<ul>
+<li>durée de vie des connexions TLS ;</li>
+<li>politique de reconnexion des agents ;</li>
+<li>limitation des tentatives simultanées ;</li>
+<li>journalisation des erreurs réseau ;</li>
+<li>supervision des connexions actives ;</li>
+<li>tableaux de bord Grafana.</li>
+</ul>
+<p>Sentinel ne sera donc plus seulement sécurisé <strong>par</strong> l'infrastructure. Il participera activement à la sécurité <strong>de</strong> l'infrastructure.</p>
+<h2 id="synthese">Synthèse</h2>
+<ul>
+<li>Conntrack transforme un pare-feu statique en pare-feu <strong>stateful</strong>.</li>
+<li>Firewalld s'appuie sur Conntrack sans que l'administrateur ait à gérer directement les états.</li>
+<li>Les états <code>NEW</code>, <code>ESTABLISHED</code>, <code>RELATED</code>, <code>INVALID</code> et <code>UNTRACKED</code> ont chacun un rôle précis.</li>
+<li>Une connexion autorisée continue généralement à fonctionner même après une modification des règles du pare-feu.</li>
+<li>La saturation de la table Conntrack peut provoquer un déni de service sans que le CPU ou la mémoire ne soient saturés.</li>
+<li>Le NAT, Podman, de nombreux VPN et de multiples services réseau dépendent directement de Conntrack.</li>
+<li>Superviser Conntrack est une bonne pratique d'exploitation, pas uniquement de sécurité.</li>
+<li>Un architecte raisonne en <strong>flux</strong>, pas uniquement en <strong>ports</strong>.</li>
+</ul>
+<h2 id="pour-aller-plus-loin">Pour aller plus loin</h2>
+<p>Dans ce chapitre, nous avons appris <strong>comment</strong> Firewalld décide d'autoriser un paquet grâce au suivi de connexion. Cependant, les règles vues jusqu'à présent restent relativement générales : autoriser un service, un port ou une zone. Dans un environnement professionnel, cela est rarement suffisant. Vous devrez souvent exprimer des politiques beaucoup plus fines :</p>
+<ul>
+<li>autoriser uniquement un sous-réseau particulier ;</li>
+<li>bloquer une adresse IP spécifique ;</li>
+<li>limiter un accès à certaines heures ou à certaines interfaces ;</li>
+<li>combiner plusieurs critères dans une même règle.</li>
+</ul>
+<p>C'est précisément le rôle des <strong>Rich Rules</strong>, que nous allons explorer dans le chapitre <strong>3.6</strong>.</p>
+<p>← <a href="../3.4-services-firewalld/">3.4 — Les services Firewalld</a> · <a href="../3.6-rich-rules-firewalld/">3.6 — Les Rich Rules Firewalld</a> →</p>
+</div>
+</div><footer>
+<div aria-label="Footer Navigation" class="rst-footer-buttons" role="navigation">
+<a class="btn btn-neutral float-left" href="../3.4-services-firewalld/" title="Chapitre 3.4 — Les services Firewalld"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+<a class="btn btn-neutral float-right" href="../3.6-rich-rules-firewalld/" title="Chapitre 3.6 — Les Rich Rules Firewalld">Next <span class="icon icon-circle-arrow-right"></span></a>
+</div>
+<hr/>
+<div role="contentinfo">
+<!-- Copyright etc -->
+</div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+</div>
+</div>
+</section>
+</div>
+<div aria-label="Versions" class="rst-versions" role="note">
+<span class="rst-current-version" data-toggle="rst-current-version">
+<span>
+<a class="fa fa-code-fork" href="https://github.com/tdelaclos/formations" style="color: #fcfcfc"> tdelaclos/formations</a>
+</span>
+<span><a href="../3.4-services-firewalld/" style="color: #fcfcfc">« Previous</a></span>
+<span><a href="../3.6-rich-rules-firewalld/" style="color: #fcfcfc">Next »</a></span>
+</span>
+</div>
+<script src="../../js/jquery-3.6.0.min.js"></script>
+<script>var base_url = "../..";</script>
+<script src="../../js/theme_extra.js"></script>
+<script src="../../js/theme.js"></script>
+<script src="../../search/main.js"></script>
+<script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+<script type="module">import mermaid from "https://unpkg.com/mermaid@10.4.0/dist/mermaid.esm.min.mjs";
+mermaid.initialize({});</script></body>
+</html>

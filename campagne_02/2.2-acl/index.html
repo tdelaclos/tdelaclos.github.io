@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+
+<html class="writer-html5" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="IE=edge" http-equiv="X-UA-Compatible"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="../../img/favicon.ico" rel="shortcut icon"/>
+<title>Chapitre 2.2 — Les ACL - Formation Sentinel — AlmaLinux sécurisé</title>
+<link href="../../css/theme.css" rel="stylesheet"/>
+<link href="../../css/theme_extra.css" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" rel="stylesheet"/>
+<script>
+        // Current page data
+        var mkdocs_page_name = "Chapitre 2.2 \u2014 Les ACL";
+        var mkdocs_page_input_path = "campagne_02/2.2-acl.md";
+        var mkdocs_page_url = null;
+      </script>
+<!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+<script>hljs.highlightAll();</script>
+</head>
+<body class="wy-body-for-nav" role="document">
+<div class="wy-grid-for-nav">
+<nav class="wy-nav-side stickynav" data-toggle="wy-nav-shift">
+<div class="wy-side-scroll">
+<div class="wy-side-nav-search">
+<a class="icon icon-home" href="../.."> Formation Sentinel — AlmaLinux sécurisé
+        </a><div role="search">
+<form action="../../search.html" class="wy-form" id="rtd-search-form" method="get">
+<input aria-label="Search docs" name="q" placeholder="Search docs" title="Type search term here" type="text"/>
+</form>
+</div>
+</div>
+<div aria-label="Navigation menu" class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../..">Accueil</a>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">A propos</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../GUIDE-REDACTION/">Guide de rédaction</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../PARCOURS-SENTINEL/">Parcours applicatif Sentinel</a>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Campagnes</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal">Campagne 1 - Sécuriser le socle Linux</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.1-pourquoi-securiser-socle-linux/">Chapitre 1.1 — Pourquoi sécuriser un socle Linux ?</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.2-installation-almalinux-minimal/">Chapitre 1.2 — Installer AlmaLinux minimal</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.3-composants-systeme-linux/">Chapitre 1.3 — Comprendre les composants d'un système Linux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.4-premier-demarrage-verifications/">Chapitre 1.4 — Établir la baseline du serveur</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.5-mise-a-jour-gestion-depots/">Chapitre 1.5 — Mettre à jour et gérer les dépôts</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.6-architecture-systemes-fichiers/">Chapitre 1.6 — Organiser les systèmes de fichiers</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.7-utilisateurs-groupes-permissions/">Chapitre 1.7 — Comprendre identités et permissions</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.8-sudo-moindre-privilege/">Chapitre 1.8 — Administrer avec sudo</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.9-premiere-mise-en-securite-serveur/">Chapitre 1.9 — Mission : mettre le serveur en sécurité</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.10-creation-laboratoire-sentinel/">Chapitre 1.10 — Créer le laboratoire Sentinel</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal current">Campagne 2 - Gestion des permissions et des identités</a>
+<ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../2.1-permissions-unix/">Chapitre 2.1 — Les permissions UNIX</a>
+</li>
+<li class="toctree-l2 current"><a class="reference internal current" href="#">Chapitre 2.2 — Les ACL</a>
+<ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="#vous-etes-ici">Vous êtes ici</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#objectifs-pedagogiques">Objectifs pédagogiques</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pourquoi-ce-chapitre-existe">Pourquoi ce chapitre existe</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#une-liste-dautorisations-supplementaire">Une liste d'autorisations supplémentaire</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#les-permissions-unix-ne-disparaissent-pas">Les permissions UNIX ne disparaissent pas</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#une-premiere-analogie">Une première analogie</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#observer-une-acl">Observer une ACL</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#ajouter-un-utilisateur-specifique">Ajouter un utilisateur spécifique</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#lire-une-acl-pas-a-pas">Lire une ACL pas à pas</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#le-masque-acl">Le masque ACL</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#un-premier-exemple">Un premier exemple</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pourquoi-ce-mecanisme-existe-t-il">Pourquoi ce mécanisme existe-t-il ?</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#les-permissions-affichees-par-ls-l">Les permissions affichées par ls -l</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#les-acl-sur-les-repertoires">Les ACL sur les répertoires</a>
+<ul>
+<li class="toctree-l4"><a class="reference internal" href="#culture-technique">Culture technique</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#piege-classique">Piège classique</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#tp-1-experimenter-sur-almalinux">TP 1 — Expérimenter sur AlmaLinux</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#les-acl-par-defaut">Les ACL par défaut</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#comment-fonctionne-lheritage-des-acl">Comment fonctionne l'héritage des ACL ?</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#observer-les-acl-par-defaut">Observer les ACL par défaut</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#acl-et-creation-dun-nouveau-fichier">ACL et création d'un nouveau fichier</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#les-acl-ne-remplacent-pas-lumask">Les ACL ne remplacent pas l'umask</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#les-systemes-de-fichiers-compatibles">Les systèmes de fichiers compatibles</a>
+<ul>
+<li class="toctree-l4"><a class="reference internal" href="#culture-technique_1">Culture technique</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#piege-classique_1">Piège classique</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#tp-2-experimenter-sur-almalinux">TP 2 — Expérimenter sur AlmaLinux</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#sauvegarder-restaurer-et-auditer-les-acl">Sauvegarder, restaurer et auditer les ACL</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#mission-dingenieur-concevoir-le-partage-des-journaux">Mission d'ingénieur — Concevoir le partage des journaux</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#impact-sur-sentinel">Impact sur Sentinel</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#synthese">Synthèse</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pour-aller-plus-loin">Pour aller plus loin</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#schema-recapitulatif">Schéma récapitulatif</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../2.3-umask/">Chapitre 2.3 — L'umask</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../2.4-attributs-etendus/">Chapitre 2.4 — Les attributs étendus</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../2.5-pam/">Chapitre 2.5 — PAM</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../2.6-politique-mots-de-passe/">Chapitre 2.6 — Politique de mots de passe</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../2.7-comptes-systeme/">Chapitre 2.7 — Les comptes système</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../2.8-sudo-avance/">Chapitre 2.8 — sudo avancé</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../2.9-fichiers-identites-linux/">Chapitre 2.9 — Comprendre les fichiers d'identités Linux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../2.10-synthese-securiser-identites/">Chapitre 2.10 — Synthèse : sécuriser les identités</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 3 - TCP/IP et Firewalld</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.1-tcp-ip-administrateur/">Chapitre 3.1 — TCP/IP côté administrateur</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.2-architecture-firewalld/">Chapitre 3.2 — Architecture de Firewalld</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.3-zones-firewalld/">Chapitre 3.3 — Les zones Firewalld</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.4-services-firewalld/">Chapitre 3.4 — Les services Firewalld</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.5-conntrack-filtrage-etats/">Chapitre 3.5 — Conntrack et le filtrage par états</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.6-rich-rules-firewalld/">Chapitre 3.6 — Les Rich Rules Firewalld</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.7-journalisation-firewalld/">Chapitre 3.7 — Journalisation et analyse Firewalld</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.8-ip-sets-firewalld/">Chapitre 3.8 — Les IP Sets Firewalld</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.9-runtime-permanent/">Chapitre 3.9 — Runtime et Permanent</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.10-politique-reseau-sentinel/">Chapitre 3.10 — Concevoir la politique réseau de Sentinel</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 4 - SSH</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_04/4.1-architecture-openssh/">Chapitre 4.1 — Architecture d'OpenSSH</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_04/4.2-authentification-mot-de-passe/">Chapitre 4.2 — Authentification par mot de passe</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_04/4.3-authentification-par-cles/">Chapitre 4.3 — Authentification par clés</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_04/4.4-durcissement-sshd-config/">Chapitre 4.4 — Durcissement de sshd_config</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_04/4.5-bastion-administration/">Chapitre 4.5 — Bastion d'administration</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_04/4.6-journalisation-audit-ssh/">Chapitre 4.6 — Journalisation et audit SSH</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_04/4.7-protection-attaques-ssh/">Chapitre 4.7 — Protection contre les attaques SSH</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_04/4.8-mission-administration-sentinel/">Chapitre 4.8 — Mission : administrer Sentinel en sécurité</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 5 - Systemd</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.1-comprendre-systemd/">Chapitre 5.1 — Comprendre systemd</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.2-unites-systemd/">Chapitre 5.2 — Les unités systemd</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.3-creer-service-sentinel/">Chapitre 5.3 — Créer le service Sentinel</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.4-sandboxing-systemd/">Chapitre 5.4 — Sandboxing systemd</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.5-capacites-linux/">Chapitre 5.5 — Les capacités Linux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.6-journalisation-journald/">Chapitre 5.6 — Journalisation avec journald</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.7-supervision-redemarrage/">Chapitre 5.7 — Supervision et redémarrage automatique</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.8-mission-sentinel-resilient/">Chapitre 5.8 — Mission : rendre Sentinel résilient</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 6 - SELinux</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_06/6.1-pourquoi-selinux-existe/">Chapitre 6.1 — Pourquoi SELinux existe</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_06/6.2-contextes-selinux/">Chapitre 6.2 — Comprendre les contextes SELinux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_06/6.3-politiques-selinux/">Chapitre 6.3 — Les politiques SELinux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_06/6.4-diagnostic-refus-selinux/">Chapitre 6.4 — Diagnostiquer les refus SELinux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_06/6.5-creation-regles-selinux/">Chapitre 6.5 — Créer des règles SELinux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_06/6.6-securiser-sentinel-selinux/">Chapitre 6.6 — Sécuriser Sentinel avec SELinux</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 7 - TLS et PKI</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.1-comprendre-cryptographie-appliquee/">Chapitre 7.1 — Comprendre la cryptographie appliquée</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.2-lire-verifier-certificats-x509/">Chapitre 7.2 — Lire et vérifier les certificats X.509</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.3-construire-autorite-certification/">Chapitre 7.3 — Construire une autorité de certification</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.4-authentification-mutuelle-tls/">Chapitre 7.4 — Authentifier les deux extrémités avec mTLS</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.5-preparer-integration-freeipa/">Chapitre 7.5 — Préparer l'intégration à FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.6-renouveler-revoquer-certificats/">Chapitre 7.6 — Renouveler et révoquer les certificats</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.7-securiser-sentinel-tls/">Chapitre 7.7 — Sécuriser Sentinel avec TLS</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 8 - FreeIPA</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.1-presentation-freeipa/">Chapitre 8.1 — Découvrir FreeIPA et la gestion centralisée des identités</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.2-architecture-interne-freeipa/">Chapitre 8.2 — Comprendre l'architecture interne de FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.3-installation-freeipa/">Chapitre 8.3 — Installer un serveur FreeIPA de laboratoire</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.4-gestion-utilisateurs/">Chapitre 8.4 — Gérer le cycle de vie des utilisateurs FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.5-groupes-roles/">Chapitre 8.5 — Organiser les groupes et les rôles FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.6-politiques-sudo/">Chapitre 8.6 — Centraliser les politiques sudo avec FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.7-gestion-hotes/">Chapitre 8.7 — Enrôler les hôtes et contrôler les accès avec HBAC</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.8-certificats/">Chapitre 8.8 — Gérer les certificats de service avec FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.9-integration-sentinel/">Chapitre 8.9 — Intégrer Sentinel à FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.10-mission-administration-freeipa/">Chapitre 8.10 — Mission : administrer Sentinel avec FreeIPA</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 9 - Déploiement avec Ansible</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.1-architecture-ansible/">Chapitre 9.1 — Comprendre l'architecture Ansible</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.2-composants-ansible/">Chapitre 9.2 — Comprendre les composants et l'idempotence Ansible</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.3-inventaires/">Chapitre 9.3 — Construire les inventaires Ansible</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.4-premiers-playbooks/">Chapitre 9.4 — Écrire les premiers playbooks</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.5-variables-templates/">Chapitre 9.5 — Piloter la configuration avec variables et templates</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.6-roles-ansible/">Chapitre 9.6 — Concevoir des rôles Ansible réutilisables</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.7-deployer-sentinel-ansible/">Chapitre 9.7 — Déployer Sentinel avec Ansible</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.8-integrer-sentinel-freeipa/">Chapitre 9.8 — Automatiser l'intégration de Sentinel à FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.9-industrialiser-laboratoire/">Chapitre 9.9 — Industrialiser le projet Ansible</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.10-mission-deploiement-sentinel/">Chapitre 9.10 — Mission : reconstruire Sentinel avec Ansible</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 10 - Packaging RPM</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_10/10.1-construire-paquet-rpm/">Chapitre 10.1 — Construire un paquet RPM</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_10/10.2-gerer-dependances-rpm/">Chapitre 10.2 — Gérer les dépendances RPM</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_10/10.3-gerer-fichiers-configuration-rpm/">Chapitre 10.3 — Gérer les fichiers de configuration RPM</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_10/10.4-signer-paquets-rpm/">Chapitre 10.4 — Signer les paquets RPM</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_10/10.5-exploiter-depot-rpm-prive/">Chapitre 10.5 — Exploiter un dépôt RPM privé</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_10/10.6-packager-sentinel/">Chapitre 10.6 — Packager Sentinel</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 11 - Conteneurs Podman</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_11/11.1-decouvrir-podman/">Chapitre 11.1 — Découvrir Podman</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_11/11.2-conteneurs-rootless/">Chapitre 11.2 — Exécuter des conteneurs rootless</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_11/11.3-construire-images-securisees/">Chapitre 11.3 — Construire des images sécurisées</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_11/11.4-reseaux-conteneurs/">Chapitre 11.4 — Concevoir les réseaux de conteneurs</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_11/11.5-gerer-secrets-podman/">Chapitre 11.5 — Gérer les secrets avec Podman</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_11/11.6-executer-sentinel-securite/">Chapitre 11.6 — Exécuter Sentinel en sécurité</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 12 - Supervision et audit</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_12/12.1-centraliser-journaux-rsyslog/">Chapitre 12.1 — Centraliser les journaux avec Rsyslog</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_12/12.2-auditer-systeme-auditd/">Chapitre 12.2 — Auditer le système avec auditd</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_12/12.3-controler-integrite-fichiers-aide/">Chapitre 12.3 — Contrôler l'intégrité des fichiers avec AIDE</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_12/12.4-superviser-sentinel-prometheus/">Chapitre 12.4 — Superviser Sentinel avec Prometheus</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_12/12.5-concevoir-alertes-alertmanager/">Chapitre 12.5 — Concevoir des alertes avec Alertmanager</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_12/12.6-construire-tableau-bord-sentinel/">Chapitre 12.6 — Construire le tableau de bord Sentinel</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 13 - Attaques et défense</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.1-reconnaissance/">Chapitre 13.1 — Reconnaissance</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.2-scan-reseau/">Chapitre 13.2 — Scan réseau</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.3-brute-force-ssh/">Chapitre 13.3 — Brute force SSH</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.4-escalade-privileges/">Chapitre 13.4 — Escalade de privilèges</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.5-mouvements-lateraux/">Chapitre 13.5 — Mouvements latéraux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.6-persistance/">Chapitre 13.6 — Persistance</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.7-exfiltration/">Chapitre 13.7 — Exfiltration</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.8-etude-cas-complete/">Chapitre 13.8 — Étude de cas complète</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 14 - Projet final</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.1-deployer-sentinel-almalinux-minimale/">Chapitre 14.1 — Déployer Sentinel sur une AlmaLinux minimale</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.2-securiser-hote/">Chapitre 14.2 — Sécuriser l'hôte</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.3-integrer-freeipa/">Chapitre 14.3 — Intégrer FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.4-deployer-ansible/">Chapitre 14.4 — Déployer avec Ansible</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.5-packager-rpm/">Chapitre 14.5 — Packager avec RPM</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.6-conteneuriser-podman/">Chapitre 14.6 — Conteneuriser avec Podman</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.7-superviser-auditer/">Chapitre 14.7 — Superviser et auditer</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.8-audit-final-tests-kali/">Chapitre 14.8 — Audit final et tests depuis Kali</a>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</nav>
+<section class="wy-nav-content-wrap" data-toggle="wy-nav-shift">
+<nav aria-label="Mobile navigation menu" class="wy-nav-top" role="navigation">
+<i class="fa fa-bars" data-toggle="wy-nav-top"></i>
+<a href="../..">Formation Sentinel — AlmaLinux sécurisé</a>
+</nav>
+<div class="wy-nav-content">
+<div class="rst-content"><div aria-label="breadcrumbs navigation" role="navigation">
+<ul class="wy-breadcrumbs">
+<li><a aria-label="Docs" class="icon icon-home" href="../.."></a></li>
+<li class="breadcrumb-item">Campagnes</li>
+<li class="breadcrumb-item">Campagne 2 - Gestion des permissions et des identités</li>
+<li class="breadcrumb-item active">Chapitre 2.2 — Les ACL</li>
+<li class="wy-breadcrumbs-aside">
+<a href="https://github.com/tdelaclos/formations/edit/master/docs/campagne_02/2.2-acl.md">Edit on tdelaclos/formations</a>
+</li>
+</ul>
+<hr/>
+</div>
+<div class="document" itemscope="itemscope" itemtype="http://schema.org/Article" role="main">
+<div class="section" itemprop="articleBody">
+<h1 id="chapitre-22-les-acl">Chapitre 2.2 — Les ACL</h1>
+<blockquote>
+<p><strong>Campagne 2 — Contrôle des accès</strong></p>
+<p><em>« La simplicité est une qualité. Jusqu'au jour où elle devient une limite. »</em></p>
+</blockquote>
+<h2 id="vous-etes-ici">Vous êtes ici</h2>
+<pre><code class="language-text">PARTIE I — Construire un socle sécurisé
+
+Campagne 1  [██████████] ✔
+Campagne 2  [██░░░░░░░░]
+
+      2.1 Les permissions UNIX ✔
+   ►  2.2 ACL
+      2.3 umask
+      2.4 Attributs étendus
+      2.5 PAM
+      2.6 Politique de mots de passe
+      2.7 Comptes système
+      2.8 sudo avancé
+      2.9 passwd / shadow / group
+      2.10 Synthèse
+</code></pre>
+<h2 id="objectifs-pedagogiques">Objectifs pédagogiques</h2>
+<p>À la fin de ce chapitre, vous serez capable de :</p>
+<ul>
+<li>comprendre pourquoi les ACL ont été introduites dans Linux ;</li>
+<li>identifier les limites des permissions UNIX classiques ;</li>
+<li>expliquer le fonctionnement d'une Access Control List ;</li>
+<li>lire et interpréter une ACL ;</li>
+<li>utiliser les commandes <code>getfacl</code> et <code>setfacl</code> ;</li>
+<li>créer des ACL pour des utilisateurs et des groupes ;</li>
+<li>comprendre la notion de masque (<em>ACL Mask</em>) ;</li>
+<li>mettre en place des ACL par défaut sur des répertoires.</li>
+</ul>
+<h2 id="pourquoi-ce-chapitre-existe">Pourquoi ce chapitre existe</h2>
+<p>Les permissions UNIX ont traversé plus d'un demi-siècle. Elles sont toujours utilisées. Elles sont rapides. Faciles à comprendre. Extrêmement efficaces. Alors pourquoi avoir inventé autre chose ? Parce que les systèmes d'information ont changé. Dans les années 1970, quelques dizaines d'utilisateurs partageaient un ordinateur. Aujourd'hui, une entreprise peut compter :</p>
+<ul>
+<li>plusieurs milliers d'utilisateurs ;</li>
+<li>des centaines d'applications ;</li>
+<li>des dizaines d'équipes ;</li>
+<li>des prestataires externes ;</li>
+<li>des robots d'automatisation ;</li>
+<li>des comptes de services.</li>
+</ul>
+<p>Les besoins sont devenus beaucoup plus fins. Prenons un exemple. Vous possédez un répertoire contenant des documents sensibles. <code>/projets</code> Le propriétaire est : <code>alice</code> Le groupe est : <code>developpeurs</code> Les permissions sont : <code>drwxrwx---</code> Un nouvel utilisateur rejoint temporairement l'équipe. Son nom est : <code>paul</code> Vous souhaitez uniquement lui donner un accès en lecture sur ce répertoire. Sans modifier :</p>
+<ul>
+<li>le propriétaire ;</li>
+<li>le groupe ;</li>
+<li>les autres utilisateurs.</li>
+</ul>
+<p>Le modèle UNIX classique ne sait pas exprimer cette règle. Il ne connaît que trois catégories.</p>
+<ul>
+<li>propriétaire ;</li>
+<li>groupe ;</li>
+<li>autres.</li>
+</ul>
+<p>Paul n'appartient à aucune de ces catégories. Nous avons besoin d'un mécanisme plus précis. C'est exactement ce que proposent les ACL.</p>
+<h2 id="une-liste-dautorisations-supplementaire">Une liste d'autorisations supplémentaire</h2>
+<p>Une ACL peut être vue comme une extension des permissions UNIX. Les permissions classiques restent présentes. Mais Linux peut désormais ajouter une liste de règles complémentaires. On peut représenter cette évolution ainsi.</p>
+<div class="mermaid">flowchart LR
+
+    A[Permissions UNIX]
+
+    A --&gt; B[Owner]
+    A --&gt; C[Group]
+    A --&gt; D[Others]
+
+    A --&gt; E[ACL]
+
+    E --&gt; F[Utilisateur Alice]
+    E --&gt; G[Utilisateur Paul]
+    E --&gt; H[Groupe Sauvegarde]
+    E --&gt; I[Groupe Audit]
+</div>
+<p>Le fichier conserve toujours son propriétaire. Il conserve toujours son groupe. Il conserve toujours ses permissions traditionnelles. Les ACL viennent simplement ajouter des exceptions. Cette approche présente un avantage majeur. Les anciens programmes continuent de fonctionner sans modification. Les nouvelles fonctionnalités restent compatibles avec le modèle UNIX historique.</p>
+<h2 id="les-permissions-unix-ne-disparaissent-pas">Les permissions UNIX ne disparaissent pas</h2>
+<p>Une erreur fréquente consiste à croire que les ACL remplacent les permissions UNIX. Ce n'est pas le cas. Les permissions classiques constituent toujours la base. Les ACL s'y ajoutent. On peut imaginer le raisonnement du noyau de cette manière.</p>
+<div class="mermaid">flowchart TB
+
+    A[Demande d'accès]
+
+    A --&gt; B[Permissions UNIX]
+
+    B --&gt; C[ACL éventuelles]
+
+    C --&gt; D[Décision finale]
+</div>
+<p>Les deux mécanismes collaborent. Ils ne sont pas concurrents. C'est une idée essentielle. Tout au long de ce chapitre, nous continuerons donc à raisonner d'abord avec les permissions UNIX. Les ACL viendront ensuite affiner cette première décision.</p>
+<h2 id="une-premiere-analogie">Une première analogie</h2>
+<p>Imaginons une entreprise. Le service informatique possède un bureau. Pour entrer dans ce bureau, il existe une règle générale. <code>Les membres du service informatique sont autorisés.</code> C'est l'équivalent des permissions UNIX. Puis le responsable ajoute une note sur la porte. <code>Paul peut également entrer.</code> Paul ne rejoint pas officiellement le service informatique. Il bénéficie simplement d'une autorisation particulière. Cette note correspond à une ACL. Le fonctionnement est très similaire.</p>
+<p>Les règles générales restent en place. Quelques exceptions viennent les compléter.</p>
+<h2 id="observer-une-acl">Observer une ACL</h2>
+<p>Créons un fichier.</p>
+<pre><code class="language-bash">touch rapport.txt
+</code></pre>
+<p>Affichons ses permissions.</p>
+<pre><code class="language-bash">ls -l
+</code></pre>
+<p>Par exemple : <code>-rw-r--r--</code> Affichons maintenant ses ACL.</p>
+<pre><code class="language-bash">getfacl rapport.txt
+</code></pre>
+<p>Le résultat ressemble à ceci.</p>
+<pre><code class="language-text"># file: rapport.txt
+# owner: alice
+# group: alice
+
+user::rw-
+group::r--
+other::r--
+</code></pre>
+<p>Cette sortie est très intéressante. Elle reprend exactement les permissions UNIX. Pourquoi ? Parce qu'en réalité, Linux les représente déjà sous forme d'ACL internes. Lorsque vous n'avez ajouté aucune règle particulière, les deux visions sont équivalentes. Les ACL deviennent réellement intéressantes lorsque l'on ajoute des entrées supplémentaires.</p>
+<h2 id="ajouter-un-utilisateur-specifique">Ajouter un utilisateur spécifique</h2>
+<p>Imaginons maintenant que l'utilisateur : <code>backup</code> doive pouvoir lire ce fichier. Sans modifier le groupe. Sans changer le propriétaire. Il suffit d'ajouter une entrée ACL.</p>
+<pre><code class="language-bash">setfacl -m u:backup:r rapport.txt
+</code></pre>
+<p>Observons à nouveau le résultat.</p>
+<pre><code class="language-bash">getfacl rapport.txt
+</code></pre>
+<p>Cette fois :</p>
+<pre><code class="language-text">user::rw-
+user:backup:r--
+group::r--
+mask::r--
+other::r--
+</code></pre>
+<p>Une nouvelle ligne est apparue. <code>user:backup:r--</code> Le propriétaire du fichier n'a pas changé. Le groupe n'a pas changé. Les permissions UNIX visibles dans <code>ls -l</code> restent presque identiques. Pourtant, un nouvel utilisateur dispose désormais d'un droit supplémentaire. C'est toute la puissance des ACL.</p>
+<h2 id="lire-une-acl-pas-a-pas">Lire une ACL pas à pas</h2>
+<p>Au premier abord, la sortie de <code>getfacl</code> peut sembler plus complexe que celle de <code>ls -l</code>. En réalité, elle suit une logique très régulière. Reprenons notre exemple.</p>
+<pre><code class="language-text"># file: rapport.txt
+# owner: alice
+# group: alice
+
+user::rw-
+user:backup:r--
+group::r--
+mask::r--
+other::r--
+</code></pre>
+<p>Chaque ligne possède une signification précise. Les trois premières lignes sont des informations. <code># file</code> désigne le fichier. <code># owner</code> indique son propriétaire. <code># group</code> désigne son groupe. Viennent ensuite les véritables règles d'accès. <code>user::rw-</code> Cette ligne représente le propriétaire du fichier. Elle correspond exactement au bloc <strong>Owner</strong> des permissions UNIX. Puis apparaît : <code>user:backup:r--</code> Cette entrée est une ACL. Elle concerne uniquement l'utilisateur <code>backup</code>. Ensuite : <code>group::r--</code></p>
+<p>correspond au groupe propriétaire. Enfin : <code>other::r--</code> désigne tous les autres utilisateurs. Une nouvelle ligne attire cependant notre attention. <code>mask::r--</code> Nous allons bientôt découvrir qu'il s'agit probablement de la partie la plus subtile des ACL.</p>
+<h2 id="le-masque-acl">Le masque ACL</h2>
+<p>Le mot <em>mask</em> surprend souvent. Pourquoi Linux ajoute-t-il une nouvelle notion alors que les permissions semblaient déjà suffisantes ? La réponse tient à une idée simple. Les ACL permettent d'accorder beaucoup de droits. Le masque permet d'en fixer la limite maximale. Autrement dit :</p>
+<blockquote>
+<p>Une ACL peut demander davantage de permissions.</p>
+<p>Le masque décide jusqu'où ces permissions peuvent réellement aller.</p>
+</blockquote>
+<p>On peut représenter cette idée ainsi.</p>
+<div class="mermaid">flowchart LR
+
+    A[ACL utilisateur] --&gt; M[ACL Mask]
+    B[ACL groupe] --&gt; M
+
+    M --&gt; D[Permissions réellement accordées]
+</div>
+<p>Le masque agit comme un plafond. Les permissions effectivement obtenues correspondent à l'intersection entre les droits demandés et ceux autorisés par le masque.</p>
+<h2 id="un-premier-exemple">Un premier exemple</h2>
+<p>Prenons un fichier.</p>
+<pre><code class="language-bash">touch secret.txt
+</code></pre>
+<p>Ajoutons une ACL.</p>
+<pre><code class="language-bash">setfacl -m u:backup:rwx secret.txt
+</code></pre>
+<p>Affichons le résultat.</p>
+<pre><code class="language-text">user::rw-
+user:backup:rwx
+group::r--
+mask::rwx
+other::r--
+</code></pre>
+<p>Ici, tout paraît cohérent. Le masque autorise : <code>rwx</code> L'utilisateur <code>backup</code> obtient donc effectivement : <code>rwx</code> Mais imaginons maintenant que le masque soit modifié.</p>
+<pre><code class="language-bash">setfacl -m m:r-- secret.txt
+</code></pre>
+<p>La sortie devient :</p>
+<pre><code class="language-text">user::rw-
+user:backup:rwx
+group::r--
+mask::r--
+other::r--
+</code></pre>
+<p>La ligne concernant <code>backup</code> n'a pas changé. Pourtant, ses droits effectifs ont changé. Pourquoi ? Parce que le masque les limite désormais à : <code>r--</code> Les droits affichés dans l'entrée ACL représentent les droits <strong>demandés</strong>. Les droits réellement utilisables sont calculés après application du masque.</p>
+<h2 id="pourquoi-ce-mecanisme-existe-t-il">Pourquoi ce mécanisme existe-t-il ?</h2>
+<p>À première vue, ce fonctionnement paraît inutilement compliqué. Pourquoi ne pas modifier directement chaque ACL ? La réponse apparaît lorsqu'un fichier possède de nombreuses entrées. Imaginons :</p>
+<pre><code class="language-text">user:backup
+user:auditeur
+user:supervision
+group:admins
+group:developpeurs
+group:qualite
+</code></pre>
+<p>Supposons que l'on souhaite rendre temporairement tous ces accès non modifiables. Sans masque, il faudrait modifier chaque entrée individuellement. Avec le masque, une seule opération suffit. <code>mask::r--</code> Toutes les ACL concernées deviennent immédiatement limitées à la lecture. Le masque joue donc un rôle comparable à un interrupteur général. Il simplifie considérablement l'administration.</p>
+<h2 id="les-permissions-affichees-par-ls-l">Les permissions affichées par <code>ls -l</code></h2>
+<p>Voici une situation qui déroute presque tous les administrateurs lors de leur première rencontre avec les ACL. Créons une ACL.</p>
+<pre><code class="language-bash">setfacl -m u:backup:r rapport.txt
+</code></pre>
+<p>Puis exécutons :</p>
+<pre><code class="language-bash">ls -l
+</code></pre>
+<p>Le résultat est légèrement différent. <code>-rw-r--r--+</code> Un caractère supplémentaire est apparu. <code>+</code> Ce symbole est extrêmement important. Il indique simplement :</p>
+<blockquote>
+<p>« Des ACL supplémentaires existent sur ce fichier. »</p>
+</blockquote>
+<p>Il ne donne aucun détail. Pour connaître leur contenu, il faut utiliser :</p>
+<pre><code class="language-bash">getfacl
+</code></pre>
+<p>Ainsi, un administrateur expérimenté remarque immédiatement ce <code>+</code>. Il sait alors que la simple lecture des permissions UNIX ne suffit plus.</p>
+<h2 id="les-acl-sur-les-repertoires">Les ACL sur les répertoires</h2>
+<p>Les ACL ne concernent pas uniquement les fichiers. Elles peuvent également être appliquées aux répertoires. Prenons l'exemple suivant. <code>/projets</code> Nous souhaitons que l'utilisateur : <code>backup</code> puisse consulter son contenu. Sans appartenir au groupe propriétaire. Une simple commande suffit.</p>
+<pre><code class="language-bash">setfacl -m u:backup:rx /projets
+</code></pre>
+<p>Le noyau appliquera ensuite cette règle lors de chaque tentative d'accès à ce répertoire. Les permissions UNIX restent présentes. Les ACL viennent simplement ajouter une nouvelle possibilité.</p>
+<h3 id="culture-technique">Culture technique</h3>
+<p>Les ACL utilisées sous Linux sont définies par la norme <strong>POSIX.1e</strong>. Fait intéressant, cette norme n'a jamais été finalisée. Le projet POSIX.1e a été abandonné avant son adoption officielle. Pourtant, son modèle d'ACL était suffisamment pertinent pour être repris par de nombreux systèmes UNIX et Linux. Aujourd'hui encore, lorsqu'on parle d'ACL POSIX sous Linux, on fait référence à une spécification qui est restée à l'état de projet.</p>
+<p>À ne pas confondre avec les ACL utilisées dans certains systèmes de fichiers comme NTFS ou NFSv4. Ces dernières sont beaucoup plus riches. Elles permettent notamment :</p>
+<ul>
+<li>des permissions de refus explicites (<em>deny</em>) ;</li>
+<li>un héritage très élaboré ;</li>
+<li>des dizaines de droits distincts.</li>
+</ul>
+<p>Les ACL POSIX sont volontairement plus simples. Elles s'intègrent naturellement au modèle historique des permissions UNIX.</p>
+<h3 id="piege-classique">Piège classique</h3>
+<p>Le piège le plus fréquent consiste à multiplier les ACL jusqu'à rendre la politique de sécurité illisible. Prenons un exemple. Un répertoire possède :</p>
+<ul>
+<li>huit utilisateurs nommés ;</li>
+<li>six groupes ;</li>
+<li>plusieurs ACL par défaut ;</li>
+<li>un masque restrictif.</li>
+</ul>
+<p>Quelques mois plus tard, plus personne ne sait réellement qui peut accéder aux fichiers. Le système fonctionne. Mais la politique est devenue incompréhensible. Une règle simple peut aider.</p>
+<blockquote>
+<p>Si vous avez besoin d'ajouter une ACL à presque tous les fichiers d'un répertoire, il est probablement temps de revoir votre stratégie de groupes.</p>
+</blockquote>
+<p>Les groupes représentent les règles générales. Les ACL représentent les exceptions. Mélanger ces deux niveaux conduit souvent à une administration difficile et à des erreurs de sécurité.</p>
+<h2 id="tp-1-experimenter-sur-almalinux">TP 1 — Expérimenter sur AlmaLinux</h2>
+<p>Dans ce laboratoire, nous allons créer nos premières ACL. Commençons par créer un utilisateur dédié.</p>
+<pre><code class="language-bash">sudo useradd backup
+</code></pre>
+<p>Créons ensuite un fichier de démonstration.</p>
+<pre><code class="language-bash">touch rapport.txt
+</code></pre>
+<p>Observons son état initial.</p>
+<pre><code class="language-bash">ls -l rapport.txt
+</code></pre>
+<p>Puis :</p>
+<pre><code class="language-bash">getfacl rapport.txt
+</code></pre>
+<p>Ajoutons maintenant une ACL.</p>
+<pre><code class="language-bash">setfacl -m u:backup:r rapport.txt
+</code></pre>
+<p>Vérifions le résultat.</p>
+<pre><code class="language-bash">ls -l rapport.txt
+</code></pre>
+<p>Vous remarquerez l'apparition du caractère : <code>+</code> Affichons ensuite les ACL.</p>
+<pre><code class="language-bash">getfacl rapport.txt
+</code></pre>
+<p>Vous devriez observer une sortie proche de celle-ci.</p>
+<pre><code class="language-text">user::rw-
+user:backup:r--
+group::r--
+mask::r--
+other::r--
+</code></pre>
+<p>Supprimons maintenant cette ACL.</p>
+<pre><code class="language-bash">setfacl -x u:backup rapport.txt
+</code></pre>
+<p>Puis vérifions à nouveau.</p>
+<pre><code class="language-bash">getfacl rapport.txt
+</code></pre>
+<p>Le fichier retrouve sa représentation initiale. Cette manipulation est volontairement simple. L'objectif est de vous familiariser avec les outils avant de construire des politiques plus élaborées.</p>
+<h2 id="les-acl-par-defaut">Les ACL par défaut</h2>
+<p>Jusqu'à présent, nous avons ajouté des ACL sur des fichiers existants. Mais imaginons un répertoire partagé. Chaque jour, de nouveaux fichiers y sont créés. Faudra-t-il ajouter une ACL manuellement sur chacun d'eux ? Heureusement, non. Linux permet de définir des <strong>ACL par défaut</strong> (<em>Default ACLs</em>). Elles ne s'appliquent pas au répertoire lui-même. Elles servent de modèle pour tous les nouveaux objets créés à l'intérieur. Prenons un répertoire de travail.</p>
+<pre><code class="language-bash">mkdir projets
+</code></pre>
+<p>Nous souhaitons que tout nouveau fichier créé dans ce répertoire accorde automatiquement un accès en lecture au compte <code>backup</code>. Il suffit de définir une ACL par défaut.</p>
+<pre><code class="language-bash">setfacl -d -m u:backup:r projets
+</code></pre>
+<p>L'option : <code>-d</code> signifie :</p>
+<blockquote>
+<p>« Cette règle est un modèle d'héritage, pas une permission immédiate. »</p>
+</blockquote>
+<p>À partir de cet instant, chaque nouveau fichier créé dans <code>projets</code> héritera automatiquement de cette ACL. Nous verrons dans la suite du chapitre comment cet héritage fonctionne précisément, et quelles sont ses interactions avec l'<code>umask</code> et les permissions classiques.</p>
+<h2 id="comment-fonctionne-lheritage-des-acl">Comment fonctionne l'héritage des ACL ?</h2>
+<p>Le mot <em>héritage</em> peut laisser penser que les ACL se propagent en permanence. Ce n'est pas le cas. Sous Linux, les <strong>ACL par défaut</strong> sont utilisées <strong>uniquement au moment de la création</strong> d'un nouvel objet. Prenons un exemple. Un répertoire possède la configuration suivante. <code>projets/</code> ACL par défaut : <code>default:user:backup:r--</code> Lorsqu'un utilisateur crée un nouveau fichier :</p>
+<pre><code class="language-bash">touch projets/rapport.txt
+</code></pre>
+<p>le noyau consulte les ACL par défaut du répertoire. Il construit alors les ACL du nouveau fichier. Une fois cette opération terminée, les deux objets deviennent indépendants. On peut représenter ce mécanisme ainsi.</p>
+<div class="mermaid">sequenceDiagram
+    participant U as Utilisateur
+    participant D as Répertoire
+    participant K as Noyau Linux
+    participant F as Nouveau fichier
+
+    U-&gt;&gt;K: Création de rapport.txt
+    K-&gt;&gt;D: Lire les ACL par défaut
+    D--&gt;&gt;K: ACL par défaut
+    K-&gt;&gt;F: Créer les ACL du fichier
+    K--&gt;&gt;U: Fichier créé
+</div>
+<p>Si, quelques heures plus tard, vous modifiez les ACL par défaut du répertoire, les fichiers déjà créés ne seront pas modifiés. Seules les créations futures utiliseront la nouvelle politique. Cette distinction est essentielle.</p>
+<h2 id="observer-les-acl-par-defaut">Observer les ACL par défaut</h2>
+<p>Créons un répertoire.</p>
+<pre><code class="language-bash">mkdir partage
+</code></pre>
+<p>Ajoutons une ACL par défaut.</p>
+<pre><code class="language-bash">setfacl -d -m u:backup:r partage
+</code></pre>
+<p>Affichons ensuite les ACL.</p>
+<pre><code class="language-bash">getfacl partage
+</code></pre>
+<p>La sortie ressemble à ceci.</p>
+<pre><code class="language-text">user::rwx
+group::r-x
+other::r-x
+
+default:user::rwx
+default:user:backup:r--
+default:group::r-x
+default:mask::r-x
+default:other::r-x
+</code></pre>
+<p>Les lignes commençant par : <code>default:</code> ne décrivent pas les permissions actuelles du répertoire. Elles décrivent le modèle qui sera utilisé pour les futurs objets créés à l'intérieur. C'est une différence importante.</p>
+<h2 id="acl-et-creation-dun-nouveau-fichier">ACL et création d'un nouveau fichier</h2>
+<p>Créons maintenant un fichier.</p>
+<pre><code class="language-bash">touch partage/compte-rendu.txt
+</code></pre>
+<p>Puis observons-le.</p>
+<pre><code class="language-bash">getfacl partage/compte-rendu.txt
+</code></pre>
+<p>Vous constaterez que l'utilisateur <code>backup</code> apparaît désormais dans les ACL du fichier. Pourtant, nous ne lui avons jamais appliqué directement une ACL. Elle provient du répertoire parent. L'héritage a joué son rôle au moment de la création. On peut représenter cette propagation de la manière suivante.</p>
+<div class="mermaid">graph TD
+
+    A[Répertoire]
+
+    A --&gt;|ACL par défaut| B[Nouveau fichier 1]
+    A --&gt;|ACL par défaut| C[Nouveau fichier 2]
+    A --&gt;|ACL par défaut| D[Nouveau répertoire]
+
+    B --&gt; E[ACL propres]
+    C --&gt; F[ACL propres]
+    D --&gt; G[ACL propres]
+</div>
+<p>Chaque nouvel objet reçoit une copie. Par la suite, chacun évolue indépendamment.</p>
+<h2 id="les-acl-ne-remplacent-pas-lumask">Les ACL ne remplacent pas l'<code>umask</code></h2>
+<p>Un autre point mérite d'être clarifié. Lorsque nous créerons un fichier, deux mécanismes interviendront. Le premier est l'<code>umask</code>. Le second est l'ACL par défaut. Ces deux mécanismes collaborent. Ils ne s'excluent pas. On peut représenter la création d'un fichier ainsi.</p>
+<div class="mermaid">flowchart LR
+
+    A[Création du fichier]
+
+    A --&gt; B[Mode demandé par l'application]
+
+    B --&gt; C[Application de l'umask]
+
+    C --&gt; D[Application des ACL par défaut]
+
+    D --&gt; E[Permissions finales]
+</div>
+<p>Dans le prochain chapitre, nous étudierons précisément le rôle de l'<code>umask</code>. Vous comprendrez alors pourquoi les permissions d'un fichier nouvellement créé ne correspondent pas toujours exactement à ce que l'on attend.</p>
+<h2 id="les-systemes-de-fichiers-compatibles">Les systèmes de fichiers compatibles</h2>
+<p>Toutes les ACL ne sont pas disponibles sur tous les systèmes de fichiers. Sous AlmaLinux, les principaux systèmes de fichiers utilisés en production prennent en charge les ACL POSIX. Par exemple :</p>
+<ul>
+<li>XFS ;</li>
+<li>ext4.</li>
+</ul>
+<p>C'est l'une des raisons pour lesquelles XFS est le système de fichiers par défaut sur les distributions RHEL et AlmaLinux. Les ACL y sont parfaitement intégrées. Dans la plupart des installations modernes, aucune configuration supplémentaire n'est nécessaire. En revanche, dans des environnements plus anciens ou avec certains systèmes de fichiers particuliers, il pouvait être nécessaire d'activer explicitement la prise en charge des ACL au montage. Aujourd'hui, cette situation est devenue rare.</p>
+<h3 id="culture-technique_1">Culture technique</h3>
+<p>Les ACL POSIX sont volontairement limitées. Par exemple, elles ne permettent pas d'exprimer directement une règle du type :</p>
+<blockquote>
+<p>« Cet utilisateur ne doit jamais accéder à ce fichier. »</p>
+</blockquote>
+<p>Autrement dit, il n'existe pas de notion de <strong>refus explicite</strong> (<em>deny</em>). Les ACL POSIX accordent des droits. Elles ne créent pas de règles de refus. Cette philosophie est très différente de celle des ACL NTFS utilisées sous Windows. Dans NTFS, une règle de refus explicite peut prendre le pas sur une règle d'autorisation. Sous Linux, la logique est plus simple. On détermine les droits effectivement accordés. Tout ce qui n'est pas autorisé est implicitement interdit.</p>
+<p>Cette approche réduit la complexité de l'évaluation. Elle évite également certains conflits de règles.</p>
+<h3 id="piege-classique_1">Piège classique</h3>
+<p>L'une des erreurs les plus fréquentes consiste à oublier les ACL lors d'une sauvegarde ou d'une copie. Prenons cet exemple.</p>
+<pre><code class="language-bash">cp rapport.txt sauvegarde/
+</code></pre>
+<p>Selon les options utilisées, la copie peut perdre :</p>
+<ul>
+<li>ses ACL ;</li>
+<li>certains attributs étendus ;</li>
+<li>d'autres métadonnées.</li>
+</ul>
+<p>Le fichier semble identique. Son contenu est identique. Mais sa politique de sécurité ne l'est plus. Pour préserver les ACL lors d'une copie, il est préférable d'utiliser des outils ou des options adaptés. Par exemple :</p>
+<pre><code class="language-bash">cp -a
+</code></pre>
+<p>ou encore :</p>
+<pre><code class="language-bash">rsync -A
+</code></pre>
+<p>Nous reviendrons sur ces commandes dans les chapitres consacrés aux sauvegardes et aux déploiements. Un bon administrateur ne vérifie jamais uniquement les données copiées. Il vérifie également les métadonnées.</p>
+<h2 id="tp-2-experimenter-sur-almalinux">TP 2 — Expérimenter sur AlmaLinux</h2>
+<p>Nous allons maintenant expérimenter les ACL par défaut. Créons un nouveau répertoire.</p>
+<pre><code class="language-bash">mkdir laboratoire-acl
+</code></pre>
+<p>Définissons une ACL par défaut.</p>
+<pre><code class="language-bash">setfacl -d -m u:backup:r laboratoire-acl
+</code></pre>
+<p>Créons ensuite deux fichiers.</p>
+<pre><code class="language-bash">touch laboratoire-acl/a.txt
+touch laboratoire-acl/b.txt
+</code></pre>
+<p>Affichons leurs ACL.</p>
+<pre><code class="language-bash">getfacl laboratoire-acl/a.txt
+</code></pre>
+<p>Puis :</p>
+<pre><code class="language-bash">getfacl laboratoire-acl/b.txt
+</code></pre>
+<p>Vous constaterez que les deux fichiers possèdent déjà une entrée pour l'utilisateur <code>backup</code>. Essayons maintenant de modifier les ACL par défaut.</p>
+<pre><code class="language-bash">setfacl -d -m u:backup:rw laboratoire-acl
+</code></pre>
+<p>Créons un troisième fichier.</p>
+<pre><code class="language-bash">touch laboratoire-acl/c.txt
+</code></pre>
+<p>Affichons son ACL.</p>
+<pre><code class="language-bash">getfacl laboratoire-acl/c.txt
+</code></pre>
+<p>Comparez-la avec celle de <code>a.txt</code>. Vous remarquerez que :</p>
+<ul>
+<li><code>c.txt</code> hérite de la nouvelle politique ;</li>
+<li><code>a.txt</code> conserve l'ancienne.</li>
+</ul>
+<p>Cela confirme que l'héritage intervient uniquement lors de la création.</p>
+<h2 id="sauvegarder-restaurer-et-auditer-les-acl">Sauvegarder, restaurer et auditer les ACL</h2>
+<p>Une ACL utile fait partie de la politique du fichier : une sauvegarde qui ne conserve que le contenu et le mode classique est incomplète. <code>getfacl -R</code> produit une représentation restaurable ; <code>setfacl --restore</code> réapplique les propriétaires, groupes, ACL et, lorsqu'ils figurent dans la sauvegarde, les bits spéciaux.</p>
+<pre><code class="language-bash">sudo getfacl -R /srv/sentinel &gt; sentinel.acl
+sudo setfacl --test --restore=sentinel.acl
+sudo setfacl --restore=sentinel.acl
+</code></pre>
+<p>Le mode <code>--test</code> est précieux : il montre l'effet attendu sans modifier les fichiers. Pour une copie, vérifiez les options de l'outil : <code>rsync -A</code> préserve les ACL et <code>cp -a</code> vise la conservation des métadonnées, mais le support dépend aussi des systèmes de fichiers source et destination.</p>
+<p>Une ACL ne doit pas devenir une base d'identités cachée. Documentez les entrées nommées, préférez un groupe lorsqu'un rôle est durable, et cherchez régulièrement les ACL inattendues :</p>
+<pre><code class="language-bash">getfacl -R -s /srv/sentinel
+</code></pre>
+<h2 id="mission-dingenieur-concevoir-le-partage-des-journaux">Mission d'ingénieur — Concevoir le partage des journaux</h2>
+<p>Concevez les ACL de <code>/var/log/sentinel</code> pour que le service écrive, que le groupe d'exploitation lise et parcoure, et qu'un compte de sauvegarde lise sans modifier. Ajoutez les ACL par défaut nécessaires, calculez le masque effectif, créez deux fichiers de test sous des identités différentes et fournissez la sauvegarde <code>getfacl</code> comme livrable. Expliquez pourquoi chaque besoin relève d'un groupe, d'une ACL nommée ou des permissions classiques.</p>
+<h2 id="impact-sur-sentinel">Impact sur Sentinel</h2>
+<p>Au fil de cette formation, Sentinel manipulera différents types de ressources. Certaines devront être accessibles uniquement au compte de service. D'autres devront également être consultables par :</p>
+<ul>
+<li>un compte de sauvegarde ;</li>
+<li>un agent de supervision ;</li>
+<li>un outil d'audit ;</li>
+<li>un administrateur.</li>
+</ul>
+<p>Les ACL permettront de répondre à ces besoins sans modifier les groupes principaux. Prenons un exemple. <code>/var/log/sentinel/</code> Les journaux sont écrits par le service Sentinel. L'équipe d'exploitation doit pouvoir les consulter. Le logiciel de sauvegarde doit également y accéder. En revanche :</p>
+<ul>
+<li>il ne doit pas pouvoir modifier les journaux ;</li>
+<li>il ne doit pas appartenir au groupe du service.</li>
+</ul>
+<p>Une ACL constitue alors une solution élégante. Elle évite d'élargir inutilement les privilèges du compte de sauvegarde. Cette approche est très courante dans les infrastructures d'entreprise.</p>
+<h2 id="synthese">Synthèse</h2>
+<ul>
+<li>Les ACL complètent les permissions UNIX ; elles ne les remplacent pas.</li>
+<li>Elles permettent d'accorder des droits à des utilisateurs ou à des groupes nommés sans modifier le propriétaire ni le groupe principal.</li>
+<li>Le caractère <code>+</code> affiché par <code>ls -l</code> indique la présence d'ACL supplémentaires.</li>
+<li>Les commandes principales sont <code>getfacl</code> pour consulter les ACL et <code>setfacl</code> pour les créer, les modifier ou les supprimer.</li>
+<li>Le masque ACL (<code>mask</code>) fixe la limite maximale des permissions accordées aux utilisateurs et groupes définis dans les ACL (à l'exception du propriétaire).</li>
+<li>Les ACL par défaut servent de modèle lors de la création de nouveaux fichiers et répertoires.</li>
+<li>Les ACL doivent rester des exceptions. Une politique reposant essentiellement sur des ACL est souvent le signe qu'une meilleure organisation des groupes est nécessaire.</li>
+</ul>
+<h2 id="pour-aller-plus-loin">Pour aller plus loin</h2>
+<p>Grâce aux ACL, nous savons désormais répondre à une question importante.</p>
+<blockquote>
+<p>« Qui peut accéder à une ressource déjà existante ? »</p>
+</blockquote>
+<p>Mais une autre question apparaît immédiatement. Que se passe-t-il lorsqu'un <strong>nouveau fichier</strong> est créé ? Prenons un exemple très simple. Deux utilisateurs exécutent exactement la même commande.</p>
+<pre><code class="language-bash">touch rapport.txt
+</code></pre>
+<p>Pourtant, les permissions obtenues peuvent être différentes. Pourquoi ? Le fichier n'existait pas une seconde auparavant. Qui a choisi ses permissions ? L'application ? Le noyau ? Le système de fichiers ? L'utilisateur ? En réalité, plusieurs mécanismes interviennent. L'un d'eux est particulièrement important. Il s'appelle <strong>l'<code>umask</code></strong>. Contrairement aux permissions UNIX ou aux ACL, l'<code>umask</code> ne contrôle pas l'accès à un fichier existant. Il intervient <strong>au moment de la création</strong>. Son rôle est discret.</p>
+<p>Pourtant, il influence quotidiennement tous les fichiers créés sur un système Linux. Comprendre son fonctionnement est indispensable pour éviter de créer, sans le vouloir, des fichiers trop permissifs. Dans le prochain chapitre, nous allons découvrir comment Linux décide des permissions initiales d'un nouveau fichier et pourquoi cette décision est bien plus subtile qu'il n'y paraît.</p>
+<p>← <a href="../2.1-permissions-unix/">2.1 — Les permissions UNIX</a> · <a href="../2.3-umask/">2.3 — L'<code>umask</code></a> →</p>
+<h2 id="schema-recapitulatif">Schéma récapitulatif</h2>
+<p><img alt="Récapitulatif du chapitre 2.2" src="../media/recap-2.2.png"/></p>
+</div>
+</div><footer>
+<div aria-label="Footer Navigation" class="rst-footer-buttons" role="navigation">
+<a class="btn btn-neutral float-left" href="../2.1-permissions-unix/" title="Chapitre 2.1 — Les permissions UNIX"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+<a class="btn btn-neutral float-right" href="../2.3-umask/" title="Chapitre 2.3 — L'umask">Next <span class="icon icon-circle-arrow-right"></span></a>
+</div>
+<hr/>
+<div role="contentinfo">
+<!-- Copyright etc -->
+</div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+</div>
+</div>
+</section>
+</div>
+<div aria-label="Versions" class="rst-versions" role="note">
+<span class="rst-current-version" data-toggle="rst-current-version">
+<span>
+<a class="fa fa-code-fork" href="https://github.com/tdelaclos/formations" style="color: #fcfcfc"> tdelaclos/formations</a>
+</span>
+<span><a href="../2.1-permissions-unix/" style="color: #fcfcfc">« Previous</a></span>
+<span><a href="../2.3-umask/" style="color: #fcfcfc">Next »</a></span>
+</span>
+</div>
+<script src="../../js/jquery-3.6.0.min.js"></script>
+<script>var base_url = "../..";</script>
+<script src="../../js/theme_extra.js"></script>
+<script src="../../js/theme.js"></script>
+<script src="../../search/main.js"></script>
+<script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+<script type="module">import mermaid from "https://unpkg.com/mermaid@10.4.0/dist/mermaid.esm.min.mjs";
+mermaid.initialize({});</script></body>
+</html>

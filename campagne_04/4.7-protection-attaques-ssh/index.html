@@ -1,0 +1,1202 @@
+<!DOCTYPE html>
+
+<html class="writer-html5" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="IE=edge" http-equiv="X-UA-Compatible"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="../../img/favicon.ico" rel="shortcut icon"/>
+<title>Chapitre 4.7 — Protection contre les attaques SSH - Formation Sentinel — AlmaLinux sécurisé</title>
+<link href="../../css/theme.css" rel="stylesheet"/>
+<link href="../../css/theme_extra.css" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" rel="stylesheet"/>
+<script>
+        // Current page data
+        var mkdocs_page_name = "Chapitre 4.7 \u2014 Protection contre les attaques SSH";
+        var mkdocs_page_input_path = "campagne_04/4.7-protection-attaques-ssh.md";
+        var mkdocs_page_url = null;
+      </script>
+<!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+<script>hljs.highlightAll();</script>
+</head>
+<body class="wy-body-for-nav" role="document">
+<div class="wy-grid-for-nav">
+<nav class="wy-nav-side stickynav" data-toggle="wy-nav-shift">
+<div class="wy-side-scroll">
+<div class="wy-side-nav-search">
+<a class="icon icon-home" href="../.."> Formation Sentinel — AlmaLinux sécurisé
+        </a><div role="search">
+<form action="../../search.html" class="wy-form" id="rtd-search-form" method="get">
+<input aria-label="Search docs" name="q" placeholder="Search docs" title="Type search term here" type="text"/>
+</form>
+</div>
+</div>
+<div aria-label="Navigation menu" class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../..">Accueil</a>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">A propos</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../GUIDE-REDACTION/">Guide de rédaction</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../PARCOURS-SENTINEL/">Parcours applicatif Sentinel</a>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Campagnes</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal">Campagne 1 - Sécuriser le socle Linux</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.1-pourquoi-securiser-socle-linux/">Chapitre 1.1 — Pourquoi sécuriser un socle Linux ?</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.2-installation-almalinux-minimal/">Chapitre 1.2 — Installer AlmaLinux minimal</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.3-composants-systeme-linux/">Chapitre 1.3 — Comprendre les composants d'un système Linux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.4-premier-demarrage-verifications/">Chapitre 1.4 — Établir la baseline du serveur</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.5-mise-a-jour-gestion-depots/">Chapitre 1.5 — Mettre à jour et gérer les dépôts</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.6-architecture-systemes-fichiers/">Chapitre 1.6 — Organiser les systèmes de fichiers</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.7-utilisateurs-groupes-permissions/">Chapitre 1.7 — Comprendre identités et permissions</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.8-sudo-moindre-privilege/">Chapitre 1.8 — Administrer avec sudo</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.9-premiere-mise-en-securite-serveur/">Chapitre 1.9 — Mission : mettre le serveur en sécurité</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.10-creation-laboratoire-sentinel/">Chapitre 1.10 — Créer le laboratoire Sentinel</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 2 - Gestion des permissions et des identités</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.1-permissions-unix/">Chapitre 2.1 — Les permissions UNIX</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.2-acl/">Chapitre 2.2 — Les ACL</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.3-umask/">Chapitre 2.3 — L'umask</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.4-attributs-etendus/">Chapitre 2.4 — Les attributs étendus</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.5-pam/">Chapitre 2.5 — PAM</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.6-politique-mots-de-passe/">Chapitre 2.6 — Politique de mots de passe</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.7-comptes-systeme/">Chapitre 2.7 — Les comptes système</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.8-sudo-avance/">Chapitre 2.8 — sudo avancé</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.9-fichiers-identites-linux/">Chapitre 2.9 — Comprendre les fichiers d'identités Linux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.10-synthese-securiser-identites/">Chapitre 2.10 — Synthèse : sécuriser les identités</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 3 - TCP/IP et Firewalld</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.1-tcp-ip-administrateur/">Chapitre 3.1 — TCP/IP côté administrateur</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.2-architecture-firewalld/">Chapitre 3.2 — Architecture de Firewalld</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.3-zones-firewalld/">Chapitre 3.3 — Les zones Firewalld</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.4-services-firewalld/">Chapitre 3.4 — Les services Firewalld</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.5-conntrack-filtrage-etats/">Chapitre 3.5 — Conntrack et le filtrage par états</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.6-rich-rules-firewalld/">Chapitre 3.6 — Les Rich Rules Firewalld</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.7-journalisation-firewalld/">Chapitre 3.7 — Journalisation et analyse Firewalld</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.8-ip-sets-firewalld/">Chapitre 3.8 — Les IP Sets Firewalld</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.9-runtime-permanent/">Chapitre 3.9 — Runtime et Permanent</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.10-politique-reseau-sentinel/">Chapitre 3.10 — Concevoir la politique réseau de Sentinel</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal current">Campagne 4 - SSH</a>
+<ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../4.1-architecture-openssh/">Chapitre 4.1 — Architecture d'OpenSSH</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../4.2-authentification-mot-de-passe/">Chapitre 4.2 — Authentification par mot de passe</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../4.3-authentification-par-cles/">Chapitre 4.3 — Authentification par clés</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../4.4-durcissement-sshd-config/">Chapitre 4.4 — Durcissement de sshd_config</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../4.5-bastion-administration/">Chapitre 4.5 — Bastion d'administration</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../4.6-journalisation-audit-ssh/">Chapitre 4.6 — Journalisation et audit SSH</a>
+</li>
+<li class="toctree-l2 current"><a class="reference internal current" href="#">Chapitre 4.7 — Protection contre les attaques SSH</a>
+<ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="#vous-etes-ici">Vous êtes ici</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#objectifs-pedagogiques">Objectifs pédagogiques</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pourquoi-ce-chapitre-existe">Pourquoi ce chapitre existe</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#theorie-detaillee">Théorie détaillée</a>
+<ul>
+<li class="toctree-l4"><a class="reference internal" href="#les-attaques-automatisees">Les attaques automatisées</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#le-brute-force">Le brute force</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#le-password-spraying">Le Password Spraying</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#le-credential-stuffing">Le Credential Stuffing</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#les-scans-de-versions">Les scans de versions</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#les-attaques-par-deni-de-service">Les attaques par déni de service</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#une-defense-en-profondeur">Une défense en profondeur</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pourquoi-les-cles-publiques-changent-tout">Pourquoi les clés publiques changent tout</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#fail2ban">Fail2ban</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#le-principe">Le principe</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pourquoi-fail2ban-fonctionne-t-il">Pourquoi Fail2ban fonctionne-t-il ?</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#le-fonctionnement-interne">Le fonctionnement interne</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#une-configuration-typique">Une configuration typique</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#le-moteur-de-bannissement-applique-le-blocage">Le moteur de bannissement applique le blocage</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#les-limites-de-fail2ban">Les limites de Fail2ban</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pourquoi-conserver-fail2ban-si-les-mots-de-passe-sont-desactives">Pourquoi conserver Fail2ban si les mots de passe sont désactivés ?</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#les-listes-blanches">Les listes blanches</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#une-architecture-complete">Une architecture complète</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#detecter-les-attaques">Détecter les attaques</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#approfondissement">Approfondissement</a>
+<ul>
+<li class="toctree-l4"><a class="reference internal" href="#une-bonne-protection-ne-cherche-pas-a-empecher-toutes-les-attaques">Une bonne protection ne cherche pas à empêcher toutes les attaques</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#toutes-les-attaques-ne-sont-pas-techniques">Toutes les attaques ne sont pas techniques</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#les-protections-doivent-etre-independantes">Les protections doivent être indépendantes</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#la-meilleure-attaque-est-souvent-celle-qui-na-jamais-lieu">La meilleure attaque est souvent celle qui n'a jamais lieu</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#concevoir-la-politique">Concevoir la politique</a>
+<ul>
+<li class="toctree-l4"><a class="reference internal" href="#les-attaques-evoluent">Les attaques évoluent</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#mesurer-plutot-que-supposer">Mesurer plutôt que supposer</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#point-de-vue-offensif">Point de vue offensif</a>
+<ul>
+<li class="toctree-l4"><a class="reference internal" href="#les-erreurs-humaines-restent-le-principal-risque">Les erreurs humaines restent le principal risque</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#en-entreprise">En entreprise</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#culture-technique">Culture technique</a>
+<ul>
+<li class="toctree-l4"><a class="reference internal" href="#fail2ban-nanalyse-pas-le-reseau">Fail2ban n'analyse pas le réseau</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#les-filtres-de-fail2ban">Les filtres de Fail2ban</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#les-jails">Les "Jails"</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#les-attaques-distribuees">Les attaques distribuées</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#piege-classique">Piège classique</a>
+<ul>
+<li class="toctree-l4"><a class="reference internal" href="#changer-le-port-ssh-en-pensant-etre-protege">Changer le port SSH en pensant être protégé</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#penser-que-fail2ban-remplace-les-cles-publiques">Penser que Fail2ban remplace les clés publiques</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#tp-1-installer-et-declencher-une-protection-adaptative">TP 1 — Installer et déclencher une protection adaptative</a>
+<ul>
+<li class="toctree-l4"><a class="reference internal" href="#objectif">Objectif</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#etape-1-installer-fail2ban">Étape 1 — Installer Fail2ban</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#etape-2-simuler-une-attaque">Étape 2 — Simuler une attaque</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#tp-2-verifier-le-bannissement-de-bout-en-bout">TP 2 — Vérifier le bannissement de bout en bout</a>
+<ul>
+<li class="toctree-l4"><a class="reference internal" href="#etape-3-observer-le-bannissement">Étape 3 — Observer le bannissement</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#etape-4-verifier-laction-de-bannissement">Étape 4 — Vérifier l'action de bannissement</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#mission-dingenieur">Mission d'ingénieur</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#impact-sur-sentinel">Impact sur Sentinel</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#synthese">Synthèse</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pour-aller-plus-loin">Pour aller plus loin</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../4.8-mission-administration-sentinel/">Chapitre 4.8 — Mission : administrer Sentinel en sécurité</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 5 - Systemd</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.1-comprendre-systemd/">Chapitre 5.1 — Comprendre systemd</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.2-unites-systemd/">Chapitre 5.2 — Les unités systemd</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.3-creer-service-sentinel/">Chapitre 5.3 — Créer le service Sentinel</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.4-sandboxing-systemd/">Chapitre 5.4 — Sandboxing systemd</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.5-capacites-linux/">Chapitre 5.5 — Les capacités Linux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.6-journalisation-journald/">Chapitre 5.6 — Journalisation avec journald</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.7-supervision-redemarrage/">Chapitre 5.7 — Supervision et redémarrage automatique</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.8-mission-sentinel-resilient/">Chapitre 5.8 — Mission : rendre Sentinel résilient</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 6 - SELinux</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_06/6.1-pourquoi-selinux-existe/">Chapitre 6.1 — Pourquoi SELinux existe</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_06/6.2-contextes-selinux/">Chapitre 6.2 — Comprendre les contextes SELinux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_06/6.3-politiques-selinux/">Chapitre 6.3 — Les politiques SELinux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_06/6.4-diagnostic-refus-selinux/">Chapitre 6.4 — Diagnostiquer les refus SELinux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_06/6.5-creation-regles-selinux/">Chapitre 6.5 — Créer des règles SELinux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_06/6.6-securiser-sentinel-selinux/">Chapitre 6.6 — Sécuriser Sentinel avec SELinux</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 7 - TLS et PKI</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.1-comprendre-cryptographie-appliquee/">Chapitre 7.1 — Comprendre la cryptographie appliquée</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.2-lire-verifier-certificats-x509/">Chapitre 7.2 — Lire et vérifier les certificats X.509</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.3-construire-autorite-certification/">Chapitre 7.3 — Construire une autorité de certification</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.4-authentification-mutuelle-tls/">Chapitre 7.4 — Authentifier les deux extrémités avec mTLS</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.5-preparer-integration-freeipa/">Chapitre 7.5 — Préparer l'intégration à FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.6-renouveler-revoquer-certificats/">Chapitre 7.6 — Renouveler et révoquer les certificats</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.7-securiser-sentinel-tls/">Chapitre 7.7 — Sécuriser Sentinel avec TLS</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 8 - FreeIPA</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.1-presentation-freeipa/">Chapitre 8.1 — Découvrir FreeIPA et la gestion centralisée des identités</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.2-architecture-interne-freeipa/">Chapitre 8.2 — Comprendre l'architecture interne de FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.3-installation-freeipa/">Chapitre 8.3 — Installer un serveur FreeIPA de laboratoire</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.4-gestion-utilisateurs/">Chapitre 8.4 — Gérer le cycle de vie des utilisateurs FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.5-groupes-roles/">Chapitre 8.5 — Organiser les groupes et les rôles FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.6-politiques-sudo/">Chapitre 8.6 — Centraliser les politiques sudo avec FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.7-gestion-hotes/">Chapitre 8.7 — Enrôler les hôtes et contrôler les accès avec HBAC</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.8-certificats/">Chapitre 8.8 — Gérer les certificats de service avec FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.9-integration-sentinel/">Chapitre 8.9 — Intégrer Sentinel à FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.10-mission-administration-freeipa/">Chapitre 8.10 — Mission : administrer Sentinel avec FreeIPA</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 9 - Déploiement avec Ansible</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.1-architecture-ansible/">Chapitre 9.1 — Comprendre l'architecture Ansible</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.2-composants-ansible/">Chapitre 9.2 — Comprendre les composants et l'idempotence Ansible</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.3-inventaires/">Chapitre 9.3 — Construire les inventaires Ansible</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.4-premiers-playbooks/">Chapitre 9.4 — Écrire les premiers playbooks</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.5-variables-templates/">Chapitre 9.5 — Piloter la configuration avec variables et templates</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.6-roles-ansible/">Chapitre 9.6 — Concevoir des rôles Ansible réutilisables</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.7-deployer-sentinel-ansible/">Chapitre 9.7 — Déployer Sentinel avec Ansible</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.8-integrer-sentinel-freeipa/">Chapitre 9.8 — Automatiser l'intégration de Sentinel à FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.9-industrialiser-laboratoire/">Chapitre 9.9 — Industrialiser le projet Ansible</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.10-mission-deploiement-sentinel/">Chapitre 9.10 — Mission : reconstruire Sentinel avec Ansible</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 10 - Packaging RPM</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_10/10.1-construire-paquet-rpm/">Chapitre 10.1 — Construire un paquet RPM</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_10/10.2-gerer-dependances-rpm/">Chapitre 10.2 — Gérer les dépendances RPM</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_10/10.3-gerer-fichiers-configuration-rpm/">Chapitre 10.3 — Gérer les fichiers de configuration RPM</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_10/10.4-signer-paquets-rpm/">Chapitre 10.4 — Signer les paquets RPM</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_10/10.5-exploiter-depot-rpm-prive/">Chapitre 10.5 — Exploiter un dépôt RPM privé</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_10/10.6-packager-sentinel/">Chapitre 10.6 — Packager Sentinel</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 11 - Conteneurs Podman</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_11/11.1-decouvrir-podman/">Chapitre 11.1 — Découvrir Podman</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_11/11.2-conteneurs-rootless/">Chapitre 11.2 — Exécuter des conteneurs rootless</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_11/11.3-construire-images-securisees/">Chapitre 11.3 — Construire des images sécurisées</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_11/11.4-reseaux-conteneurs/">Chapitre 11.4 — Concevoir les réseaux de conteneurs</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_11/11.5-gerer-secrets-podman/">Chapitre 11.5 — Gérer les secrets avec Podman</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_11/11.6-executer-sentinel-securite/">Chapitre 11.6 — Exécuter Sentinel en sécurité</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 12 - Supervision et audit</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_12/12.1-centraliser-journaux-rsyslog/">Chapitre 12.1 — Centraliser les journaux avec Rsyslog</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_12/12.2-auditer-systeme-auditd/">Chapitre 12.2 — Auditer le système avec auditd</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_12/12.3-controler-integrite-fichiers-aide/">Chapitre 12.3 — Contrôler l'intégrité des fichiers avec AIDE</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_12/12.4-superviser-sentinel-prometheus/">Chapitre 12.4 — Superviser Sentinel avec Prometheus</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_12/12.5-concevoir-alertes-alertmanager/">Chapitre 12.5 — Concevoir des alertes avec Alertmanager</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_12/12.6-construire-tableau-bord-sentinel/">Chapitre 12.6 — Construire le tableau de bord Sentinel</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 13 - Attaques et défense</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.1-reconnaissance/">Chapitre 13.1 — Reconnaissance</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.2-scan-reseau/">Chapitre 13.2 — Scan réseau</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.3-brute-force-ssh/">Chapitre 13.3 — Brute force SSH</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.4-escalade-privileges/">Chapitre 13.4 — Escalade de privilèges</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.5-mouvements-lateraux/">Chapitre 13.5 — Mouvements latéraux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.6-persistance/">Chapitre 13.6 — Persistance</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.7-exfiltration/">Chapitre 13.7 — Exfiltration</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.8-etude-cas-complete/">Chapitre 13.8 — Étude de cas complète</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 14 - Projet final</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.1-deployer-sentinel-almalinux-minimale/">Chapitre 14.1 — Déployer Sentinel sur une AlmaLinux minimale</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.2-securiser-hote/">Chapitre 14.2 — Sécuriser l'hôte</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.3-integrer-freeipa/">Chapitre 14.3 — Intégrer FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.4-deployer-ansible/">Chapitre 14.4 — Déployer avec Ansible</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.5-packager-rpm/">Chapitre 14.5 — Packager avec RPM</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.6-conteneuriser-podman/">Chapitre 14.6 — Conteneuriser avec Podman</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.7-superviser-auditer/">Chapitre 14.7 — Superviser et auditer</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.8-audit-final-tests-kali/">Chapitre 14.8 — Audit final et tests depuis Kali</a>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</nav>
+<section class="wy-nav-content-wrap" data-toggle="wy-nav-shift">
+<nav aria-label="Mobile navigation menu" class="wy-nav-top" role="navigation">
+<i class="fa fa-bars" data-toggle="wy-nav-top"></i>
+<a href="../..">Formation Sentinel — AlmaLinux sécurisé</a>
+</nav>
+<div class="wy-nav-content">
+<div class="rst-content"><div aria-label="breadcrumbs navigation" role="navigation">
+<ul class="wy-breadcrumbs">
+<li><a aria-label="Docs" class="icon icon-home" href="../.."></a></li>
+<li class="breadcrumb-item">Campagnes</li>
+<li class="breadcrumb-item">Campagne 4 - SSH</li>
+<li class="breadcrumb-item active">Chapitre 4.7 — Protection contre les attaques SSH</li>
+<li class="wy-breadcrumbs-aside">
+<a href="https://github.com/tdelaclos/formations/edit/master/docs/campagne_04/4.7-protection-attaques-ssh.md">Edit on tdelaclos/formations</a>
+</li>
+</ul>
+<hr/>
+</div>
+<div class="document" itemscope="itemscope" itemtype="http://schema.org/Article" role="main">
+<div class="section" itemprop="articleBody">
+<h1 id="chapitre-47-protection-contre-les-attaques-ssh">Chapitre 4.7 — Protection contre les attaques SSH</h1>
+<blockquote>
+<p><strong>Campagne 4 — SSH et accès distant</strong></p>
+<p><em>« Aucun service exposé sur un réseau ne reste longtemps sans être attaqué. La question n'est pas de savoir si des tentatives auront lieu, mais comment les détecter, les ralentir et les rendre inefficaces. »</em></p>
+</blockquote>
+<h2 id="vous-etes-ici">Vous êtes ici</h2>
+<pre><code class="language-text">Partie I — Construire un socle sécurisé
+
+Campagne 4 — SSH et accès distant
+
+      4.1 Architecture d'OpenSSH
+      4.2 Authentification par mot de passe
+      4.3 Authentification par clés
+      4.4 Durcissement de sshd_config
+      4.5 Bastion d'administration
+      4.6 Journalisation et audit SSH
+    ► 4.7 Protection contre les attaques
+      4.8 Mission : administration sécurisée de Sentinel
+</code></pre>
+<h2 id="objectifs-pedagogiques">Objectifs pédagogiques</h2>
+<p>À la fin de ce chapitre, vous serez capable de :</p>
+<ul>
+<li>identifier les principales attaques visant OpenSSH ;</li>
+<li>comprendre pourquoi certaines protections sont efficaces et d'autres non ;</li>
+<li>mettre en œuvre plusieurs couches de défense complémentaires ;</li>
+<li>comprendre le fonctionnement de Fail2ban ;</li>
+<li>intégrer la protection SSH dans une stratégie globale de défense en profondeur.</li>
+</ul>
+<h2 id="pourquoi-ce-chapitre-existe">Pourquoi ce chapitre existe</h2>
+<p>Vous venez de déployer votre serveur Sentinel. Vous avez :</p>
+<ul>
+<li>désactivé <code>root</code> ;</li>
+<li>supprimé les mots de passe ;</li>
+<li>configuré des clés Ed25519 ;</li>
+<li>installé un bastion ;</li>
+<li>activé la journalisation.</li>
+</ul>
+<p>Vous pourriez croire que le travail est terminé. Pourtant, dès que le serveur sera connecté au réseau, les premières tentatives apparaîtront. Parfois en quelques minutes. Parfois en quelques secondes. Pourquoi ? Parce que des robots analysent Internet en permanence. Ils recherchent automatiquement :</p>
+<ul>
+<li>les ports SSH ;</li>
+<li>les versions vulnérables ;</li>
+<li>les mots de passe faibles ;</li>
+<li>les erreurs de configuration.</li>
+</ul>
+<p>L'objectif de ce chapitre est d'apprendre à résister à cette réalité.</p>
+<h2 id="theorie-detaillee">Théorie détaillée</h2>
+<h3 id="les-attaques-automatisees">Les attaques automatisées</h3>
+<p>La très grande majorité des attaques contre SSH ne sont pas réalisées par des humains. Elles sont réalisées par des robots. Leur fonctionnement est extrêmement simple.</p>
+<div class="mermaid">flowchart TD
+    N0["Scanner Internet"]
+    N1["Port 22 ?"]
+    N2["Oui"]
+    N3["Tentative"]
+    N4["Échec"]
+    N5["Serveur suivant"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+    N2 --&gt; N3
+    N3 --&gt; N4
+    N4 --&gt; N5
+</div>
+<p>Des millions de serveurs sont ainsi testés chaque jour.</p>
+<h2 id="le-brute-force">Le brute force</h2>
+<p>L'attaque la plus connue.</p>
+<div class="mermaid">flowchart TD
+    N0["root"]
+    N1["123456"]
+    N2["Échec"]
+    N3["password"]
+    N4["Échec"]
+    N5["admin123"]
+    N6["Échec"]
+    N7["..."]
+    N0 --&gt; N1
+    N1 --&gt; N2
+    N2 --&gt; N3
+    N3 --&gt; N4
+    N4 --&gt; N5
+    N5 --&gt; N6
+    N6 --&gt; N7
+</div>
+<p>L'objectif est de trouver le bon mot de passe. Cette attaque disparaît presque totalement lorsque : <code>PasswordAuthentication no</code> est activé.</p>
+<h2 id="le-password-spraying">Le Password Spraying</h2>
+<p>Contrairement au brute force, l'attaquant ne teste pas des milliers de mots de passe sur un seul compte. Il teste quelques mots de passe très courants sur un grand nombre d'utilisateurs. Par exemple.</p>
+<div class="mermaid">flowchart TD
+    Attack["Tentatives SSH"] --&gt; Keys["Clés plutôt que mots de passe"]
+    Keys --&gt; Restrict["Restrictions sshd"]
+    Restrict --&gt; Firewall["Firewalld"]
+    Firewall --&gt; Ban["Fail2ban"]
+    Ban --&gt; Logs["Journalisation et alertes"]
+</div>
+<p>Cette stratégie évite parfois les mécanismes de verrouillage de compte.</p>
+<h2 id="le-credential-stuffing">Le Credential Stuffing</h2>
+<p>Ici, l'attaquant exploite des mots de passe déjà divulgués. Par exemple. Une fuite provenant :</p>
+<ul>
+<li>d'un site web ;</li>
+<li>d'un forum ;</li>
+<li>d'un service cloud.</li>
+</ul>
+<p>Les identifiants sont ensuite testés automatiquement sur SSH. Cette attaque repose sur une faiblesse humaine. La réutilisation des mots de passe.</p>
+<h2 id="les-scans-de-versions">Les scans de versions</h2>
+<p>Tous les attaquants ne cherchent pas immédiatement à se connecter. Certains commencent simplement par identifier le serveur. Par exemple. <code>OpenSSH_9.3</code> Ils recherchent ensuite :</p>
+<ul>
+<li>des vulnérabilités connues ;</li>
+<li>des configurations dangereuses ;</li>
+<li>des algorithmes obsolètes.</li>
+</ul>
+<p>Cette phase est appelée : <code>Reconnaissance</code> Elle précède souvent toute tentative d'exploitation.</p>
+<h2 id="les-attaques-par-deni-de-service">Les attaques par déni de service</h2>
+<p>Une autre catégorie consiste à épuiser les ressources du serveur. Par exemple.</p>
+<div class="mermaid">flowchart TD
+    N0["Connexion"]
+    N1["Pas d'authentification"]
+    N2["Connexion"]
+    N3["Pas d'authentification"]
+    N4["..."]
+    N0 --&gt; N1
+    N1 --&gt; N2
+    N2 --&gt; N3
+    N3 --&gt; N4
+</div>
+<p>Des milliers de connexions incomplètes peuvent monopoliser :</p>
+<ul>
+<li>les processus ;</li>
+<li>la mémoire ;</li>
+<li>les sockets.</li>
+</ul>
+<p>C'est précisément pour cette raison que nous avons étudié : <code>LoginGraceTime</code> et. <code>MaxStartups</code> dans le chapitre précédent.</p>
+<h2 id="une-defense-en-profondeur">Une défense en profondeur</h2>
+<p>Aucune protection ne suffit seule. Nous devons combiner plusieurs couches.</p>
+<div class="mermaid">flowchart TD
+    N0["Internet"]
+    N1["Firewalld"]
+    N2["Bastion"]
+    N3["SSH"]
+    N4["Clés publiques"]
+    N5["PAM"]
+    N6["Journalisation"]
+    N7["Fail2ban"]
+    N8["Supervision"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+    N2 --&gt; N3
+    N3 --&gt; N4
+    N4 --&gt; N5
+    N5 --&gt; N6
+    N6 --&gt; N7
+    N7 --&gt; N8
+</div>
+<p>Chaque couche ralentit l'attaquant. Ensemble, elles rendent l'attaque beaucoup plus coûteuse.</p>
+<h2 id="pourquoi-les-cles-publiques-changent-tout">Pourquoi les clés publiques changent tout</h2>
+<p>Reprenons le brute force. Face à un serveur utilisant exclusivement des clés publiques.</p>
+<div class="mermaid">flowchart TD
+    N0["Robot"]
+    N1["Mot de passe"]
+    N2["Refus"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+</div>
+<div class="mermaid">flowchart TD
+    N0["Robot"]
+    N1["Autre mot de passe"]
+    N2["Refus"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+</div>
+<p>Peu importe le nombre d'essais. Le serveur n'accepte tout simplement plus cette méthode. L'attaquant doit donc changer complètement de stratégie. Nous avons déplacé le problème, plutôt que de simplement le ralentir.</p>
+<h2 id="fail2ban">Fail2ban</h2>
+<p>L'un des outils les plus populaires pour protéger SSH est : <code>Fail2ban</code> Son fonctionnement est remarquablement simple. Il surveille les journaux. Dès qu'il détecte un comportement anormal, il bloque automatiquement l'adresse IP concernée.</p>
+<h2 id="le-principe">Le principe</h2>
+<p>Visualisons.</p>
+<div class="mermaid">flowchart TD
+    N0["Connexion"]
+    N1["Échec"]
+    N2["Connexion"]
+    N3["Échec"]
+    N4["Connexion"]
+    N5["Échec"]
+    N6["Fail2ban"]
+    N7["Firewalld"]
+    N8["Blocage IP"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+    N2 --&gt; N3
+    N3 --&gt; N4
+    N4 --&gt; N5
+    N5 --&gt; N6
+    N6 --&gt; N7
+    N7 --&gt; N8
+</div>
+<p>L'attaquant n'est plus seulement confronté à un refus d'authentification. Il ne peut même plus établir une nouvelle connexion.</p>
+<h2 id="pourquoi-fail2ban-fonctionne-t-il">Pourquoi Fail2ban fonctionne-t-il ?</h2>
+<p>Souvenons-nous du chapitre précédent. OpenSSH écrit des événements dans : <code>journalctl</code> Fail2ban analyse précisément ces événements. Par exemple.</p>
+<pre><code class="language-text">Failed password
+
+for root
+
+from 203.0.113.15
+</code></pre>
+<p>Après plusieurs occurrences similaires, Fail2ban considère qu'il s'agit probablement d'une attaque. Il applique alors une règle de blocage.</p>
+<h2 id="le-fonctionnement-interne">Le fonctionnement interne</h2>
+<p>Le mécanisme complet ressemble à ceci.</p>
+<div class="mermaid">flowchart TD
+    N0["OpenSSH"]
+    N1["Journal"]
+    N2["Fail2ban"]
+    N3["Décision"]
+    N4["Firewalld"]
+    N5["Blocage réseau"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+    N2 --&gt; N3
+    N3 --&gt; N4
+    N4 --&gt; N5
+</div>
+<p>Remarquons que Fail2ban ne modifie pas OpenSSH. Il agit au niveau du pare-feu. C'est une excellente illustration de la défense en profondeur.</p>
+<h2 id="une-configuration-typique">Une configuration typique</h2>
+<p>Par exemple.</p>
+<div class="mermaid">flowchart TD
+    N0["5 échecs"]
+    N1["10 minutes"]
+    N2["Blocage&lt;br/&gt;pendant 1 heure"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+</div>
+<p>L'utilisateur légitime qui se trompe une fois n'est pas pénalisé. En revanche, un robot réalisant plusieurs centaines de tentatives est rapidement bloqué.</p>
+<h2 id="le-moteur-de-bannissement-applique-le-blocage">Le moteur de bannissement applique le blocage</h2>
+<p>Une confusion fréquente consiste à attribuer le blocage au filtre de journal. Fail2ban détecte et décide ; une <strong>action de bannissement</strong> applique ensuite la mesure dans le moteur configuré. Selon la distribution et le paquet, cette action peut piloter nftables, Firewalld ou un autre backend. Il faut donc vérifier la configuration effective au lieu de supposer systématiquement l'usage de <code>firewall-cmd</code>.</p>
+<div class="mermaid">flowchart TD
+    N0["Fail2ban"]
+    N1["Action configurée&lt;br/&gt;nftables, Firewalld ou autre"]
+    N2["Nouvelle règle"]
+    N3["Adresse IP refusée"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+    N2 --&gt; N3
+</div>
+<p>La décision est prise par Fail2ban. Le blocage réseau est réalisé par le backend choisi.</p>
+<h2 id="les-limites-de-fail2ban">Les limites de Fail2ban</h2>
+<p>Fail2ban est surtout efficace contre :</p>
+<ul>
+<li>les rafales et répétitions comprises dans sa fenêtre d'observation ;</li>
+<li>les robots classiques ;</li>
+<li>les tentatives répétées provenant d'une même adresse IP.</li>
+</ul>
+<p>En revanche, il devient beaucoup moins efficace contre :</p>
+<ul>
+<li>des attaques distribuées ;</li>
+<li>des botnets ;</li>
+<li>des milliers d'adresses IP différentes.</li>
+</ul>
+<p>Dans ce cas, chaque adresse effectue seulement quelques tentatives. Aucune n'atteint le seuil de blocage. Fail2ban reste donc une excellente protection, mais il ne constitue pas une solution miracle.</p>
+<h2 id="pourquoi-conserver-fail2ban-si-les-mots-de-passe-sont-desactives">Pourquoi conserver Fail2ban si les mots de passe sont désactivés ?</h2>
+<p>Question fréquente. Si nous avons : <code>PasswordAuthentication no</code> Pourquoi installer Fail2ban ? Parce qu'il protège également contre :</p>
+<ul>
+<li>certaines erreurs de configuration ;</li>
+<li>des comptes oubliés ;</li>
+<li>d'autres services ;</li>
+<li>des tentatives répétées de connexion.</li>
+</ul>
+<p>De plus, dans de nombreuses entreprises, tous les serveurs ne sont pas encore entièrement migrés vers les clés publiques. Fail2ban reste donc une couche de protection pertinente.</p>
+<h2 id="les-listes-blanches">Les listes blanches</h2>
+<p>Attention à un point important. Les administrateurs peuvent eux aussi se tromper. Une adresse de secours ou un réseau d'administration maîtrisé peut être exclu du bannissement. Par exemple.</p>
+<p>ou.</p>
+<pre><code class="language-text">Réseau
+
+d'administration
+</code></pre>
+<p>Ainsi, une erreur de saisie ne provoquera pas le verrouillage de toute l'équipe d'exploitation. Mais <code>ignoreip</code> crée aussi un angle mort : si le bastion ou un poste exclu est compromis, Fail2ban ne réagira pas. Limitez la liste, conservez une authentification forte et surveillez ces sources avec autant d'attention que les autres.</p>
+<h2 id="une-architecture-complete">Une architecture complète</h2>
+<div class="mermaid">flowchart TD
+    N0["Internet"]
+    N1["Pare-feu"]
+    N2["OpenSSH"]
+    N3["Journal"]
+    N4["Fail2ban"]
+    N5["Blocage automatique"]
+    N6["Règle temporaire dans le backend configuré"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+    N2 --&gt; N3
+    N3 --&gt; N4
+    N4 --&gt; N5
+    N5 --&gt; N6
+</div>
+<p>Chaque composant joue un rôle bien défini. Aucun ne remplace les autres. Ils se complètent.</p>
+<h2 id="detecter-les-attaques">Détecter les attaques</h2>
+<p>Grâce aux journaux, Fail2ban produit également des statistiques. Par exemple.</p>
+<div class="mermaid">flowchart TD
+    N0["Adresse IP"]
+    N1["Nombre d'échecs"]
+    N2["Date"]
+    N3["Blocage"]
+    N4["Durée restante"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+    N2 --&gt; N3
+    N3 --&gt; N4
+</div>
+<p>Ces informations permettent aux administrateurs de comprendre :</p>
+<ul>
+<li>quelles attaques sont en cours ;</li>
+<li>quelles adresses reviennent régulièrement ;</li>
+<li>quelles règles doivent éventuellement être renforcées.</li>
+</ul>
+<p>Nous retrouvons ici l'importance de la journalisation étudiée dans le chapitre précédent.</p>
+<h2 id="approfondissement">Approfondissement</h2>
+<h3 id="une-bonne-protection-ne-cherche-pas-a-empecher-toutes-les-attaques">Une bonne protection ne cherche pas à empêcher toutes les attaques</h3>
+<p>Lorsqu'on débute en cybersécurité, on imagine souvent qu'une bonne protection est une protection qui bloque absolument tout. En réalité, ce n'est pas l'objectif. Un architecte cherche plutôt à :</p>
+<ul>
+<li>augmenter le coût de l'attaque ;</li>
+<li>ralentir l'attaquant ;</li>
+<li>multiplier les obstacles ;</li>
+<li>détecter rapidement les comportements anormaux.</li>
+</ul>
+<p>Prenons un exemple. Deux serveurs.</p>
+<h4 id="serveur-a">Serveur A</h4>
+<div class="mermaid">flowchart TD
+    N0["SSH"]
+    N1["Mot de passe"]
+    N2["Aucune journalisation"]
+    N3["Aucun blocage"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+    N2 --&gt; N3
+</div>
+<h4 id="serveur-b">Serveur B</h4>
+<div class="mermaid">flowchart TD
+    N0["Firewalld"]
+    N1["Bastion"]
+    N2["Clés publiques"]
+    N3["Fail2ban"]
+    N4["Journalisation"]
+    N5["SIEM"]
+    N6["Audit"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+    N2 --&gt; N3
+    N3 --&gt; N4
+    N4 --&gt; N5
+    N5 --&gt; N6
+</div>
+<p>Le second serveur n'est pas invulnérable. Mais il demande énormément plus de temps, de compétences et de ressources pour être compromis. En cybersécurité, on parle souvent de :</p>
+<blockquote>
+<p><strong>Augmenter le coût de l'attaque.</strong></p>
+</blockquote>
+<h3 id="toutes-les-attaques-ne-sont-pas-techniques">Toutes les attaques ne sont pas techniques</h3>
+<p>Prenons un attaquant. Il possède deux possibilités. Première possibilité. <code>Casser Ed25519</code> Probabilité ? Pratiquement nulle. Deuxième possibilité.</p>
+<pre><code class="language-text">Voler
+
+la clé privée
+
+sur le PC
+
+de l'administrateur.
+</code></pre>
+<p>Probabilité ? Beaucoup plus réaliste. Cette observation change complètement la manière de penser la sécurité. On ne protège plus uniquement les serveurs. On protège également :</p>
+<ul>
+<li>les postes d'administration ;</li>
+<li>les sauvegardes ;</li>
+<li>les comptes FreeIPA ;</li>
+<li>les secrets ;</li>
+<li>les équipements réseau.</li>
+</ul>
+<h3 id="les-protections-doivent-etre-independantes">Les protections doivent être indépendantes</h3>
+<p>Supposons que Fail2ban tombe en panne. Que se passe-t-il ? Si l'infrastructure repose uniquement sur lui, la sécurité disparaît. En revanche, dans Sentinel, nous avons déjà : <code>Clés publiques</code> ↓ <code>Pas de mots de passe</code> ↓ <code>Firewalld</code> ↓ <code>Bastion</code> ↓ <code>Journalisation</code> ↓ <code>Fail2ban</code> Chaque couche reste utile, même si une autre devient indisponible. C'est précisément la définition de la <strong>défense en profondeur</strong>.</p>
+<h3 id="la-meilleure-attaque-est-souvent-celle-qui-na-jamais-lieu">La meilleure attaque est souvent celle qui n'a jamais lieu</h3>
+<p>Prenons deux infrastructures.</p>
+<h4 id="infrastructure-1">Infrastructure 1</h4>
+<pre><code class="language-text">SSH
+
+visible
+
+sur Internet
+</code></pre>
+<p>Elle reçoit :</p>
+<ul>
+<li>des scans ;</li>
+<li>des robots ;</li>
+<li>des tentatives quotidiennes.</li>
+</ul>
+<h4 id="infrastructure-2">Infrastructure 2</h4>
+<pre><code class="language-text">Serveur
+
+non exposé
+
+derrière un bastion
+</code></pre>
+<p>Le serveur n'est même plus découvert. Les attaques n'ont tout simplement pas lieu. La meilleure protection consiste parfois à rendre la cible invisible. C'est pourquoi nous avons consacré un chapitre entier au bastion d'administration.</p>
+<h2 id="concevoir-la-politique">Concevoir la politique</h2>
+<p>Un architecte ne cherche jamais :</p>
+<blockquote>
+<p><strong>la meilleure protection.</strong></p>
+</blockquote>
+<p>Il cherche :</p>
+<blockquote>
+<p><strong>la meilleure combinaison de protections.</strong></p>
+</blockquote>
+<p>Par exemple.</p>
+<div class="mermaid">flowchart TD
+    N0["Pare-feu"]
+    N1["Réseau privé"]
+    N2["Bastion"]
+    N3["SSH"]
+    N4["Clés publiques"]
+    N5["PAM"]
+    N6["SELinux"]
+    N7["Audit"]
+    N8["Supervision"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+    N2 --&gt; N3
+    N3 --&gt; N4
+    N4 --&gt; N5
+    N5 --&gt; N6
+    N6 --&gt; N7
+    N7 --&gt; N8
+</div>
+<p>Chaque mécanisme répond à une question différente. Ensemble, ils construisent une architecture résiliente.</p>
+<h3 id="les-attaques-evoluent">Les attaques évoluent</h3>
+<p>Une erreur classique consiste à considérer une configuration comme définitive. Prenons l'histoire d'OpenSSH. Hier.</p>
+<p>Aujourd'hui.</p>
+<p>Demain, de nouveaux algorithmes apparaîtront. Il en va de même pour :</p>
+<ul>
+<li>les méthodes d'attaque ;</li>
+<li>les recommandations ;</li>
+<li>les outils.</li>
+</ul>
+<p>La sécurité est donc un processus, pas un état.</p>
+<h3 id="mesurer-plutot-que-supposer">Mesurer plutôt que supposer</h3>
+<p>Une entreprise mature ne dit jamais :</p>
+<blockquote>
+<p>« Notre SSH est sécurisé. »</p>
+</blockquote>
+<p>Elle mesure. Par exemple.</p>
+<ul>
+<li>nombre quotidien de tentatives ;</li>
+<li>adresses IP bloquées ;</li>
+<li>comptes ciblés ;</li>
+<li>temps moyen avant détection ;</li>
+<li>temps moyen avant remédiation.</li>
+</ul>
+<p>Ces indicateurs permettent d'améliorer progressivement la posture de sécurité.</p>
+<h2 id="point-de-vue-offensif">Point de vue offensif</h2>
+<p>Un attaquant opportuniste abandonne rapidement lorsqu'il rencontre plusieurs obstacles successifs. Prenons notre infrastructure Sentinel.</p>
+<div class="mermaid">flowchart TD
+    N0["Scan"]
+    N1["Bastion obligatoire"]
+    N2["Clés publiques"]
+    N3["MFA"]
+    N4["Fail2ban"]
+    N5["Journalisation"]
+    N6["Supervision"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+    N2 --&gt; N3
+    N3 --&gt; N4
+    N4 --&gt; N5
+    N5 --&gt; N6
+</div>
+<p>À chaque étape, la probabilité de réussite diminue. L'attaquant choisira souvent une cible moins protégée. C'est une réalité économique. Le temps passé représente un coût.</p>
+<h3 id="les-erreurs-humaines-restent-le-principal-risque">Les erreurs humaines restent le principal risque</h3>
+<p>Malgré toutes les protections étudiées, les incidents proviennent très souvent :</p>
+<ul>
+<li>d'une clé privée copiée par erreur ;</li>
+<li>d'un compte administrateur partagé ;</li>
+<li>d'une mauvaise règle Firewalld ;</li>
+<li>d'un <code>PermitRootLogin yes</code> oublié ;</li>
+<li>d'un serveur laissé accessible directement à Internet.</li>
+</ul>
+<p>Autrement dit, la majorité des compromissions résultent davantage d'erreurs de configuration que de failles cryptographiques. C'est pourquoi les procédures, les revues de configuration et l'automatisation sont si importantes.</p>
+<h2 id="en-entreprise">En entreprise</h2>
+<p>Dans une infrastructure mature, la protection SSH repose généralement sur une combinaison de mécanismes.</p>
+<ul>
+<li>Bastion d'administration ;</li>
+<li>authentification par clés publiques ;</li>
+<li>MFA sur le bastion ;</li>
+<li>Fail2ban ;</li>
+<li>Firewalld ;</li>
+<li>journalisation centralisée ;</li>
+<li>supervision en temps réel ;</li>
+<li>scans réguliers de conformité ;</li>
+<li>déploiement automatique de la configuration via Ansible.</li>
+</ul>
+<p>Aucun de ces éléments n'est suffisant seul. Ensemble, ils forment une architecture cohérente, résistante et beaucoup plus difficile à compromettre.</p>
+<h2 id="culture-technique">Culture technique</h2>
+<h3 id="fail2ban-nanalyse-pas-le-reseau">Fail2ban n'analyse pas le réseau</h3>
+<p>Une idée reçue consiste à croire que Fail2ban observe directement les paquets réseau. Ce n'est pas son fonctionnement. Fail2ban ne regarde jamais les paquets TCP. Il lit uniquement les journaux produits par les services. Dans notre cas.</p>
+<div class="mermaid">flowchart TD
+    N0["OpenSSH"]
+    N1["journalctl"]
+    N2["Fail2ban"]
+    N3["Analyse"]
+    N4["Blocage"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+    N2 --&gt; N3
+    N3 --&gt; N4
+</div>
+<p>Autrement dit, si SSH ne journalise plus un événement, Fail2ban ne pourra jamais le détecter. Cette dépendance explique pourquoi la qualité des journaux est essentielle.</p>
+<h3 id="les-filtres-de-fail2ban">Les filtres de Fail2ban</h3>
+<p>Fail2ban fonctionne grâce à des filtres. Chaque filtre décrit :</p>
+<ul>
+<li>quelles lignes rechercher ;</li>
+<li>quels événements ignorer ;</li>
+<li>quelles informations extraire.</li>
+</ul>
+<p>Par exemple.</p>
+<div class="mermaid">flowchart TD
+    N0["Failed password"]
+    N1["Adresse IP"]
+    N2["Utilisateur"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+</div>
+<p>Le même mécanisme existe pour :</p>
+<ul>
+<li>Apache ;</li>
+<li>Nginx ;</li>
+<li>Postfix ;</li>
+<li>Dovecot ;</li>
+<li>vsftpd ;</li>
+<li>Cockpit ;</li>
+<li>et de nombreux autres services.</li>
+</ul>
+<p>Fail2ban n'est donc pas un outil spécifique à SSH. C'est une plateforme générique de protection basée sur les journaux.</p>
+<h3 id="les-jails">Les "Jails"</h3>
+<p>Dans Fail2ban, une règle de protection est appelée une <strong>Jail</strong>. Une jail définit :</p>
+<ul>
+<li>le service surveillé ;</li>
+<li>le filtre utilisé ;</li>
+<li>le nombre maximal d'échecs ;</li>
+<li>la durée du bannissement ;</li>
+<li>l'action à appliquer.</li>
+</ul>
+<p>Schématiquement.</p>
+<div class="mermaid">flowchart TD
+    N0["SSH Jail"]
+    N1["Filtre SSH"]
+    N2["5 échecs"]
+    N3["1 heure"]
+    N4["Blocage Firewalld"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+    N2 --&gt; N3
+    N3 --&gt; N4
+</div>
+<p>Chaque service peut posséder sa propre jail.</p>
+<h3 id="les-attaques-distribuees">Les attaques distribuées</h3>
+<p>Les botnets représentent aujourd'hui une difficulté majeure. Prenons un exemple. Sans botnet.</p>
+<div class="mermaid">flowchart TD
+    N0["Adresse IP A"]
+    N1["500 tentatives"]
+    N2["Fail2ban"]
+    N3["Blocage"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+    N2 --&gt; N3
+</div>
+<p>Très efficace. Maintenant.</p>
+<p>Aucune adresse n'atteint le seuil. Fail2ban ne déclenche rien. Cette limite explique pourquoi les entreprises complètent souvent Fail2ban par :</p>
+<ul>
+<li>des listes de réputation IP ;</li>
+<li>des pare-feu intelligents ;</li>
+<li>des protections réseau ;</li>
+<li>des services anti-DDoS.</li>
+</ul>
+<h2 id="piege-classique">Piège classique</h2>
+<h3 id="changer-le-port-ssh-en-pensant-etre-protege">Changer le port SSH en pensant être protégé</h3>
+<p>L'un des conseils les plus répandus sur Internet est :</p>
+<p>Cette mesure réduit effectivement le bruit généré par les robots les plus simples. Mais elle ne protège pas réellement le serveur. Pourquoi ? Parce qu'un attaquant réalise généralement un scan.</p>
+<div class="mermaid">flowchart TD
+    N0["nmap"]
+    N1["Tous les ports"]
+    N2["SSH trouvé"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+</div>
+<p>Le changement de port ne doit donc jamais être considéré comme une véritable protection. Il peut être utilisé, mais uniquement comme une mesure complémentaire.</p>
+<h3 id="penser-que-fail2ban-remplace-les-cles-publiques">Penser que Fail2ban remplace les clés publiques</h3>
+<p>Autre erreur fréquente. Certains administrateurs gardent : <code>PasswordAuthentication yes</code> en se disant :</p>
+<blockquote>
+<p>« Fail2ban me protège. »</p>
+</blockquote>
+<p>Cette approche est dangereuse. Pourquoi ? Parce que Fail2ban intervient : <strong>après plusieurs tentatives</strong>. Les clés publiques, elles, suppriment complètement cette méthode d'attaque. L'ordre des priorités est donc.</p>
+<div class="mermaid">flowchart TD
+    N0["Clés publiques"]
+    N1["Bastion"]
+    N2["Firewalld"]
+    N3["Fail2ban"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+    N2 --&gt; N3
+</div>
+<p>Et non l'inverse.</p>
+<h2 id="tp-1-installer-et-declencher-une-protection-adaptative">TP 1 — Installer et déclencher une protection adaptative</h2>
+<h3 id="objectif">Objectif</h3>
+<p>Observer le fonctionnement réel de Fail2ban sur un serveur AlmaLinux.</p>
+<h3 id="etape-1-installer-fail2ban">Étape 1 — Installer Fail2ban</h3>
+<p>Vérifiez d'abord que le dépôt fournissant Fail2ban est approuvé dans votre environnement AlmaLinux ; selon l'image utilisée, le paquet peut provenir d'EPEL plutôt que des dépôts de base. Installez ensuite le paquet sans modifier les fichiers fournis directement : les personnalisations iront dans <code>jail.local</code> ou <code>jail.d/*.local</code>.</p>
+<pre><code class="language-bash">sudo dnf install fail2ban
+</code></pre>
+<p>Créez un fragment local plutôt que de modifier <code>jail.conf</code> :</p>
+<pre><code class="language-bash">sudoedit /etc/fail2ban/jail.d/sshd.local
+</code></pre>
+<pre><code class="language-ini">[sshd]
+enabled = true
+backend = systemd
+maxretry = 5
+findtime = 10m
+bantime = 1h
+</code></pre>
+<p>Le backend et l'action de bannissement doivent être confirmés à partir des fichiers réellement fournis par le paquet. Validez la configuration, puis démarrez le service.</p>
+<pre><code class="language-bash">sudo fail2ban-client -t
+</code></pre>
+<pre><code class="language-bash">sudo systemctl enable --now fail2ban
+</code></pre>
+<p>Vérifier son état.</p>
+<pre><code class="language-bash">systemctl status fail2ban
+</code></pre>
+<h3 id="etape-2-simuler-une-attaque">Étape 2 — Simuler une attaque</h3>
+<p>Dans le laboratoire isolé uniquement, utilisez un compte jetable et effectuez depuis Kali plusieurs connexions volontairement refusées. Si les méthodes par mot de passe sont déjà désactivées, provoquez un échec cohérent avec la politique active et vérifiez d'abord qu'il correspond au filtre installé.</p>
+<ul>
+<li>cinq tentatives successives.</li>
+</ul>
+<p>Observer ensuite les journaux.</p>
+<pre><code class="language-bash">sudo journalctl -u fail2ban
+</code></pre>
+<p>Identifier le moment où l'adresse IP est bannie.</p>
+<h2 id="tp-2-verifier-le-bannissement-de-bout-en-bout">TP 2 — Vérifier le bannissement de bout en bout</h2>
+<h3 id="etape-3-observer-le-bannissement">Étape 3 — Observer le bannissement</h3>
+<p>Afficher les jails actives.</p>
+<pre><code class="language-bash">sudo fail2ban-client status
+</code></pre>
+<p>Puis.</p>
+<pre><code class="language-bash">sudo fail2ban-client status sshd
+</code></pre>
+<p>Identifier :</p>
+<ul>
+<li>le nombre d'adresses bannies ;</li>
+<li>les adresses IP concernées ;</li>
+<li>les statistiques de la jail.</li>
+</ul>
+<h3 id="etape-4-verifier-laction-de-bannissement">Étape 4 — Vérifier l'action de bannissement</h3>
+<p>Identifiez d'abord l'action réellement sélectionnée :</p>
+<pre><code class="language-bash">sudo fail2ban-client get sshd actions
+</code></pre>
+<p>Affichez ensuite l'état du backend correspondant. Si l'action utilise Firewalld, commencez par :</p>
+<pre><code class="language-bash">sudo firewall-cmd --list-all
+</code></pre>
+<p>Si elle utilise directement nftables, inspectez plutôt le jeu de règles avec <code>sudo nft list ruleset</code>. Comprendre que le filtre de journaux prend la décision tandis que l'action configurée réalise le blocage.</p>
+<h2 id="mission-dingenieur">Mission d'ingénieur</h2>
+<p>Votre entreprise souhaite renforcer automatiquement la protection des serveurs Sentinel contre les attaques SSH. Vous devez proposer une politique Fail2ban répondant aux questions suivantes.</p>
+<ul>
+<li>Combien d'échecs doivent être autorisés ?</li>
+<li>Quelle durée de bannissement appliquer ?</li>
+<li>Quelles adresses IP doivent être placées en liste blanche (bastion, supervision, réseau d'administration) ?</li>
+<li>Quels journaux doivent être surveillés ?</li>
+<li>Comment superviser les bannissements et générer des alertes en cas d'augmentation inhabituelle ?</li>
+</ul>
+<p>Votre proposition devra également expliquer pourquoi Fail2ban constitue une <strong>couche supplémentaire</strong> et non le mécanisme principal de protection.</p>
+<h2 id="impact-sur-sentinel">Impact sur Sentinel</h2>
+<p>Grâce aux mesures étudiées dans ce chapitre, Sentinel est désormais capable de :</p>
+<ul>
+<li>ralentir les attaques automatisées ;</li>
+<li>bloquer temporairement les adresses IP malveillantes ;</li>
+<li>détecter les comportements anormaux ;</li>
+<li>produire des indicateurs exploitables par l'équipe sécurité.</li>
+</ul>
+<p>Le chapitre suivant conclura cette campagne en réunissant toutes les briques étudiées pour concevoir une architecture d'administration complète, industrialisée et conforme aux bonnes pratiques.</p>
+<h2 id="synthese">Synthèse</h2>
+<ul>
+<li>Les attaques SSH sont majoritairement automatisées.</li>
+<li>Les clés publiques rendent le brute force de mots de passe inopérant lorsque les autres méthodes de secret sont réellement désactivées.</li>
+<li>Fail2ban analyse les événements puis déclenche l'action de bannissement configurée.</li>
+<li>Fail2ban est efficace contre les attaques répétées provenant d'une même adresse IP, mais moins contre les botnets distribués.</li>
+<li>Le changement de port SSH ne constitue pas une véritable mesure de sécurité.</li>
+<li>La meilleure protection repose sur une combinaison de mécanismes : bastion, clés publiques, Firewalld, journalisation, Fail2ban et supervision.</li>
+<li>La défense en profondeur reste le principe fondamental de la protection des services SSH.</li>
+</ul>
+<h2 id="pour-aller-plus-loin">Pour aller plus loin</h2>
+<p>Vérifiez la documentation et les fichiers installés de Fail2ban : filtres, jails, backend de journal et action de bannissement varient selon le paquet. La mission finale transforme ensuite l'ensemble de ces contrôles en architecture d'administration Sentinel.</p>
+<p>← <a href="../4.6-journalisation-audit-ssh/">4.6 — Journalisation et audit SSH</a> · <a href="../4.8-mission-administration-sentinel/">4.8 — Mission : administrer Sentinel en sécurité</a> →</p>
+</div>
+</div><footer>
+<div aria-label="Footer Navigation" class="rst-footer-buttons" role="navigation">
+<a class="btn btn-neutral float-left" href="../4.6-journalisation-audit-ssh/" title="Chapitre 4.6 — Journalisation et audit SSH"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+<a class="btn btn-neutral float-right" href="../4.8-mission-administration-sentinel/" title="Chapitre 4.8 — Mission : administrer Sentinel en sécurité">Next <span class="icon icon-circle-arrow-right"></span></a>
+</div>
+<hr/>
+<div role="contentinfo">
+<!-- Copyright etc -->
+</div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+</div>
+</div>
+</section>
+</div>
+<div aria-label="Versions" class="rst-versions" role="note">
+<span class="rst-current-version" data-toggle="rst-current-version">
+<span>
+<a class="fa fa-code-fork" href="https://github.com/tdelaclos/formations" style="color: #fcfcfc"> tdelaclos/formations</a>
+</span>
+<span><a href="../4.6-journalisation-audit-ssh/" style="color: #fcfcfc">« Previous</a></span>
+<span><a href="../4.8-mission-administration-sentinel/" style="color: #fcfcfc">Next »</a></span>
+</span>
+</div>
+<script src="../../js/jquery-3.6.0.min.js"></script>
+<script>var base_url = "../..";</script>
+<script src="../../js/theme_extra.js"></script>
+<script src="../../js/theme.js"></script>
+<script src="../../search/main.js"></script>
+<script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+<script type="module">import mermaid from "https://unpkg.com/mermaid@10.4.0/dist/mermaid.esm.min.mjs";
+mermaid.initialize({});</script></body>
+</html>

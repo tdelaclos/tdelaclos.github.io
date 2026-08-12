@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+
+<html class="writer-html5" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="IE=edge" http-equiv="X-UA-Compatible"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="../../img/favicon.ico" rel="shortcut icon"/>
+<title>Chapitre 2.7 — Les comptes système - Formation Sentinel — AlmaLinux sécurisé</title>
+<link href="../../css/theme.css" rel="stylesheet"/>
+<link href="../../css/theme_extra.css" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" rel="stylesheet"/>
+<script>
+        // Current page data
+        var mkdocs_page_name = "Chapitre 2.7 \u2014 Les comptes syst\u00e8me";
+        var mkdocs_page_input_path = "campagne_02/2.7-comptes-systeme.md";
+        var mkdocs_page_url = null;
+      </script>
+<!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+<script>hljs.highlightAll();</script>
+</head>
+<body class="wy-body-for-nav" role="document">
+<div class="wy-grid-for-nav">
+<nav class="wy-nav-side stickynav" data-toggle="wy-nav-shift">
+<div class="wy-side-scroll">
+<div class="wy-side-nav-search">
+<a class="icon icon-home" href="../.."> Formation Sentinel — AlmaLinux sécurisé
+        </a><div role="search">
+<form action="../../search.html" class="wy-form" id="rtd-search-form" method="get">
+<input aria-label="Search docs" name="q" placeholder="Search docs" title="Type search term here" type="text"/>
+</form>
+</div>
+</div>
+<div aria-label="Navigation menu" class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../..">Accueil</a>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">A propos</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../GUIDE-REDACTION/">Guide de rédaction</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../PARCOURS-SENTINEL/">Parcours applicatif Sentinel</a>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Campagnes</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal">Campagne 1 - Sécuriser le socle Linux</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.1-pourquoi-securiser-socle-linux/">Chapitre 1.1 — Pourquoi sécuriser un socle Linux ?</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.2-installation-almalinux-minimal/">Chapitre 1.2 — Installer AlmaLinux minimal</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.3-composants-systeme-linux/">Chapitre 1.3 — Comprendre les composants d'un système Linux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.4-premier-demarrage-verifications/">Chapitre 1.4 — Établir la baseline du serveur</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.5-mise-a-jour-gestion-depots/">Chapitre 1.5 — Mettre à jour et gérer les dépôts</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.6-architecture-systemes-fichiers/">Chapitre 1.6 — Organiser les systèmes de fichiers</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.7-utilisateurs-groupes-permissions/">Chapitre 1.7 — Comprendre identités et permissions</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.8-sudo-moindre-privilege/">Chapitre 1.8 — Administrer avec sudo</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.9-premiere-mise-en-securite-serveur/">Chapitre 1.9 — Mission : mettre le serveur en sécurité</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.10-creation-laboratoire-sentinel/">Chapitre 1.10 — Créer le laboratoire Sentinel</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal current">Campagne 2 - Gestion des permissions et des identités</a>
+<ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../2.1-permissions-unix/">Chapitre 2.1 — Les permissions UNIX</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../2.2-acl/">Chapitre 2.2 — Les ACL</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../2.3-umask/">Chapitre 2.3 — L'umask</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../2.4-attributs-etendus/">Chapitre 2.4 — Les attributs étendus</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../2.5-pam/">Chapitre 2.5 — PAM</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../2.6-politique-mots-de-passe/">Chapitre 2.6 — Politique de mots de passe</a>
+</li>
+<li class="toctree-l2 current"><a class="reference internal current" href="#">Chapitre 2.7 — Les comptes système</a>
+<ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="#vous-etes-ici">Vous êtes ici</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#objectifs-pedagogiques">Objectifs pédagogiques</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pourquoi-ce-chapitre-existe">Pourquoi ce chapitre existe</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#un-service-est-aussi-un-utilisateur">Un service est aussi un utilisateur</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pourquoi-ne-pas-tout-executer-en-root">Pourquoi ne pas tout exécuter en root ?</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#le-principe-du-moindre-privilege">Le principe du moindre privilège</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#tous-les-comptes-ne-permettent-pas-de-se-connecter">Tous les comptes ne permettent pas de se connecter</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#une-identite-sans-connexion">Une identité sans connexion</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#qui-cree-ces-comptes">Qui crée ces comptes ?</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#un-service-demarre-t-il-en-root">Un service démarre-t-il en root ?</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#le-role-de-systemd">Le rôle de systemd</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#existe-t-il-encore-des-services-qui-commencent-en-root">Existe-t-il encore des services qui commencent en root ?</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#les-capacites-linux-un-apercu">Les capacités Linux : un aperçu</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pourquoi-autant-de-comptes-systeme">Pourquoi autant de comptes système ?</a>
+<ul>
+<li class="toctree-l4"><a class="reference internal" href="#culture-technique">Culture technique</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#piege-classique">Piège classique</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#tp-1-experimenter-sur-almalinux">TP 1 — Expérimenter sur AlmaLinux</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#creer-et-faire-evoluer-les-identites-de-service">Créer et faire évoluer les identités de service</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#tp-2-comparer-identite-statique-et-dynamique">TP 2 — Comparer identité statique et dynamique</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#mission-dingenieur-specifier-le-compte-sentinel">Mission d'ingénieur — Spécifier le compte Sentinel</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#impact-sur-sentinel">Impact sur Sentinel</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#synthese">Synthèse</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pour-aller-plus-loin">Pour aller plus loin</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../2.8-sudo-avance/">Chapitre 2.8 — sudo avancé</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../2.9-fichiers-identites-linux/">Chapitre 2.9 — Comprendre les fichiers d'identités Linux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../2.10-synthese-securiser-identites/">Chapitre 2.10 — Synthèse : sécuriser les identités</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 3 - TCP/IP et Firewalld</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.1-tcp-ip-administrateur/">Chapitre 3.1 — TCP/IP côté administrateur</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.2-architecture-firewalld/">Chapitre 3.2 — Architecture de Firewalld</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.3-zones-firewalld/">Chapitre 3.3 — Les zones Firewalld</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.4-services-firewalld/">Chapitre 3.4 — Les services Firewalld</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.5-conntrack-filtrage-etats/">Chapitre 3.5 — Conntrack et le filtrage par états</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.6-rich-rules-firewalld/">Chapitre 3.6 — Les Rich Rules Firewalld</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.7-journalisation-firewalld/">Chapitre 3.7 — Journalisation et analyse Firewalld</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.8-ip-sets-firewalld/">Chapitre 3.8 — Les IP Sets Firewalld</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.9-runtime-permanent/">Chapitre 3.9 — Runtime et Permanent</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.10-politique-reseau-sentinel/">Chapitre 3.10 — Concevoir la politique réseau de Sentinel</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 4 - SSH</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_04/4.1-architecture-openssh/">Chapitre 4.1 — Architecture d'OpenSSH</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_04/4.2-authentification-mot-de-passe/">Chapitre 4.2 — Authentification par mot de passe</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_04/4.3-authentification-par-cles/">Chapitre 4.3 — Authentification par clés</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_04/4.4-durcissement-sshd-config/">Chapitre 4.4 — Durcissement de sshd_config</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_04/4.5-bastion-administration/">Chapitre 4.5 — Bastion d'administration</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_04/4.6-journalisation-audit-ssh/">Chapitre 4.6 — Journalisation et audit SSH</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_04/4.7-protection-attaques-ssh/">Chapitre 4.7 — Protection contre les attaques SSH</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_04/4.8-mission-administration-sentinel/">Chapitre 4.8 — Mission : administrer Sentinel en sécurité</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 5 - Systemd</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.1-comprendre-systemd/">Chapitre 5.1 — Comprendre systemd</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.2-unites-systemd/">Chapitre 5.2 — Les unités systemd</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.3-creer-service-sentinel/">Chapitre 5.3 — Créer le service Sentinel</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.4-sandboxing-systemd/">Chapitre 5.4 — Sandboxing systemd</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.5-capacites-linux/">Chapitre 5.5 — Les capacités Linux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.6-journalisation-journald/">Chapitre 5.6 — Journalisation avec journald</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.7-supervision-redemarrage/">Chapitre 5.7 — Supervision et redémarrage automatique</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.8-mission-sentinel-resilient/">Chapitre 5.8 — Mission : rendre Sentinel résilient</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 6 - SELinux</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_06/6.1-pourquoi-selinux-existe/">Chapitre 6.1 — Pourquoi SELinux existe</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_06/6.2-contextes-selinux/">Chapitre 6.2 — Comprendre les contextes SELinux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_06/6.3-politiques-selinux/">Chapitre 6.3 — Les politiques SELinux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_06/6.4-diagnostic-refus-selinux/">Chapitre 6.4 — Diagnostiquer les refus SELinux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_06/6.5-creation-regles-selinux/">Chapitre 6.5 — Créer des règles SELinux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_06/6.6-securiser-sentinel-selinux/">Chapitre 6.6 — Sécuriser Sentinel avec SELinux</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 7 - TLS et PKI</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.1-comprendre-cryptographie-appliquee/">Chapitre 7.1 — Comprendre la cryptographie appliquée</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.2-lire-verifier-certificats-x509/">Chapitre 7.2 — Lire et vérifier les certificats X.509</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.3-construire-autorite-certification/">Chapitre 7.3 — Construire une autorité de certification</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.4-authentification-mutuelle-tls/">Chapitre 7.4 — Authentifier les deux extrémités avec mTLS</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.5-preparer-integration-freeipa/">Chapitre 7.5 — Préparer l'intégration à FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.6-renouveler-revoquer-certificats/">Chapitre 7.6 — Renouveler et révoquer les certificats</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.7-securiser-sentinel-tls/">Chapitre 7.7 — Sécuriser Sentinel avec TLS</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 8 - FreeIPA</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.1-presentation-freeipa/">Chapitre 8.1 — Découvrir FreeIPA et la gestion centralisée des identités</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.2-architecture-interne-freeipa/">Chapitre 8.2 — Comprendre l'architecture interne de FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.3-installation-freeipa/">Chapitre 8.3 — Installer un serveur FreeIPA de laboratoire</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.4-gestion-utilisateurs/">Chapitre 8.4 — Gérer le cycle de vie des utilisateurs FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.5-groupes-roles/">Chapitre 8.5 — Organiser les groupes et les rôles FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.6-politiques-sudo/">Chapitre 8.6 — Centraliser les politiques sudo avec FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.7-gestion-hotes/">Chapitre 8.7 — Enrôler les hôtes et contrôler les accès avec HBAC</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.8-certificats/">Chapitre 8.8 — Gérer les certificats de service avec FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.9-integration-sentinel/">Chapitre 8.9 — Intégrer Sentinel à FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.10-mission-administration-freeipa/">Chapitre 8.10 — Mission : administrer Sentinel avec FreeIPA</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 9 - Déploiement avec Ansible</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.1-architecture-ansible/">Chapitre 9.1 — Comprendre l'architecture Ansible</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.2-composants-ansible/">Chapitre 9.2 — Comprendre les composants et l'idempotence Ansible</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.3-inventaires/">Chapitre 9.3 — Construire les inventaires Ansible</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.4-premiers-playbooks/">Chapitre 9.4 — Écrire les premiers playbooks</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.5-variables-templates/">Chapitre 9.5 — Piloter la configuration avec variables et templates</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.6-roles-ansible/">Chapitre 9.6 — Concevoir des rôles Ansible réutilisables</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.7-deployer-sentinel-ansible/">Chapitre 9.7 — Déployer Sentinel avec Ansible</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.8-integrer-sentinel-freeipa/">Chapitre 9.8 — Automatiser l'intégration de Sentinel à FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.9-industrialiser-laboratoire/">Chapitre 9.9 — Industrialiser le projet Ansible</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.10-mission-deploiement-sentinel/">Chapitre 9.10 — Mission : reconstruire Sentinel avec Ansible</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 10 - Packaging RPM</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_10/10.1-construire-paquet-rpm/">Chapitre 10.1 — Construire un paquet RPM</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_10/10.2-gerer-dependances-rpm/">Chapitre 10.2 — Gérer les dépendances RPM</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_10/10.3-gerer-fichiers-configuration-rpm/">Chapitre 10.3 — Gérer les fichiers de configuration RPM</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_10/10.4-signer-paquets-rpm/">Chapitre 10.4 — Signer les paquets RPM</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_10/10.5-exploiter-depot-rpm-prive/">Chapitre 10.5 — Exploiter un dépôt RPM privé</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_10/10.6-packager-sentinel/">Chapitre 10.6 — Packager Sentinel</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 11 - Conteneurs Podman</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_11/11.1-decouvrir-podman/">Chapitre 11.1 — Découvrir Podman</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_11/11.2-conteneurs-rootless/">Chapitre 11.2 — Exécuter des conteneurs rootless</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_11/11.3-construire-images-securisees/">Chapitre 11.3 — Construire des images sécurisées</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_11/11.4-reseaux-conteneurs/">Chapitre 11.4 — Concevoir les réseaux de conteneurs</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_11/11.5-gerer-secrets-podman/">Chapitre 11.5 — Gérer les secrets avec Podman</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_11/11.6-executer-sentinel-securite/">Chapitre 11.6 — Exécuter Sentinel en sécurité</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 12 - Supervision et audit</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_12/12.1-centraliser-journaux-rsyslog/">Chapitre 12.1 — Centraliser les journaux avec Rsyslog</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_12/12.2-auditer-systeme-auditd/">Chapitre 12.2 — Auditer le système avec auditd</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_12/12.3-controler-integrite-fichiers-aide/">Chapitre 12.3 — Contrôler l'intégrité des fichiers avec AIDE</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_12/12.4-superviser-sentinel-prometheus/">Chapitre 12.4 — Superviser Sentinel avec Prometheus</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_12/12.5-concevoir-alertes-alertmanager/">Chapitre 12.5 — Concevoir des alertes avec Alertmanager</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_12/12.6-construire-tableau-bord-sentinel/">Chapitre 12.6 — Construire le tableau de bord Sentinel</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 13 - Attaques et défense</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.1-reconnaissance/">Chapitre 13.1 — Reconnaissance</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.2-scan-reseau/">Chapitre 13.2 — Scan réseau</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.3-brute-force-ssh/">Chapitre 13.3 — Brute force SSH</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.4-escalade-privileges/">Chapitre 13.4 — Escalade de privilèges</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.5-mouvements-lateraux/">Chapitre 13.5 — Mouvements latéraux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.6-persistance/">Chapitre 13.6 — Persistance</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.7-exfiltration/">Chapitre 13.7 — Exfiltration</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.8-etude-cas-complete/">Chapitre 13.8 — Étude de cas complète</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 14 - Projet final</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.1-deployer-sentinel-almalinux-minimale/">Chapitre 14.1 — Déployer Sentinel sur une AlmaLinux minimale</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.2-securiser-hote/">Chapitre 14.2 — Sécuriser l'hôte</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.3-integrer-freeipa/">Chapitre 14.3 — Intégrer FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.4-deployer-ansible/">Chapitre 14.4 — Déployer avec Ansible</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.5-packager-rpm/">Chapitre 14.5 — Packager avec RPM</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.6-conteneuriser-podman/">Chapitre 14.6 — Conteneuriser avec Podman</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.7-superviser-auditer/">Chapitre 14.7 — Superviser et auditer</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.8-audit-final-tests-kali/">Chapitre 14.8 — Audit final et tests depuis Kali</a>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</nav>
+<section class="wy-nav-content-wrap" data-toggle="wy-nav-shift">
+<nav aria-label="Mobile navigation menu" class="wy-nav-top" role="navigation">
+<i class="fa fa-bars" data-toggle="wy-nav-top"></i>
+<a href="../..">Formation Sentinel — AlmaLinux sécurisé</a>
+</nav>
+<div class="wy-nav-content">
+<div class="rst-content"><div aria-label="breadcrumbs navigation" role="navigation">
+<ul class="wy-breadcrumbs">
+<li><a aria-label="Docs" class="icon icon-home" href="../.."></a></li>
+<li class="breadcrumb-item">Campagnes</li>
+<li class="breadcrumb-item">Campagne 2 - Gestion des permissions et des identités</li>
+<li class="breadcrumb-item active">Chapitre 2.7 — Les comptes système</li>
+<li class="wy-breadcrumbs-aside">
+<a href="https://github.com/tdelaclos/formations/edit/master/docs/campagne_02/2.7-comptes-systeme.md">Edit on tdelaclos/formations</a>
+</li>
+</ul>
+<hr/>
+</div>
+<div class="document" itemscope="itemscope" itemtype="http://schema.org/Article" role="main">
+<div class="section" itemprop="articleBody">
+<h1 id="chapitre-27-les-comptes-systeme">Chapitre 2.7 — Les comptes système</h1>
+<blockquote>
+<p><strong>Campagne 2 — Contrôle des accès</strong></p>
+<p><em>« Le service le plus sûr est celui qui ne possède que les privilèges strictement nécessaires à son fonctionnement. »</em></p>
+</blockquote>
+<h2 id="vous-etes-ici">Vous êtes ici</h2>
+<pre><code class="language-text">PARTIE I — Construire un socle sécurisé
+
+Campagne 1  [██████████] ✔
+Campagne 2  [███████░░░]
+
+      2.1 Les permissions UNIX ✔
+      2.2 ACL ✔
+      2.3 umask ✔
+      2.4 Attributs étendus ✔
+      2.5 PAM ✔
+      2.6 Politique de mots de passe ✔
+   ►  2.7 Comptes système
+      2.8 sudo avancé
+      2.9 passwd / shadow / group
+      2.10 Synthèse
+</code></pre>
+<h2 id="objectifs-pedagogiques">Objectifs pédagogiques</h2>
+<p>À la fin de ce chapitre, vous serez capable de :</p>
+<ul>
+<li>distinguer un utilisateur humain d'un compte système ;</li>
+<li>comprendre pourquoi les services Linux utilisent des comptes dédiés ;</li>
+<li>expliquer le principe du moindre privilège appliqué aux démons ;</li>
+<li>identifier les principaux comptes système présents sur AlmaLinux ;</li>
+<li>comprendre comment <code>systemd</code> exécute un service avec une identité spécifique ;</li>
+<li>préparer la création du futur compte de service de Sentinel.</li>
+</ul>
+<h2 id="pourquoi-ce-chapitre-existe">Pourquoi ce chapitre existe</h2>
+<p>Lorsque l'on ouvre pour la première fois : <code>/etc/passwd</code> une surprise attend souvent les nouveaux administrateurs. Ils s'attendent à trouver quelques utilisateurs. À la place, ils découvrent parfois plusieurs dizaines de comptes. Par exemple :</p>
+<pre><code class="language-text">root
+daemon
+bin
+rpc
+sshd
+chrony
+dbus
+nobody
+</code></pre>
+<p>Pourtant, une seule personne utilise réellement la machine. Qui sont donc tous ces utilisateurs ? La réponse est simple. Ils ne représentent généralement <strong>aucun être humain</strong>. Ils représentent des <strong>services</strong>. Chaque service possède sa propre identité. Cette idée est l'un des fondements de la sécurité sous Linux.</p>
+<h2 id="un-service-est-aussi-un-utilisateur">Un service est aussi un utilisateur</h2>
+<p>Prenons un exemple. Le démon OpenSSH. Lorsqu'il accepte une connexion réseau, il s'exécute sous Linux comme un processus. Or, tout processus Linux possède :</p>
+<ul>
+<li>un UID ;</li>
+<li>un GID ;</li>
+<li>des permissions ;</li>
+<li>une identité.</li>
+</ul>
+<p>Autrement dit, un service doit lui aussi être associé à un utilisateur. Le schéma suivant illustre cette idée.</p>
+<div class="mermaid">flowchart LR
+
+    A[Service OpenSSH]
+
+    A --&gt; B[Processus]
+
+    B --&gt; C[UID]
+
+    C --&gt; D[Utilisateur sshd]
+</div>
+<p>Le compte : <code>sshd</code> n'est donc pas destiné à une personne. Il sert à donner une identité au démon.</p>
+<h2 id="pourquoi-ne-pas-tout-executer-en-root">Pourquoi ne pas tout exécuter en <code>root</code> ?</h2>
+<p>Cette question est essentielle. Après tout, <code>root</code> possède tous les droits. Pourquoi créer des dizaines de comptes supplémentaires ? Imaginons un serveur Web. S'il fonctionne sous : <code>root</code> et qu'un attaquant découvre une vulnérabilité, il obtient immédiatement tous les privilèges de la machine. En revanche, si le serveur fonctionne sous : <code>nginx</code> ou : <code>apache</code> l'attaquant obtient seulement les droits associés à ce compte. Les dégâts potentiels sont considérablement réduits. On parle alors de <strong>compartimentation</strong>.</p>
+<p>Chaque service est isolé des autres.</p>
+<h2 id="le-principe-du-moindre-privilege">Le principe du moindre privilège</h2>
+<p>Nous avons déjà rencontré ce principe avec <code>sudo</code>. Nous le retrouvons ici. Chaque service ne doit disposer que des privilèges strictement nécessaires. Ni plus. Ni moins. On peut représenter cette philosophie ainsi.</p>
+<div class="mermaid">flowchart TD
+
+    R[root]
+
+    R --&gt; SSH[sshd]
+
+    R --&gt; WEB[nginx]
+
+    R --&gt; CHRONY[chronyd]
+
+    R --&gt; DBUS[dbus]
+
+    SSH --&gt; P1[Privilèges minimaux]
+
+    WEB --&gt; P2[Privilèges minimaux]
+
+    CHRONY --&gt; P3[Privilèges minimaux]
+
+    DBUS --&gt; P4[Privilèges minimaux]
+</div>
+<p>L'objectif est simple. Une compromission locale ne doit jamais entraîner automatiquement la compromission complète du serveur.</p>
+<h2 id="tous-les-comptes-ne-permettent-pas-de-se-connecter">Tous les comptes ne permettent pas de se connecter</h2>
+<p>Observons quelques lignes de : <code>/etc/passwd</code></p>
+<pre><code class="language-text">chrony:x:987:985::/var/lib/chrony:/sbin/nologin
+
+sshd:x:74:74::/run/sshd:/sbin/nologin
+
+rpc:x:32:32::/var/lib/rpcbind:/sbin/nologin
+</code></pre>
+<p>Que remarque-t-on ? Le dernier champ vaut souvent : <code>/sbin/nologin</code> ou : <code>/usr/sbin/nologin</code> Selon la distribution. Cela signifie que ces comptes ne disposent pas d'un shell interactif. Ils ne sont pas destinés à accueillir une session utilisateur. Ils existent uniquement pour donner une identité à un processus. Cette différence est fondamentale. Un compte système n'est pas nécessairement un compte de connexion.</p>
+<h2 id="une-identite-sans-connexion">Une identité sans connexion</h2>
+<p>Il est important de bien distinguer deux notions. La première. Le processus possède une identité. La seconde. Cette identité peut ouvrir une session. Ce sont deux concepts différents. On peut représenter cela ainsi.</p>
+<div class="mermaid">flowchart LR
+
+    A[Compte système]
+
+    A --&gt; B[Identité Linux]
+
+    A --&gt; C[UID]
+
+    A --&gt; D[GID]
+
+    A -.-&gt; E[Connexion interactive ?]
+
+    E --&gt;|Non| F["/sbin/nologin"]
+</div>
+<p>Le démon utilise bien cette identité. Mais aucun utilisateur ne peut normalement ouvrir une session interactive avec ce compte.</p>
+<h2 id="qui-cree-ces-comptes">Qui crée ces comptes ?</h2>
+<p>La plupart des comptes système sont créés automatiquement. Par exemple :</p>
+<ul>
+<li>lors de l'installation du système ;</li>
+<li>lors de l'installation d'un paquet RPM ;</li>
+<li>lors de la création d'un nouveau service.</li>
+</ul>
+<p>Prenons un exemple. Vous installez : <code>chrony</code> Le paquet crée automatiquement : <code>chrony</code> avec :</p>
+<ul>
+<li>un UID ;</li>
+<li>un GID ;</li>
+<li>un répertoire adapté ;</li>
+<li>un shell <code>nologin</code>.</li>
+</ul>
+<p>L'administrateur n'a généralement aucune intervention à effectuer. Le paquet prépare directement l'environnement de sécurité du service.</p>
+<h2 id="un-service-demarre-t-il-en-root">Un service démarre-t-il en <code>root</code> ?</h2>
+<p>Cette question revient très souvent. La réponse mérite quelques explications. De nombreux services doivent effectivement réaliser certaines opérations privilégiées lors de leur démarrage. Par exemple :</p>
+<ul>
+<li>ouvrir un port inférieur à <code>1024</code> ;</li>
+<li>accéder à un fichier appartenant à <code>root</code> ;</li>
+<li>créer un socket système ;</li>
+<li>initialiser certains périphériques.</li>
+</ul>
+<p>Historiquement, ces services étaient lancés directement par <code>root</code>. Le démon réalisait ses opérations privilégiées. Puis il appelait les fonctions système :</p>
+<pre><code class="language-c">setgid()
+</code></pre>
+<p>puis :</p>
+<pre><code class="language-c">setuid()
+</code></pre>
+<p>afin d'abandonner ses privilèges. On parle souvent de <strong>drop privileges</strong>. Le déroulement était approximativement le suivant.</p>
+<div class="mermaid">sequenceDiagram
+
+    participant Root
+
+    participant Service
+
+    Root-&gt;&gt;Service: Lancer le démon
+
+    Service-&gt;&gt;Service: Initialisation privilégiée
+
+    Service-&gt;&gt;Service: setgid()
+
+    Service-&gt;&gt;Service: setuid()
+
+    Service-&gt;&gt;Service: Exécution avec un compte système
+</div>
+<p>Cette approche fonctionne encore. Mais elle présente plusieurs inconvénients. Le code du service doit gérer lui-même cette transition. Une erreur de programmation peut laisser le démon fonctionner en <code>root</code> plus longtemps que prévu.</p>
+<h2 id="le-role-de-systemd">Le rôle de <code>systemd</code></h2>
+<p>Aujourd'hui, la plupart des services Linux sont lancés par : <code>systemd</code> <code>systemd</code> est exécuté sous l'identité : <code>root</code> Il possède donc les privilèges nécessaires pour préparer le futur processus. Lorsqu'une unité contient :</p>
+<pre><code class="language-ini">[Service]
+User=chrony
+Group=chrony
+</code></pre>
+<p><code>systemd</code> crée directement le processus avec l'identité demandée. Le démon n'a plus besoin d'appeler lui-même : <code>setuid()</code> dans la majorité des cas. Le schéma devient alors beaucoup plus simple.</p>
+<div class="mermaid">flowchart TD
+
+    PID1[systemd - PID 1]
+
+    PID1 --&gt; P[Création du processus]
+
+    P --&gt; UID[UID = chrony]
+
+    UID --&gt; SERVICE[Le service démarre déjà avec&lt;br/&gt;les bons privilèges]
+</div>
+<p>Cette approche réduit le risque d'erreur dans le code applicatif. Elle participe au durcissement général du système.</p>
+<h2 id="existe-t-il-encore-des-services-qui-commencent-en-root">Existe-t-il encore des services qui commencent en <code>root</code> ?</h2>
+<p>Oui. Certaines applications doivent encore réaliser des opérations privilégiées avant de réduire leurs droits. Par exemple :</p>
+<ul>
+<li>ouvrir un port TCP inférieur à <code>1024</code> lorsqu'elles ne s'appuient pas sur les mécanismes modernes de <code>systemd</code> ;</li>
+<li>manipuler certains périphériques ;</li>
+<li>effectuer une initialisation nécessitant des privilèges élevés.</li>
+</ul>
+<p>Cependant, cette pratique est de moins en moins courante. Aujourd'hui, plusieurs mécanismes permettent d'éviter de conserver des privilèges élevés. Par exemple :</p>
+<ul>
+<li>les <strong>capacités Linux</strong> (<em>Capabilities</em>) ;</li>
+<li>l'activation par socket de <code>systemd</code> (<em>Socket Activation</em>) ;</li>
+<li>les espaces de noms (<em>Namespaces</em>) ;</li>
+<li>les services <code>systemd</code> fortement sandboxés.</li>
+</ul>
+<p>Nous étudierons tous ces mécanismes dans les campagnes suivantes. L'objectif est toujours le même. Réduire au maximum la durée pendant laquelle un processus possède des privilèges élevés.</p>
+<h2 id="les-capacites-linux-un-apercu">Les capacités Linux : un aperçu</h2>
+<p>Pendant longtemps, un programme avait deux possibilités. Soit : <code>root</code> Soit : <code>non-root</code> Cette vision était très binaire. Les capacités Linux introduisent une approche beaucoup plus fine. Au lieu de donner tous les privilèges de <code>root</code>, on peut accorder uniquement ceux qui sont réellement nécessaires. Par exemple :</p>
+<ul>
+<li>ouvrir un port privilégié ;</li>
+<li>modifier l'horloge système ;</li>
+<li>administrer le réseau.</li>
+</ul>
+<p>On peut représenter cette évolution ainsi.</p>
+<div class="mermaid">graph LR
+
+    A[Ancien modèle]
+
+    A --&gt; ROOT[root = tous les privilèges]
+
+    A --&gt; USER[Utilisateur = aucun privilège]
+
+    B[Nouveau modèle]
+
+    B --&gt; CAP[Capacités individuelles]
+
+    CAP --&gt; NET[CAP_NET_BIND_SERVICE]
+
+    CAP --&gt; TIME[CAP_SYS_TIME]
+
+    CAP --&gt; ADMIN[Autres capacités]
+</div>
+<p>Nous consacrerons un chapitre entier aux capacités Linux dans la campagne <strong>5.5</strong>.</p>
+<h2 id="pourquoi-autant-de-comptes-systeme">Pourquoi autant de comptes système ?</h2>
+<p>Prenons un serveur classique. Il peut héberger :</p>
+<ul>
+<li>OpenSSH ;</li>
+<li>Chrony ;</li>
+<li>Podman ;</li>
+<li>SSSD ;</li>
+<li>D-Bus ;</li>
+<li>Auditd ;</li>
+<li>Nginx ;</li>
+<li>Sentinel.</li>
+</ul>
+<p>Chacun possède son propre compte. Pourquoi ? Parce qu'une vulnérabilité dans : <code>chronyd</code> ne doit pas donner accès :</p>
+<ul>
+<li>aux journaux de Nginx ;</li>
+<li>aux certificats de SSSD ;</li>
+<li>aux fichiers de Sentinel.</li>
+</ul>
+<p>Chaque compte constitue une frontière de sécurité.</p>
+<div class="mermaid">flowchart TD
+
+    ROOT[root]
+
+    ROOT --&gt; SSH[sshd]
+
+    ROOT --&gt; WEB[nginx]
+
+    ROOT --&gt; CHRONY[chronyd]
+
+    ROOT --&gt; SENT[Sentinel]
+
+    SSH --&gt; FS1[Fichiers SSH]
+
+    WEB --&gt; FS2[Fichiers Web]
+
+    CHRONY --&gt; FS3[Fichiers Chrony]
+
+    SENT --&gt; FS4[Fichiers Sentinel]
+</div>
+<p>Cette isolation limite considérablement les conséquences d'une compromission.</p>
+<h3 id="culture-technique">Culture technique</h3>
+<p>Les premiers UNIX comportaient déjà plusieurs comptes spéciaux. On retrouvait notamment : <code>daemon</code> <code>bin</code> <code>lp</code> <code>mail</code> Ces comptes servaient principalement à séparer les différents services système. Au fil des années, cette approche s'est affinée. Aujourd'hui, chaque démon important dispose généralement de son propre compte. Cette évolution suit une tendance générale de la sécurité moderne. Au lieu de faire confiance à quelques comptes très puissants, on préfère multiplier les identités très spécialisées.</p>
+<p>Cette philosophie se retrouve également dans :</p>
+<ul>
+<li>Kubernetes avec les <strong>Service Accounts</strong> ;</li>
+<li>les identités IAM dans les environnements cloud ;</li>
+<li>les comptes de service Windows ;</li>
+<li>les rôles utilisés dans les bases de données.</li>
+</ul>
+<p>Le principe reste identique. Une identité. Une responsabilité. Le minimum de privilèges.</p>
+<h3 id="piege-classique">Piège classique</h3>
+<p>Une erreur fréquente consiste à lancer un nouveau service en <code>root</code> « pour simplifier ». Le raisonnement ressemble souvent à ceci.</p>
+<blockquote>
+<p>« Je commencerai par le faire fonctionner.</p>
+<p>Je réduirai les privilèges plus tard. »</p>
+</blockquote>
+<p>Dans la pratique, ce « plus tard » n'arrive pas toujours. Le service reste exécuté avec des privilèges excessifs pendant des mois, voire des années. À l'inverse, il est beaucoup plus simple de concevoir un service sécurisé dès le départ. Si un accès privilégié est réellement nécessaire, il doit être :</p>
+<ul>
+<li>identifié ;</li>
+<li>justifié ;</li>
+<li>documenté ;</li>
+<li>limité au strict nécessaire.</li>
+</ul>
+<p>La sécurité doit accompagner le développement. Elle ne doit pas être une étape ajoutée après coup.</p>
+<h2 id="tp-1-experimenter-sur-almalinux">TP 1 — Expérimenter sur AlmaLinux</h2>
+<p>Observons quelques comptes système présents sur une installation AlmaLinux. Commençons par filtrer les comptes dont le shell est <code>nologin</code>.</p>
+<pre><code class="language-bash">grep nologin /etc/passwd
+</code></pre>
+<p>Vous obtiendrez un résultat proche de :</p>
+<pre><code class="language-text">sshd:x:74:74::/run/sshd:/sbin/nologin
+chrony:x:987:985::/var/lib/chrony:/sbin/nologin
+rpc:x:32:32::/var/lib/rpcbind:/sbin/nologin
+</code></pre>
+<p>Choisissez ensuite l'un de ces comptes. Par exemple :</p>
+<pre><code class="language-bash">id chrony
+</code></pre>
+<p>Observez son UID et son GID. Essayez maintenant de lancer une session interactive.</p>
+<pre><code class="language-bash">su - chrony
+</code></pre>
+<p>Le système refusera généralement la connexion. Pourquoi ? Parce que le shell associé est : <code>/sbin/nologin</code> Le compte existe. Le processus peut l'utiliser. Mais il n'est pas destiné à accueillir un utilisateur humain. Créons maintenant un véritable compte de service.</p>
+<pre><code class="language-bash">sudo useradd \
+    --system \
+    --home-dir /var/lib/demo \
+    --shell /sbin/nologin \
+    demo-service
+</code></pre>
+<p>Vérifions son existence.</p>
+<pre><code class="language-bash">id demo-service
+</code></pre>
+<p>Puis :</p>
+<pre><code class="language-bash">grep demo-service /etc/passwd
+</code></pre>
+<p>Vous venez de créer exactement le type de compte que nous utiliserons plus tard pour Sentinel.</p>
+<h2 id="creer-et-faire-evoluer-les-identites-de-service">Créer et faire évoluer les identités de service</h2>
+<p><code>useradd --system</code> n'est pas la seule méthode. Un paquet RPM peut déclarer un utilisateur dans ses scripts, tandis que <code>systemd-sysusers</code> décrit de façon déclarative les comptes et groupes nécessaires au démarrage ou à l'installation. Cette approche facilite la reproductibilité et évite d'attribuer manuellement un UID choisi au hasard.</p>
+<pre><code class="language-text"># Type Nom       ID  GECOS              Répertoire
+u sentinel       -   "Service Sentinel" /var/lib/sentinel
+g sentinel-admin -
+</code></pre>
+<p>Les plages d'UID système sont une convention de distribution, pas une frontière de sécurité. Le noyau ne sait pas qu'un UID est « humain » ou « système » : il applique les mêmes contrôles numériques. Évitez donc de coder un seuil arbitraire dans une application ; interrogez NSS et la politique locale.</p>
+<p><code>DynamicUser=yes</code> permet à <code>systemd</code> d'allouer une identité transitoire pour certains services. C'est intéressant lorsque le service n'a pas besoin d'un propriétaire stable dans des données persistantes. Pour Sentinel, qui possède <code>/var/lib/sentinel</code> et doit rester cohérent entre paquet, sauvegarde et exploitation, un compte statique est souvent plus simple. Connaître l'option permet néanmoins de choisir au lieu de reproduire une habitude.</p>
+<p>Trois notions doivent rester séparées :</p>
+<ul>
+<li>un mot de passe verrouillé empêche l'authentification par ce mot de passe ;</li>
+<li>un shell <code>nologin</code> refuse une session interactive normale ;</li>
+<li>une identité de service peut encore être utilisée par <code>systemd</code>, <code>sudo -u</code>, une tâche ou un processus compromis.</li>
+</ul>
+<p>Le cycle de vie compte autant que la création. Avant de supprimer un compte, cherchez ses processus, fichiers, tâches planifiées, règles <code>sudo</code>, ACL et unités. Un UID réutilisé trop tôt peut rendre un nouvel utilisateur propriétaire d'anciens fichiers.</p>
+<pre><code class="language-bash">sudo find / -xdev -uid "$(id -u demo-service)" -print 2&gt;/dev/null
+sudo loginctl user-status demo-service
+</code></pre>
+<h2 id="tp-2-comparer-identite-statique-et-dynamique">TP 2 — Comparer identité statique et dynamique</h2>
+<p>Écrivez deux unités de laboratoire très simples : l'une avec <code>User=demo-service</code>, l'autre avec <code>DynamicUser=yes</code> et <code>StateDirectory=demo-dynamic</code>. Observez l'identité avec <code>systemctl status</code>, <code>ps -o user,uid,cmd</code> et <code>stat</code> sur les répertoires. Supprimez ensuite seulement les unités de test et expliquez ce qui persiste.</p>
+<h2 id="mission-dingenieur-specifier-le-compte-sentinel">Mission d'ingénieur — Spécifier le compte Sentinel</h2>
+<p>Rédigez la fiche de l'identité Sentinel : mode de création, stabilité de l'UID, groupe principal, groupes secondaires autorisés, shell, répertoire personnel ou d'état, authentification, propriétaires de fichiers, privilèges nécessaires et procédure de suppression. Ajoutez une preuve pour chaque propriété et justifiez pourquoi le service n'est ni <code>root</code> ni un compte humain partagé.</p>
+<h2 id="impact-sur-sentinel">Impact sur Sentinel</h2>
+<p>Sentinel sera installée comme un véritable service d'entreprise. Elle ne fonctionnera jamais sous : <code>root</code> Lors de l'installation du paquet RPM, un compte dédié sera créé. Par exemple : <code>sentinel</code> L'unité <code>systemd</code> utilisera ensuite cette identité.</p>
+<pre><code class="language-ini">[Service]
+User=sentinel
+Group=sentinel
+</code></pre>
+<p>Les répertoires de travail appartiendront à ce compte. Par exemple :</p>
+<pre><code class="language-text">/var/lib/sentinel
+
+/var/log/sentinel
+
+/etc/sentinel
+</code></pre>
+<p>Chaque répertoire recevra uniquement les permissions nécessaires. Cette architecture limitera fortement les conséquences d'une éventuelle vulnérabilité dans Sentinel. Nous enrichirons progressivement cette protection avec :</p>
+<ul>
+<li>les capacités Linux ;</li>
+<li>le sandboxing <code>systemd</code> ;</li>
+<li>SELinux ;</li>
+<li>les politiques de fichiers.</li>
+</ul>
+<p>Le compte système constitue simplement la première étape de cette démarche.</p>
+<h2 id="synthese">Synthèse</h2>
+<ul>
+<li>Un compte système représente généralement un <strong>service</strong>, pas un utilisateur humain.</li>
+<li>Chaque processus Linux s'exécute avec une identité (UID et GID).</li>
+<li>Le principe du moindre privilège impose qu'un service ne possède que les droits strictement nécessaires.</li>
+<li>La plupart des comptes système utilisent un shell de type <code>nologin</code>, ce qui empêche les connexions interactives.</li>
+<li>Les services modernes sont généralement lancés par <code>systemd</code> directement sous leur identité définitive grâce aux directives <code>User=</code> et <code>Group=</code>.</li>
+<li>Les comptes système ne constituent qu'une première couche de protection ; ils sont complétés par d'autres mécanismes comme les capacités Linux, le sandboxing <code>systemd</code> et SELinux.</li>
+<li>Une bonne conception consiste à créer un compte dédié pour chaque service applicatif.</li>
+</ul>
+<h2 id="pour-aller-plus-loin">Pour aller plus loin</h2>
+<p>Nous savons désormais qu'un service fonctionne avec une identité dédiée. Nous savons également qu'un utilisateur ordinaire ne doit pas travailler quotidiennement avec les privilèges de <code>root</code>. Une question essentielle reste pourtant en suspens.</p>
+<blockquote>
+<p><strong>Comment un administrateur réalise-t-il des opérations privilégiées sans ouvrir directement une session <code>root</code> ?</strong></p>
+</blockquote>
+<p>Pendant longtemps, la réponse était simple. On utilisait :</p>
+<pre><code class="language-bash">su -
+</code></pre>
+<p>Cette approche présente cependant plusieurs inconvénients. Aujourd'hui, la quasi-totalité des infrastructures Linux professionnelles repose sur un autre mécanisme : <code>sudo</code> Mais contrairement à ce que beaucoup imaginent, <code>sudo</code> ne se limite pas à exécuter une commande en tant que <code>root</code>.</p>
+<p>Il constitue un véritable moteur de délégation de privilèges, capable d'accorder des droits extrêmement précis, de journaliser les actions réalisées et, dans les grandes entreprises, de s'intégrer directement à des annuaires comme FreeIPA. Dans le prochain chapitre, nous allons découvrir pourquoi <code>sudo</code> est devenu l'un des piliers de l'administration sécurisée des systèmes Linux modernes.</p>
+<p>← <a href="../2.6-politique-mots-de-passe/">2.6 — Politique de mots de passe</a> · <a href="../2.8-sudo-avance/">2.8 — <code>sudo</code> avancé</a> →</p>
+</div>
+</div><footer>
+<div aria-label="Footer Navigation" class="rst-footer-buttons" role="navigation">
+<a class="btn btn-neutral float-left" href="../2.6-politique-mots-de-passe/" title="Chapitre 2.6 — Politique de mots de passe"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+<a class="btn btn-neutral float-right" href="../2.8-sudo-avance/" title="Chapitre 2.8 — sudo avancé">Next <span class="icon icon-circle-arrow-right"></span></a>
+</div>
+<hr/>
+<div role="contentinfo">
+<!-- Copyright etc -->
+</div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+</div>
+</div>
+</section>
+</div>
+<div aria-label="Versions" class="rst-versions" role="note">
+<span class="rst-current-version" data-toggle="rst-current-version">
+<span>
+<a class="fa fa-code-fork" href="https://github.com/tdelaclos/formations" style="color: #fcfcfc"> tdelaclos/formations</a>
+</span>
+<span><a href="../2.6-politique-mots-de-passe/" style="color: #fcfcfc">« Previous</a></span>
+<span><a href="../2.8-sudo-avance/" style="color: #fcfcfc">Next »</a></span>
+</span>
+</div>
+<script src="../../js/jquery-3.6.0.min.js"></script>
+<script>var base_url = "../..";</script>
+<script src="../../js/theme_extra.js"></script>
+<script src="../../js/theme.js"></script>
+<script src="../../search/main.js"></script>
+<script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+<script type="module">import mermaid from "https://unpkg.com/mermaid@10.4.0/dist/mermaid.esm.min.mjs";
+mermaid.initialize({});</script></body>
+</html>

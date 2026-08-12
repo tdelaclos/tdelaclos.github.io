@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+
+<html class="writer-html5" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="IE=edge" http-equiv="X-UA-Compatible"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="../../img/favicon.ico" rel="shortcut icon"/>
+<title>Chapitre 12.1 — Centraliser les journaux avec Rsyslog - Formation Sentinel — AlmaLinux sécurisé</title>
+<link href="../../css/theme.css" rel="stylesheet"/>
+<link href="../../css/theme_extra.css" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" rel="stylesheet"/>
+<script>
+        // Current page data
+        var mkdocs_page_name = "Chapitre 12.1 \u2014 Centraliser les journaux avec Rsyslog";
+        var mkdocs_page_input_path = "campagne_12/12.1-centraliser-journaux-rsyslog.md";
+        var mkdocs_page_url = null;
+      </script>
+<!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+<script>hljs.highlightAll();</script>
+</head>
+<body class="wy-body-for-nav" role="document">
+<div class="wy-grid-for-nav">
+<nav class="wy-nav-side stickynav" data-toggle="wy-nav-shift">
+<div class="wy-side-scroll">
+<div class="wy-side-nav-search">
+<a class="icon icon-home" href="../.."> Formation Sentinel — AlmaLinux sécurisé
+        </a><div role="search">
+<form action="../../search.html" class="wy-form" id="rtd-search-form" method="get">
+<input aria-label="Search docs" name="q" placeholder="Search docs" title="Type search term here" type="text"/>
+</form>
+</div>
+</div>
+<div aria-label="Navigation menu" class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../..">Accueil</a>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">A propos</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../GUIDE-REDACTION/">Guide de rédaction</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../PARCOURS-SENTINEL/">Parcours applicatif Sentinel</a>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Campagnes</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal">Campagne 1 - Sécuriser le socle Linux</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.1-pourquoi-securiser-socle-linux/">Chapitre 1.1 — Pourquoi sécuriser un socle Linux ?</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.2-installation-almalinux-minimal/">Chapitre 1.2 — Installer AlmaLinux minimal</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.3-composants-systeme-linux/">Chapitre 1.3 — Comprendre les composants d'un système Linux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.4-premier-demarrage-verifications/">Chapitre 1.4 — Établir la baseline du serveur</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.5-mise-a-jour-gestion-depots/">Chapitre 1.5 — Mettre à jour et gérer les dépôts</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.6-architecture-systemes-fichiers/">Chapitre 1.6 — Organiser les systèmes de fichiers</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.7-utilisateurs-groupes-permissions/">Chapitre 1.7 — Comprendre identités et permissions</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.8-sudo-moindre-privilege/">Chapitre 1.8 — Administrer avec sudo</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.9-premiere-mise-en-securite-serveur/">Chapitre 1.9 — Mission : mettre le serveur en sécurité</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.10-creation-laboratoire-sentinel/">Chapitre 1.10 — Créer le laboratoire Sentinel</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 2 - Gestion des permissions et des identités</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.1-permissions-unix/">Chapitre 2.1 — Les permissions UNIX</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.2-acl/">Chapitre 2.2 — Les ACL</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.3-umask/">Chapitre 2.3 — L'umask</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.4-attributs-etendus/">Chapitre 2.4 — Les attributs étendus</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.5-pam/">Chapitre 2.5 — PAM</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.6-politique-mots-de-passe/">Chapitre 2.6 — Politique de mots de passe</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.7-comptes-systeme/">Chapitre 2.7 — Les comptes système</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.8-sudo-avance/">Chapitre 2.8 — sudo avancé</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.9-fichiers-identites-linux/">Chapitre 2.9 — Comprendre les fichiers d'identités Linux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.10-synthese-securiser-identites/">Chapitre 2.10 — Synthèse : sécuriser les identités</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 3 - TCP/IP et Firewalld</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.1-tcp-ip-administrateur/">Chapitre 3.1 — TCP/IP côté administrateur</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.2-architecture-firewalld/">Chapitre 3.2 — Architecture de Firewalld</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.3-zones-firewalld/">Chapitre 3.3 — Les zones Firewalld</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.4-services-firewalld/">Chapitre 3.4 — Les services Firewalld</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.5-conntrack-filtrage-etats/">Chapitre 3.5 — Conntrack et le filtrage par états</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.6-rich-rules-firewalld/">Chapitre 3.6 — Les Rich Rules Firewalld</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.7-journalisation-firewalld/">Chapitre 3.7 — Journalisation et analyse Firewalld</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.8-ip-sets-firewalld/">Chapitre 3.8 — Les IP Sets Firewalld</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.9-runtime-permanent/">Chapitre 3.9 — Runtime et Permanent</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.10-politique-reseau-sentinel/">Chapitre 3.10 — Concevoir la politique réseau de Sentinel</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 4 - SSH</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_04/4.1-architecture-openssh/">Chapitre 4.1 — Architecture d'OpenSSH</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_04/4.2-authentification-mot-de-passe/">Chapitre 4.2 — Authentification par mot de passe</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_04/4.3-authentification-par-cles/">Chapitre 4.3 — Authentification par clés</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_04/4.4-durcissement-sshd-config/">Chapitre 4.4 — Durcissement de sshd_config</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_04/4.5-bastion-administration/">Chapitre 4.5 — Bastion d'administration</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_04/4.6-journalisation-audit-ssh/">Chapitre 4.6 — Journalisation et audit SSH</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_04/4.7-protection-attaques-ssh/">Chapitre 4.7 — Protection contre les attaques SSH</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_04/4.8-mission-administration-sentinel/">Chapitre 4.8 — Mission : administrer Sentinel en sécurité</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 5 - Systemd</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.1-comprendre-systemd/">Chapitre 5.1 — Comprendre systemd</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.2-unites-systemd/">Chapitre 5.2 — Les unités systemd</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.3-creer-service-sentinel/">Chapitre 5.3 — Créer le service Sentinel</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.4-sandboxing-systemd/">Chapitre 5.4 — Sandboxing systemd</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.5-capacites-linux/">Chapitre 5.5 — Les capacités Linux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.6-journalisation-journald/">Chapitre 5.6 — Journalisation avec journald</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.7-supervision-redemarrage/">Chapitre 5.7 — Supervision et redémarrage automatique</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.8-mission-sentinel-resilient/">Chapitre 5.8 — Mission : rendre Sentinel résilient</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 6 - SELinux</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_06/6.1-pourquoi-selinux-existe/">Chapitre 6.1 — Pourquoi SELinux existe</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_06/6.2-contextes-selinux/">Chapitre 6.2 — Comprendre les contextes SELinux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_06/6.3-politiques-selinux/">Chapitre 6.3 — Les politiques SELinux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_06/6.4-diagnostic-refus-selinux/">Chapitre 6.4 — Diagnostiquer les refus SELinux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_06/6.5-creation-regles-selinux/">Chapitre 6.5 — Créer des règles SELinux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_06/6.6-securiser-sentinel-selinux/">Chapitre 6.6 — Sécuriser Sentinel avec SELinux</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 7 - TLS et PKI</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.1-comprendre-cryptographie-appliquee/">Chapitre 7.1 — Comprendre la cryptographie appliquée</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.2-lire-verifier-certificats-x509/">Chapitre 7.2 — Lire et vérifier les certificats X.509</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.3-construire-autorite-certification/">Chapitre 7.3 — Construire une autorité de certification</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.4-authentification-mutuelle-tls/">Chapitre 7.4 — Authentifier les deux extrémités avec mTLS</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.5-preparer-integration-freeipa/">Chapitre 7.5 — Préparer l'intégration à FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.6-renouveler-revoquer-certificats/">Chapitre 7.6 — Renouveler et révoquer les certificats</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.7-securiser-sentinel-tls/">Chapitre 7.7 — Sécuriser Sentinel avec TLS</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 8 - FreeIPA</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.1-presentation-freeipa/">Chapitre 8.1 — Découvrir FreeIPA et la gestion centralisée des identités</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.2-architecture-interne-freeipa/">Chapitre 8.2 — Comprendre l'architecture interne de FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.3-installation-freeipa/">Chapitre 8.3 — Installer un serveur FreeIPA de laboratoire</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.4-gestion-utilisateurs/">Chapitre 8.4 — Gérer le cycle de vie des utilisateurs FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.5-groupes-roles/">Chapitre 8.5 — Organiser les groupes et les rôles FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.6-politiques-sudo/">Chapitre 8.6 — Centraliser les politiques sudo avec FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.7-gestion-hotes/">Chapitre 8.7 — Enrôler les hôtes et contrôler les accès avec HBAC</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.8-certificats/">Chapitre 8.8 — Gérer les certificats de service avec FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.9-integration-sentinel/">Chapitre 8.9 — Intégrer Sentinel à FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.10-mission-administration-freeipa/">Chapitre 8.10 — Mission : administrer Sentinel avec FreeIPA</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 9 - Déploiement avec Ansible</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.1-architecture-ansible/">Chapitre 9.1 — Comprendre l'architecture Ansible</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.2-composants-ansible/">Chapitre 9.2 — Comprendre les composants et l'idempotence Ansible</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.3-inventaires/">Chapitre 9.3 — Construire les inventaires Ansible</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.4-premiers-playbooks/">Chapitre 9.4 — Écrire les premiers playbooks</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.5-variables-templates/">Chapitre 9.5 — Piloter la configuration avec variables et templates</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.6-roles-ansible/">Chapitre 9.6 — Concevoir des rôles Ansible réutilisables</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.7-deployer-sentinel-ansible/">Chapitre 9.7 — Déployer Sentinel avec Ansible</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.8-integrer-sentinel-freeipa/">Chapitre 9.8 — Automatiser l'intégration de Sentinel à FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.9-industrialiser-laboratoire/">Chapitre 9.9 — Industrialiser le projet Ansible</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.10-mission-deploiement-sentinel/">Chapitre 9.10 — Mission : reconstruire Sentinel avec Ansible</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 10 - Packaging RPM</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_10/10.1-construire-paquet-rpm/">Chapitre 10.1 — Construire un paquet RPM</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_10/10.2-gerer-dependances-rpm/">Chapitre 10.2 — Gérer les dépendances RPM</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_10/10.3-gerer-fichiers-configuration-rpm/">Chapitre 10.3 — Gérer les fichiers de configuration RPM</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_10/10.4-signer-paquets-rpm/">Chapitre 10.4 — Signer les paquets RPM</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_10/10.5-exploiter-depot-rpm-prive/">Chapitre 10.5 — Exploiter un dépôt RPM privé</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_10/10.6-packager-sentinel/">Chapitre 10.6 — Packager Sentinel</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 11 - Conteneurs Podman</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_11/11.1-decouvrir-podman/">Chapitre 11.1 — Découvrir Podman</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_11/11.2-conteneurs-rootless/">Chapitre 11.2 — Exécuter des conteneurs rootless</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_11/11.3-construire-images-securisees/">Chapitre 11.3 — Construire des images sécurisées</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_11/11.4-reseaux-conteneurs/">Chapitre 11.4 — Concevoir les réseaux de conteneurs</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_11/11.5-gerer-secrets-podman/">Chapitre 11.5 — Gérer les secrets avec Podman</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_11/11.6-executer-sentinel-securite/">Chapitre 11.6 — Exécuter Sentinel en sécurité</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal current">Campagne 12 - Supervision et audit</a>
+<ul class="current">
+<li class="toctree-l2 current"><a class="reference internal current" href="#">Chapitre 12.1 — Centraliser les journaux avec Rsyslog</a>
+<ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="#vous-etes-ici">Vous êtes ici</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#objectifs-pedagogiques">Objectifs pédagogiques</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pourquoi-ce-chapitre-existe">Pourquoi ce chapitre existe</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#observer-journaliser-et-auditer">Observer, journaliser et auditer</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#comprendre-la-chaine-almalinux">Comprendre la chaîne AlmaLinux</a>
+<ul>
+<li class="toctree-l4"><a class="reference internal" href="#facility-et-severite">Facility et sévérité</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#concevoir-larchitecture-du-laboratoire">Concevoir l'architecture du laboratoire</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#choisir-le-transport">Choisir le transport</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#preparer-la-confiance-tls">Préparer la confiance TLS</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#configurer-le-collecteur">Configurer le collecteur</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#configurer-le-client-et-sa-file-dattente">Configurer le client et sa file d'attente</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#valider-avant-de-recharger">Valider avant de recharger</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#tp-1-prouver-une-collecte-chiffree">TP 1 — Prouver une collecte chiffrée</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#tp-2-tester-la-coupure-et-la-reprise">TP 2 — Tester la coupure et la reprise</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#tp-3-construire-une-requete-denquete">TP 3 — Construire une requête d'enquête</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#exploiter-sans-creer-un-nouveau-risque">Exploiter sans créer un nouveau risque</a>
+<ul>
+<li class="toctree-l4"><a class="reference internal" href="#horodatage">Horodatage</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#retention">Rétention</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#confidentialite-et-moindre-privilege">Confidentialité et moindre privilège</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#integrite-et-externalisation">Intégrité et externalisation</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#mission-dingenieur-ecrire-le-contrat-de-journalisation-sentinel">Mission d'ingénieur — Écrire le contrat de journalisation Sentinel</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#impact-sur-sentinel">Impact sur Sentinel</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#references-techniques">Références techniques</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#synthese">Synthèse</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pour-aller-plus-loin">Pour aller plus loin</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#schema-recapitulatif">Schéma récapitulatif</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../12.2-auditer-systeme-auditd/">Chapitre 12.2 — Auditer le système avec auditd</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../12.3-controler-integrite-fichiers-aide/">Chapitre 12.3 — Contrôler l'intégrité des fichiers avec AIDE</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../12.4-superviser-sentinel-prometheus/">Chapitre 12.4 — Superviser Sentinel avec Prometheus</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../12.5-concevoir-alertes-alertmanager/">Chapitre 12.5 — Concevoir des alertes avec Alertmanager</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../12.6-construire-tableau-bord-sentinel/">Chapitre 12.6 — Construire le tableau de bord Sentinel</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 13 - Attaques et défense</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.1-reconnaissance/">Chapitre 13.1 — Reconnaissance</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.2-scan-reseau/">Chapitre 13.2 — Scan réseau</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.3-brute-force-ssh/">Chapitre 13.3 — Brute force SSH</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.4-escalade-privileges/">Chapitre 13.4 — Escalade de privilèges</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.5-mouvements-lateraux/">Chapitre 13.5 — Mouvements latéraux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.6-persistance/">Chapitre 13.6 — Persistance</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.7-exfiltration/">Chapitre 13.7 — Exfiltration</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.8-etude-cas-complete/">Chapitre 13.8 — Étude de cas complète</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 14 - Projet final</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.1-deployer-sentinel-almalinux-minimale/">Chapitre 14.1 — Déployer Sentinel sur une AlmaLinux minimale</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.2-securiser-hote/">Chapitre 14.2 — Sécuriser l'hôte</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.3-integrer-freeipa/">Chapitre 14.3 — Intégrer FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.4-deployer-ansible/">Chapitre 14.4 — Déployer avec Ansible</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.5-packager-rpm/">Chapitre 14.5 — Packager avec RPM</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.6-conteneuriser-podman/">Chapitre 14.6 — Conteneuriser avec Podman</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.7-superviser-auditer/">Chapitre 14.7 — Superviser et auditer</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.8-audit-final-tests-kali/">Chapitre 14.8 — Audit final et tests depuis Kali</a>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</nav>
+<section class="wy-nav-content-wrap" data-toggle="wy-nav-shift">
+<nav aria-label="Mobile navigation menu" class="wy-nav-top" role="navigation">
+<i class="fa fa-bars" data-toggle="wy-nav-top"></i>
+<a href="../..">Formation Sentinel — AlmaLinux sécurisé</a>
+</nav>
+<div class="wy-nav-content">
+<div class="rst-content"><div aria-label="breadcrumbs navigation" role="navigation">
+<ul class="wy-breadcrumbs">
+<li><a aria-label="Docs" class="icon icon-home" href="../.."></a></li>
+<li class="breadcrumb-item">Campagnes</li>
+<li class="breadcrumb-item">Campagne 12 - Supervision et audit</li>
+<li class="breadcrumb-item active">Chapitre 12.1 — Centraliser les journaux avec Rsyslog</li>
+<li class="wy-breadcrumbs-aside">
+<a href="https://github.com/tdelaclos/formations/edit/master/docs/campagne_12/12.1-centraliser-journaux-rsyslog.md">Edit on tdelaclos/formations</a>
+</li>
+</ul>
+<hr/>
+</div>
+<div class="document" itemscope="itemscope" itemtype="http://schema.org/Article" role="main">
+<div class="section" itemprop="articleBody">
+<h1 id="chapitre-121-centraliser-les-journaux-avec-rsyslog">Chapitre 12.1 — Centraliser les journaux avec Rsyslog</h1>
+<blockquote>
+<p><strong>Campagne 12 — Supervision et audit</strong></p>
+<p><em>« Un journal resté uniquement sur la machine compromise raconte l'histoire que l'attaquant a bien voulu laisser. »</em></p>
+</blockquote>
+<h2 id="vous-etes-ici">Vous êtes ici</h2>
+<pre><code class="language-text">PARTIE II — Industrialiser la sécurité
+
+Campagne 12
+
+► 12.1 Centraliser les journaux avec Rsyslog
+  12.2 Auditer le système avec auditd
+  12.3 Contrôler l'intégrité des fichiers avec AIDE
+  12.4 Superviser Sentinel avec Prometheus
+  12.5 Concevoir des alertes avec Alertmanager
+  12.6 Construire le tableau de bord Sentinel
+</code></pre>
+<h2 id="objectifs-pedagogiques">Objectifs pédagogiques</h2>
+<p>À l'issue de ce chapitre, vous serez capable de :</p>
+<ul>
+<li>distinguer journal, événement de sécurité, trace d'audit et métrique ;</li>
+<li>expliquer la coopération entre <code>systemd-journald</code> et Rsyslog sur AlmaLinux ;</li>
+<li>concevoir une collecte distante avec authentification mutuelle, file d'attente et stockage par hôte ;</li>
+<li>valider une configuration Rsyslog avant son rechargement ;</li>
+<li>prouver la réception d'un événement et le comportement pendant une coupure ;</li>
+<li>définir une politique de rétention, de contrôle d'accès et de synchronisation temporelle.</li>
+</ul>
+<h2 id="pourquoi-ce-chapitre-existe">Pourquoi ce chapitre existe</h2>
+<p>Les campagnes précédentes ont rendu Sentinel plus difficile à attaquer, mais elles ont aussi multiplié les sources de traces : SSH, Firewalld, systemd, SELinux, Podman et l'application. Lire chaque machine séparément ralentit l'enquête et permet à une compromission locale d'effacer une partie de l'histoire.</p>
+<p>La centralisation ne transforme pas automatiquement des journaux en preuves irréfutables. Elle réduit cependant la fenêtre de falsification locale, facilite la corrélation et donne un point de conservation soumis à une politique distincte. Ce chapitre construit ce premier étage avant d'introduire l'audit noyau et la supervision.</p>
+<h2 id="observer-journaliser-et-auditer">Observer, journaliser et auditer</h2>
+<p>Ces mots sont proches mais ne répondent pas à la même question.</p>
+<table>
+<thead>
+<tr>
+<th>Donnée</th>
+<th>Question principale</th>
+<th>Exemple</th>
+<th>Limite</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>journal applicatif</td>
+<td>que raconte le programme ?</td>
+<td>requête refusée, erreur TLS</td>
+<td>dépend de ce que le programme écrit</td>
+</tr>
+<tr>
+<td>journal système</td>
+<td>que racontent les services ?</td>
+<td>démarrage, échec d'unité</td>
+<td>peut manquer une action noyau précise</td>
+</tr>
+<tr>
+<td>audit</td>
+<td>qui a tenté quelle opération ?</td>
+<td>écriture de <code>/etc/sentinel/sentinel.conf</code></td>
+<td>coûteux si la politique est trop large</td>
+</tr>
+<tr>
+<td>métrique</td>
+<td>comment une grandeur évolue-t-elle ?</td>
+<td>taux d'erreurs, espace libre</td>
+<td>peu adaptée au détail d'un événement</td>
+</tr>
+<tr>
+<td>trace distribuée</td>
+<td>par où une requête est-elle passée ?</td>
+<td>proxy, API, base</td>
+<td>nécessite une instrumentation dédiée</td>
+</tr>
+</tbody>
+</table>
+<div class="mermaid">mindmap
+  root((Visibilité Sentinel))
+    Journaux
+      Application
+      systemd
+      SSH et réseau
+    Audit
+      Identité de connexion
+      Appels système
+      Objets sensibles
+    Métriques
+      Santé de l'hôte
+      Débit et erreurs
+      Saturation
+    Contexte
+      Horloge fiable
+      Inventaire
+      Version déployée
+</div>
+<blockquote>
+<p><strong>💎 Le point d'expertise — La visibilité est une architecture</strong></p>
+<p>Collecter « tout » sans modèle produit beaucoup de stockage et peu de compréhension. Partez des scénarios : compromission d'un compte, modification de configuration, indisponibilité de Sentinel, saturation disque. Pour chacun, identifiez la source, le délai utile, le propriétaire et la durée de conservation.</p>
+</blockquote>
+<h2 id="comprendre-la-chaine-almalinux">Comprendre la chaîne AlmaLinux</h2>
+<p>Sur AlmaLinux, <code>systemd-journald</code> reçoit les messages de services, du noyau et de la sortie standard des unités systemd. Rsyslog peut ensuite lire les messages du journal, les filtrer, les écrire dans des fichiers classiques ou les transmettre à un serveur.</p>
+<div class="mermaid">flowchart LR
+    Kernel["Noyau"] --&gt; Journal["systemd-journald"]
+    Units["Unités systemd"] --&gt; Journal
+    App["Sentinel stdout/stderr"] --&gt; Journal
+    Journal --&gt; Local["journalctl"]
+    Journal --&gt; Rsyslog["rsyslogd"]
+    Rsyslog --&gt; Files["Fichiers locaux"]
+    Rsyslog --&gt; Queue["File d'action"]
+    Queue --&gt; Collector["Collecteur distant"]
+</div>
+<p>Le Journal conserve des champs structurés comme <code>_SYSTEMD_UNIT</code>, <code>_PID</code> et <code>_UID</code>. Le protocole Syslog transporte traditionnellement un message, une date, un hôte, une facility et une sévérité. Certaines informations riches peuvent donc être reformattées ou perdues selon la configuration. Le collecteur central ne remplace pas <code>journalctl</code> pour tous les diagnostics locaux.</p>
+<h3 id="facility-et-severite">Facility et sévérité</h3>
+<p>La facility décrit grossièrement l'origine logique (<code>authpriv</code>, <code>daemon</code>, <code>local0</code>…), tandis que la sévérité va de <code>emerg</code> à <code>debug</code>. Une priorité Syslog s'écrit <code>facility.severity</code>. L'expression <code>authpriv.*</code> sélectionne toutes les sévérités de la facility <code>authpriv</code>.</p>
+<p>Une sévérité n'est pas une vérité universelle. Une application qui classe une panne critique en <code>info</code> restera mal classée après centralisation. La qualité commence à la source.</p>
+<h2 id="concevoir-larchitecture-du-laboratoire">Concevoir l'architecture du laboratoire</h2>
+<p>Le laboratoire utilise trois rôles :</p>
+<table>
+<thead>
+<tr>
+<th>Hôte</th>
+<th>Rôle</th>
+<th>Adresse d'exemple</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>sentinel.sentinel.lab</code></td>
+<td>service et client Rsyslog</td>
+<td><code>192.0.2.10</code></td>
+</tr>
+<tr>
+<td><code>observability.sentinel.lab</code></td>
+<td>collecteur Rsyslog</td>
+<td><code>192.0.2.20</code></td>
+</tr>
+<tr>
+<td><code>kali.sentinel.lab</code></td>
+<td>poste de validation</td>
+<td><code>192.0.2.30</code></td>
+</tr>
+</tbody>
+</table>
+<p>Les adresses du bloc <code>192.0.2.0/24</code> sont documentaires. Remplacez-les par celles du laboratoire.</p>
+<div class="mermaid">flowchart LR
+    subgraph App[Zone applicative]
+        Sentinel[Sentinel AlmaLinux]
+    end
+
+    subgraph Admin[Zone administration]
+        Kali[Kali]
+    end
+
+    subgraph Obs[Zone observabilité]
+        Collector[(Collecteur Rsyslog)]
+    end
+
+    Sentinel --&gt;|journaux via TLS| Collector
+    Kali --&gt;|journaux via TLS| Collector
+</div>
+<p>Le flux de collecte va du client vers le collecteur. Le pare-feu du collecteur n'accepte le port choisi que depuis les hôtes autorisés. L'accès humain aux journaux utilise un autre canal, avec des droits en lecture.</p>
+<h2 id="choisir-le-transport">Choisir le transport</h2>
+<table>
+<thead>
+<tr>
+<th>Transport</th>
+<th>Atout</th>
+<th>Limite</th>
+<th>Usage conseillé</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>UDP</td>
+<td>simple et peu coûteux</td>
+<td>pas d'accusé de réception, pertes possibles</td>
+<td>réseau local tolérant la perte</td>
+</tr>
+<tr>
+<td>TCP</td>
+<td>livraison ordonnée par connexion</td>
+<td>une connexion réussie ne garantit pas la conservation finale</td>
+<td>base du laboratoire</td>
+</tr>
+<tr>
+<td>TCP avec TLS</td>
+<td>confidentialité et authentification</td>
+<td>certificats et renouvellement à gérer</td>
+<td>choix par défaut ici</td>
+</tr>
+<tr>
+<td>RELP avec TLS</td>
+<td>reprise et réduction du risque de perte</td>
+<td>modules et exploitation supplémentaires</td>
+<td>exigences de livraison élevées</td>
+</tr>
+</tbody>
+</table>
+<p>TLS protège le transport ; il ne rend pas le fichier final immuable. RELP améliore la livraison ; il ne remplace ni la capacité disque, ni la supervision du collecteur, ni une politique d'archivage.</p>
+<h2 id="preparer-la-confiance-tls">Préparer la confiance TLS</h2>
+<p>Le laboratoire réutilise la PKI conçue dans la campagne TLS ou les certificats issus de FreeIPA. Chaque certificat possède un nom DNS cohérent avec l'hôte. Les clés privées sont lisibles uniquement par le service concerné.</p>
+<p>Sur les deux hôtes :</p>
+<pre><code class="language-bash">sudo dnf install -y rsyslog rsyslog-gnutls
+sudo systemctl enable --now rsyslog
+</code></pre>
+<p>Placez les éléments fournis par la PKI dans des chemins explicites :</p>
+<pre><code class="language-text">/etc/pki/rsyslog/ca.crt
+/etc/pki/rsyslog/collector.crt
+/etc/pki/rsyslog/collector.key
+/etc/pki/rsyslog/sentinel.crt
+/etc/pki/rsyslog/sentinel.key
+</code></pre>
+<p>Vérifiez le propriétaire, les modes et les dates :</p>
+<pre><code class="language-bash">sudo stat -c '%U %G %a %n' /etc/pki/rsyslog/*
+openssl x509 -in /etc/pki/rsyslog/sentinel.crt -noout \
+  -subject -issuer -dates -ext subjectAltName
+</code></pre>
+<blockquote>
+<p><strong>Piège classique — désactiver la vérification du pair</strong></p>
+<p>Chiffrer sans vérifier le nom du serveur protège mal contre un intermédiaire. Le client doit valider la chaîne de certification et l'identité DNS attendue. Ne remplacez pas ce contrôle par un mode anonyme pour « faire fonctionner le TP ».</p>
+</blockquote>
+<h2 id="configurer-le-collecteur">Configurer le collecteur</h2>
+<p>Créez <code>/etc/rsyslog.d/20-sentinel-collector.conf</code> sur <code>observability.sentinel.lab</code> :</p>
+<pre><code class="language-rainerscript">global(
+  DefaultNetstreamDriverCAFile="/etc/pki/rsyslog/ca.crt"
+  DefaultNetstreamDriverCertFile="/etc/pki/rsyslog/collector.crt"
+  DefaultNetstreamDriverKeyFile="/etc/pki/rsyslog/collector.key"
+)
+
+module(load="imtcp"
+       StreamDriver.Name="gtls"
+       StreamDriver.Mode="1"
+       StreamDriver.AuthMode="x509/name"
+       PermittedPeer=["sentinel.sentinel.lab"])
+
+template(name="RemoteByHost" type="string"
+         string="/var/log/remote/%HOSTNAME%/%PROGRAMNAME%.log")
+
+ruleset(name="RemoteStore") {
+  action(type="omfile"
+         dynaFile="RemoteByHost"
+         createDirs="on"
+         dirCreateMode="0750"
+         fileCreateMode="0640")
+  stop
+}
+
+input(type="imtcp" port="6514" ruleset="RemoteStore")
+</code></pre>
+<p><code>PermittedPeer</code> doit correspondre au nom présenté dans le certificat client. Le stockage par nom d'hôte facilite la navigation, mais il faut maîtriser l'identité acceptée : un champ de message non fiable ne doit pas permettre d'écrire arbitrairement dans l'arborescence.</p>
+<p>Autorisez le port dans SELinux et Firewalld si le laboratoire utilise <code>6514/tcp</code> :</p>
+<pre><code class="language-bash">sudo semanage port -a -t syslogd_port_t -p tcp 6514 2&gt;/dev/null || \
+  sudo semanage port -m -t syslogd_port_t -p tcp 6514
+sudo firewall-cmd --permanent --zone=internal \
+  --add-rich-rule='rule family="ipv4" source address="192.0.2.10/32" port port="6514" protocol="tcp" accept'
+sudo firewall-cmd --reload
+</code></pre>
+<p>La zone et la source doivent être adaptées à la matrice de flux réelle.</p>
+<h2 id="configurer-le-client-et-sa-file-dattente">Configurer le client et sa file d'attente</h2>
+<p>Créez <code>/etc/rsyslog.d/60-sentinel-forward.conf</code> sur <code>sentinel.sentinel.lab</code> :</p>
+<pre><code class="language-rainerscript">global(
+  DefaultNetstreamDriverCAFile="/etc/pki/rsyslog/ca.crt"
+  DefaultNetstreamDriverCertFile="/etc/pki/rsyslog/sentinel.crt"
+  DefaultNetstreamDriverKeyFile="/etc/pki/rsyslog/sentinel.key"
+  workDirectory="/var/lib/rsyslog"
+)
+
+*.* action(
+  type="omfwd"
+  target="observability.sentinel.lab"
+  port="6514"
+  protocol="tcp"
+  StreamDriver="gtls"
+  StreamDriverMode="1"
+  StreamDriverAuthMode="x509/name"
+  StreamDriverPermittedPeers="observability.sentinel.lab"
+  queue.type="LinkedList"
+  queue.filename="sentinel-forward"
+  queue.maxDiskSpace="512m"
+  queue.saveOnShutdown="on"
+  action.resumeRetryCount="-1"
+)
+</code></pre>
+<p>La file d'action découple la production locale et la disponibilité du collecteur. <code>action.resumeRetryCount="-1"</code> demande de retenter indéfiniment ; <code>queue.filename</code> rend la file persistante lorsqu'elle doit utiliser le disque. La capacité reste finie : il faut superviser son répertoire et prévoir ce qui arrive lorsque les 512 Mio sont consommés.</p>
+<div class="mermaid">stateDiagram-v2
+    [*] --&gt; Emis: événement local
+    Emis --&gt; Transmis: collecteur joignable
+    Emis --&gt; EnFile: connexion impossible
+    EnFile --&gt; Transmis: connexion rétablie
+    EnFile --&gt; Pression: file proche de la limite
+    Pression --&gt; Incident: aucune capacité restante
+    Transmis --&gt; Stocke
+    Stocke --&gt; [*]
+</div>
+<h2 id="valider-avant-de-recharger">Valider avant de recharger</h2>
+<p>Sur chaque hôte :</p>
+<pre><code class="language-bash">sudo rsyslogd -N1
+sudo systemctl restart rsyslog
+sudo systemctl status rsyslog --no-pager
+sudo journalctl -u rsyslog -b --no-pager
+</code></pre>
+<p><code>rsyslogd -N1</code> valide la syntaxe et une partie de la configuration. Il ne prouve ni la confiance TLS, ni le pare-feu, ni l'écriture finale. La validation complète reste un test de bout en bout.</p>
+<h2 id="tp-1-prouver-une-collecte-chiffree">TP 1 — Prouver une collecte chiffrée</h2>
+<p>Sur Sentinel, émettez un message identifiable :</p>
+<pre><code class="language-bash">logger --tag sentinel-lab --priority local0.notice \
+  "event=centralization-test result=success campaign=12"
+</code></pre>
+<p>Sur le collecteur :</p>
+<pre><code class="language-bash">sudo find /var/log/remote -type f -name 'sentinel-lab.log' -print
+sudo tail -n 5 /var/log/remote/sentinel.sentinel.lab/sentinel-lab.log
+sudo ss -lntp | grep ':6514'
+</code></pre>
+<p>Capturez ensuite uniquement les métadonnées du flux, sans extraire de clé privée :</p>
+<pre><code class="language-bash">sudo tcpdump -ni any host 192.0.2.10 and tcp port 6514 -c 10
+</code></pre>
+<p>Le contenu applicatif ne doit pas apparaître en clair. Une capture opaque ne prouve toutefois pas à elle seule l'authentification du pair : conservez aussi la configuration et les journaux TLS.</p>
+<h2 id="tp-2-tester-la-coupure-et-la-reprise">TP 2 — Tester la coupure et la reprise</h2>
+<p>Dans une fenêtre de maintenance du laboratoire, arrêtez temporairement le collecteur :</p>
+<pre><code class="language-bash">sudo systemctl stop rsyslog
+</code></pre>
+<p>Sur Sentinel, émettez une série bornée d'événements :</p>
+<pre><code class="language-bash">for i in $(seq 1 20); do
+  logger --tag sentinel-queue "event=queue-test sequence=$i"
+done
+sudo du -sh /var/lib/rsyslog
+sudo journalctl -u rsyslog --since '-5 min' --no-pager
+</code></pre>
+<p>Redémarrez le collecteur, puis comptez les séquences reçues :</p>
+<pre><code class="language-bash">sudo systemctl start rsyslog
+sudo grep -c 'event=queue-test' \
+  /var/log/remote/sentinel.sentinel.lab/sentinel-queue.log
+</code></pre>
+<p>Documentez le délai de reprise, le nombre reçu et la taille maximale de la file. Ne concluez pas à une garantie générale de « zéro perte » à partir de vingt messages : vous avez validé un scénario précis.</p>
+<h2 id="tp-3-construire-une-requete-denquete">TP 3 — Construire une requête d'enquête</h2>
+<p>Provoquez un échec de santé Sentinel, puis recherchez la même fenêtre sur les deux hôtes :</p>
+<pre><code class="language-bash">sudo journalctl -u sentinel --since '-10 min' --until 'now' -o short-iso
+sudo grep -R 'sentinel' /var/log/remote/sentinel.sentinel.lab/
+</code></pre>
+<p>Relevez :</p>
+<ol>
+<li>la date locale et la date centrale ;</li>
+<li>le nom d'hôte ;</li>
+<li>l'unité ou le programme ;</li>
+<li>l'identifiant de processus ;</li>
+<li>le message utile au diagnostic ;</li>
+<li>les champs présents localement mais absents après transport.</li>
+</ol>
+<p>Ce relevé définit le contrat minimal de journalisation de Sentinel.</p>
+<h2 id="exploiter-sans-creer-un-nouveau-risque">Exploiter sans créer un nouveau risque</h2>
+<h3 id="horodatage">Horodatage</h3>
+<p>La corrélation suppose des horloges cohérentes. Vérifiez Chrony :</p>
+<pre><code class="language-bash">chronyc tracking
+chronyc sources -v
+timedatectl status
+</code></pre>
+<p>Une dérive de quelques minutes peut inverser l'ordre apparent d'une authentification, d'une modification et d'un redémarrage. En enquête, conservez le fuseau et préférez un format non ambigu comme ISO 8601.</p>
+<h3 id="retention">Rétention</h3>
+<p>La durée de conservation dépend du débit, des obligations et du temps nécessaire pour découvrir un incident. Mesurez avant de choisir :</p>
+<pre><code class="language-bash">sudo du -sh /var/log/remote
+sudo find /var/log/remote -type f -printf '%s\n' | awk '{s+=$1} END {print s}'
+</code></pre>
+<p>Définissez ensuite rotation, compression, archivage et suppression. Une rotation sans surveillance peut effacer silencieusement la seule copie utile ; une conservation illimitée peut saturer le collecteur et accumuler des données sensibles.</p>
+<h3 id="confidentialite-et-moindre-privilege">Confidentialité et moindre privilège</h3>
+<p>Les journaux peuvent contenir des noms d'utilisateur, adresses IP, chemins, paramètres et parfois des secrets écrits par erreur. Interdisez aux applications de journaliser les mots de passe, jetons et clés. Séparez les rôles :</p>
+<ul>
+<li>Rsyslog écrit ;</li>
+<li>l'équipe d'exploitation lit le périmètre utile ;</li>
+<li>l'administrateur de la plateforme gère la rétention ;</li>
+<li>la suppression suit une procédure tracée.</li>
+</ul>
+<h3 id="integrite-et-externalisation">Intégrité et externalisation</h3>
+<p>Un collecteur sur une machine distincte résiste mieux à l'effacement local, mais un administrateur du collecteur peut encore modifier les fichiers. Pour des exigences fortes, ajoutez un stockage append-only ou WORM, une empreinte signée, une duplication hors domaine d'administration et des contrôles réguliers de restauration.</p>
+<h2 id="mission-dingenieur-ecrire-le-contrat-de-journalisation-sentinel">Mission d'ingénieur — Écrire le contrat de journalisation Sentinel</h2>
+<p>Produisez un dossier versionné comprenant :</p>
+<ol>
+<li>une matrice des sources et événements attendus ;</li>
+<li>le flux réseau exact, avec source, destination, port et authentification ;</li>
+<li>les configurations serveur et client validées ;</li>
+<li>le calcul de capacité pour 30 jours à partir d'une mesure de 24 heures ;</li>
+<li>un test de coupure et de reprise avec critères de réussite ;</li>
+<li>une règle de protection des données sensibles ;</li>
+<li>une procédure de recherche pendant un incident ;</li>
+<li>une limite explicitement non couverte par le dispositif.</li>
+</ol>
+<p>Le livrable est recevable si un autre administrateur peut reproduire la collecte sans désactiver TLS, retrouver le message de test et expliquer ce qui se passe lorsque le collecteur ou son disque devient indisponible.</p>
+<h2 id="impact-sur-sentinel">Impact sur Sentinel</h2>
+<p>Sentinel possède désormais une copie distante de ses journaux système et applicatifs. Un arrêt, un refus SELinux, un échec SSH ou un redémarrage peut être corrélé sans ouvrir immédiatement une session sur l'hôte concerné.</p>
+<p>Cette visibilité reste déclarative : elle dépend de ce que les services journalisent. Le chapitre suivant ajoute une source issue du noyau capable de conserver l'identité de connexion et les opérations sur des objets sensibles.</p>
+<h2 id="references-techniques">Références techniques</h2>
+<ul>
+<li><a href="https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/9/html/security_hardening/assembly_configuring-a-remote-logging-solution_security-hardening">Red Hat — Configuring a remote logging solution</a> ;</li>
+<li><a href="https://www.rsyslog.com/doc/">Rsyslog — Documentation officielle</a> ;</li>
+<li>pages de manuel locales <code>rsyslogd(8)</code>, <code>rsyslog.conf(5)</code> et <code>logger(1)</code>.</li>
+</ul>
+<h2 id="synthese">Synthèse</h2>
+<ul>
+<li><code>journald</code> collecte localement ; Rsyslog filtre, écrit et transmet ;</li>
+<li>centraliser réduit la dépendance à l'hôte, sans garantir l'immutabilité ;</li>
+<li>TCP limite certaines pertes, TLS protège le canal et RELP renforce la livraison ;</li>
+<li>une file persistante absorbe une indisponibilité temporaire mais possède une capacité finie ;</li>
+<li>le test <code>rsyslogd -N1</code> précède le rechargement, puis un test de bout en bout prouve le flux ;</li>
+<li>horloge, rétention, droits de lecture et capacité disque font partie de la sécurité du dispositif.</li>
+</ul>
+<h2 id="pour-aller-plus-loin">Pour aller plus loin</h2>
+<p><a href="../12.2-auditer-systeme-auditd/">Le chapitre 12.2</a> construit une politique <code>auditd</code> persistante afin d'attribuer les actions sensibles au compte qui a ouvert la session.</p>
+<h2 id="schema-recapitulatif">Schéma récapitulatif</h2>
+<p><img alt="Récapitulatif du chapitre 12.1" src="../media/recap-12.1.png"/></p>
+</div>
+</div><footer>
+<div aria-label="Footer Navigation" class="rst-footer-buttons" role="navigation">
+<a class="btn btn-neutral float-left" href="../../campagne_11/11.6-executer-sentinel-securite/" title="Chapitre 11.6 — Exécuter Sentinel en sécurité"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+<a class="btn btn-neutral float-right" href="../12.2-auditer-systeme-auditd/" title="Chapitre 12.2 — Auditer le système avec auditd">Next <span class="icon icon-circle-arrow-right"></span></a>
+</div>
+<hr/>
+<div role="contentinfo">
+<!-- Copyright etc -->
+</div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+</div>
+</div>
+</section>
+</div>
+<div aria-label="Versions" class="rst-versions" role="note">
+<span class="rst-current-version" data-toggle="rst-current-version">
+<span>
+<a class="fa fa-code-fork" href="https://github.com/tdelaclos/formations" style="color: #fcfcfc"> tdelaclos/formations</a>
+</span>
+<span><a href="../../campagne_11/11.6-executer-sentinel-securite/" style="color: #fcfcfc">« Previous</a></span>
+<span><a href="../12.2-auditer-systeme-auditd/" style="color: #fcfcfc">Next »</a></span>
+</span>
+</div>
+<script src="../../js/jquery-3.6.0.min.js"></script>
+<script>var base_url = "../..";</script>
+<script src="../../js/theme_extra.js"></script>
+<script src="../../js/theme.js"></script>
+<script src="../../search/main.js"></script>
+<script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+<script type="module">import mermaid from "https://unpkg.com/mermaid@10.4.0/dist/mermaid.esm.min.mjs";
+mermaid.initialize({});</script></body>
+</html>

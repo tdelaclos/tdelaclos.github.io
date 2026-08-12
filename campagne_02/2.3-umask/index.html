@@ -1,0 +1,982 @@
+<!DOCTYPE html>
+
+<html class="writer-html5" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="IE=edge" http-equiv="X-UA-Compatible"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="../../img/favicon.ico" rel="shortcut icon"/>
+<title>Chapitre 2.3 — L'umask - Formation Sentinel — AlmaLinux sécurisé</title>
+<link href="../../css/theme.css" rel="stylesheet"/>
+<link href="../../css/theme_extra.css" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" rel="stylesheet"/>
+<script>
+        // Current page data
+        var mkdocs_page_name = "Chapitre 2.3 \u2014 L\u0027umask";
+        var mkdocs_page_input_path = "campagne_02/2.3-umask.md";
+        var mkdocs_page_url = null;
+      </script>
+<!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+<script>hljs.highlightAll();</script>
+</head>
+<body class="wy-body-for-nav" role="document">
+<div class="wy-grid-for-nav">
+<nav class="wy-nav-side stickynav" data-toggle="wy-nav-shift">
+<div class="wy-side-scroll">
+<div class="wy-side-nav-search">
+<a class="icon icon-home" href="../.."> Formation Sentinel — AlmaLinux sécurisé
+        </a><div role="search">
+<form action="../../search.html" class="wy-form" id="rtd-search-form" method="get">
+<input aria-label="Search docs" name="q" placeholder="Search docs" title="Type search term here" type="text"/>
+</form>
+</div>
+</div>
+<div aria-label="Navigation menu" class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../..">Accueil</a>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">A propos</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../GUIDE-REDACTION/">Guide de rédaction</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../PARCOURS-SENTINEL/">Parcours applicatif Sentinel</a>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Campagnes</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal">Campagne 1 - Sécuriser le socle Linux</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.1-pourquoi-securiser-socle-linux/">Chapitre 1.1 — Pourquoi sécuriser un socle Linux ?</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.2-installation-almalinux-minimal/">Chapitre 1.2 — Installer AlmaLinux minimal</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.3-composants-systeme-linux/">Chapitre 1.3 — Comprendre les composants d'un système Linux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.4-premier-demarrage-verifications/">Chapitre 1.4 — Établir la baseline du serveur</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.5-mise-a-jour-gestion-depots/">Chapitre 1.5 — Mettre à jour et gérer les dépôts</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.6-architecture-systemes-fichiers/">Chapitre 1.6 — Organiser les systèmes de fichiers</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.7-utilisateurs-groupes-permissions/">Chapitre 1.7 — Comprendre identités et permissions</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.8-sudo-moindre-privilege/">Chapitre 1.8 — Administrer avec sudo</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.9-premiere-mise-en-securite-serveur/">Chapitre 1.9 — Mission : mettre le serveur en sécurité</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.10-creation-laboratoire-sentinel/">Chapitre 1.10 — Créer le laboratoire Sentinel</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal current">Campagne 2 - Gestion des permissions et des identités</a>
+<ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../2.1-permissions-unix/">Chapitre 2.1 — Les permissions UNIX</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../2.2-acl/">Chapitre 2.2 — Les ACL</a>
+</li>
+<li class="toctree-l2 current"><a class="reference internal current" href="#">Chapitre 2.3 — L'umask</a>
+<ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="#vous-etes-ici">Vous êtes ici</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#objectifs-pedagogiques">Objectifs pédagogiques</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pourquoi-ce-chapitre-existe">Pourquoi ce chapitre existe</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#une-idee-contre-intuitive">Une idée contre-intuitive</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pourquoi-avoir-concu-lumask-de-cette-maniere">Pourquoi avoir conçu l'umask de cette manière ?</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#le-mode-demande-par-lapplication">Le mode demandé par l'application</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#une-premiere-umask">Une première umask</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#comprendre-la-notation-octale">Comprendre la notation octale</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pourquoi-utiliser-loctal">Pourquoi utiliser l'octal ?</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#de-binaire-a-octal">De binaire à octal</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#decomposer-un-nombre-octal">Décomposer un nombre octal</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#revenons-a-lumask">Revenons à l'umask</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#calculer-les-permissions-dun-fichier">Calculer les permissions d'un fichier</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#calculer-les-permissions-dun-repertoire">Calculer les permissions d'un répertoire</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pourquoi-les-fichiers-ordinaires-ne-deviennent-ils-pas-executables-par-defaut">Pourquoi les fichiers ordinaires ne deviennent-ils pas exécutables par défaut ?</a>
+<ul>
+<li class="toctree-l4"><a class="reference internal" href="#culture-technique">Culture technique</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#piege-classique">Piège classique</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#tp-1-experimenter-sur-almalinux">TP 1 — Expérimenter sur AlmaLinux</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#ou-lumask-est-elle-definie">Où l'umask est-elle définie ?</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#linteraction-entre-lumask-et-les-acl">L'interaction entre l'umask et les ACL</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#quelle-valeur-dumask-choisir">Quelle valeur d'umask choisir ?</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pourquoi-0022-est-elle-si-repandue">Pourquoi 0022 est-elle si répandue ?</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pourquoi-de-nombreuses-entreprises-preferent-0027-ou-0077">Pourquoi de nombreuses entreprises préfèrent 0027 ou 0077</a>
+<ul>
+<li class="toctree-l4"><a class="reference internal" href="#culture-technique_1">Culture technique</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#piege-classique_1">Piège classique</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#tp-2-experimenter-sur-almalinux">TP 2 — Expérimenter sur AlmaLinux</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#au-dela-du-calcul-limites-et-variantes">Au-delà du calcul : limites et variantes</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#mission-dingenieur-choisir-les-valeurs-de-creation-de-sentinel">Mission d'ingénieur — Choisir les valeurs de création de Sentinel</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#impact-sur-sentinel">Impact sur Sentinel</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#synthese">Synthèse</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pour-aller-plus-loin">Pour aller plus loin</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../2.4-attributs-etendus/">Chapitre 2.4 — Les attributs étendus</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../2.5-pam/">Chapitre 2.5 — PAM</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../2.6-politique-mots-de-passe/">Chapitre 2.6 — Politique de mots de passe</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../2.7-comptes-systeme/">Chapitre 2.7 — Les comptes système</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../2.8-sudo-avance/">Chapitre 2.8 — sudo avancé</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../2.9-fichiers-identites-linux/">Chapitre 2.9 — Comprendre les fichiers d'identités Linux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../2.10-synthese-securiser-identites/">Chapitre 2.10 — Synthèse : sécuriser les identités</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 3 - TCP/IP et Firewalld</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.1-tcp-ip-administrateur/">Chapitre 3.1 — TCP/IP côté administrateur</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.2-architecture-firewalld/">Chapitre 3.2 — Architecture de Firewalld</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.3-zones-firewalld/">Chapitre 3.3 — Les zones Firewalld</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.4-services-firewalld/">Chapitre 3.4 — Les services Firewalld</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.5-conntrack-filtrage-etats/">Chapitre 3.5 — Conntrack et le filtrage par états</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.6-rich-rules-firewalld/">Chapitre 3.6 — Les Rich Rules Firewalld</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.7-journalisation-firewalld/">Chapitre 3.7 — Journalisation et analyse Firewalld</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.8-ip-sets-firewalld/">Chapitre 3.8 — Les IP Sets Firewalld</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.9-runtime-permanent/">Chapitre 3.9 — Runtime et Permanent</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.10-politique-reseau-sentinel/">Chapitre 3.10 — Concevoir la politique réseau de Sentinel</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 4 - SSH</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_04/4.1-architecture-openssh/">Chapitre 4.1 — Architecture d'OpenSSH</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_04/4.2-authentification-mot-de-passe/">Chapitre 4.2 — Authentification par mot de passe</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_04/4.3-authentification-par-cles/">Chapitre 4.3 — Authentification par clés</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_04/4.4-durcissement-sshd-config/">Chapitre 4.4 — Durcissement de sshd_config</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_04/4.5-bastion-administration/">Chapitre 4.5 — Bastion d'administration</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_04/4.6-journalisation-audit-ssh/">Chapitre 4.6 — Journalisation et audit SSH</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_04/4.7-protection-attaques-ssh/">Chapitre 4.7 — Protection contre les attaques SSH</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_04/4.8-mission-administration-sentinel/">Chapitre 4.8 — Mission : administrer Sentinel en sécurité</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 5 - Systemd</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.1-comprendre-systemd/">Chapitre 5.1 — Comprendre systemd</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.2-unites-systemd/">Chapitre 5.2 — Les unités systemd</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.3-creer-service-sentinel/">Chapitre 5.3 — Créer le service Sentinel</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.4-sandboxing-systemd/">Chapitre 5.4 — Sandboxing systemd</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.5-capacites-linux/">Chapitre 5.5 — Les capacités Linux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.6-journalisation-journald/">Chapitre 5.6 — Journalisation avec journald</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.7-supervision-redemarrage/">Chapitre 5.7 — Supervision et redémarrage automatique</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.8-mission-sentinel-resilient/">Chapitre 5.8 — Mission : rendre Sentinel résilient</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 6 - SELinux</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_06/6.1-pourquoi-selinux-existe/">Chapitre 6.1 — Pourquoi SELinux existe</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_06/6.2-contextes-selinux/">Chapitre 6.2 — Comprendre les contextes SELinux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_06/6.3-politiques-selinux/">Chapitre 6.3 — Les politiques SELinux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_06/6.4-diagnostic-refus-selinux/">Chapitre 6.4 — Diagnostiquer les refus SELinux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_06/6.5-creation-regles-selinux/">Chapitre 6.5 — Créer des règles SELinux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_06/6.6-securiser-sentinel-selinux/">Chapitre 6.6 — Sécuriser Sentinel avec SELinux</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 7 - TLS et PKI</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.1-comprendre-cryptographie-appliquee/">Chapitre 7.1 — Comprendre la cryptographie appliquée</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.2-lire-verifier-certificats-x509/">Chapitre 7.2 — Lire et vérifier les certificats X.509</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.3-construire-autorite-certification/">Chapitre 7.3 — Construire une autorité de certification</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.4-authentification-mutuelle-tls/">Chapitre 7.4 — Authentifier les deux extrémités avec mTLS</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.5-preparer-integration-freeipa/">Chapitre 7.5 — Préparer l'intégration à FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.6-renouveler-revoquer-certificats/">Chapitre 7.6 — Renouveler et révoquer les certificats</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.7-securiser-sentinel-tls/">Chapitre 7.7 — Sécuriser Sentinel avec TLS</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 8 - FreeIPA</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.1-presentation-freeipa/">Chapitre 8.1 — Découvrir FreeIPA et la gestion centralisée des identités</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.2-architecture-interne-freeipa/">Chapitre 8.2 — Comprendre l'architecture interne de FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.3-installation-freeipa/">Chapitre 8.3 — Installer un serveur FreeIPA de laboratoire</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.4-gestion-utilisateurs/">Chapitre 8.4 — Gérer le cycle de vie des utilisateurs FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.5-groupes-roles/">Chapitre 8.5 — Organiser les groupes et les rôles FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.6-politiques-sudo/">Chapitre 8.6 — Centraliser les politiques sudo avec FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.7-gestion-hotes/">Chapitre 8.7 — Enrôler les hôtes et contrôler les accès avec HBAC</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.8-certificats/">Chapitre 8.8 — Gérer les certificats de service avec FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.9-integration-sentinel/">Chapitre 8.9 — Intégrer Sentinel à FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.10-mission-administration-freeipa/">Chapitre 8.10 — Mission : administrer Sentinel avec FreeIPA</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 9 - Déploiement avec Ansible</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.1-architecture-ansible/">Chapitre 9.1 — Comprendre l'architecture Ansible</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.2-composants-ansible/">Chapitre 9.2 — Comprendre les composants et l'idempotence Ansible</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.3-inventaires/">Chapitre 9.3 — Construire les inventaires Ansible</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.4-premiers-playbooks/">Chapitre 9.4 — Écrire les premiers playbooks</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.5-variables-templates/">Chapitre 9.5 — Piloter la configuration avec variables et templates</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.6-roles-ansible/">Chapitre 9.6 — Concevoir des rôles Ansible réutilisables</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.7-deployer-sentinel-ansible/">Chapitre 9.7 — Déployer Sentinel avec Ansible</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.8-integrer-sentinel-freeipa/">Chapitre 9.8 — Automatiser l'intégration de Sentinel à FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.9-industrialiser-laboratoire/">Chapitre 9.9 — Industrialiser le projet Ansible</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.10-mission-deploiement-sentinel/">Chapitre 9.10 — Mission : reconstruire Sentinel avec Ansible</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 10 - Packaging RPM</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_10/10.1-construire-paquet-rpm/">Chapitre 10.1 — Construire un paquet RPM</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_10/10.2-gerer-dependances-rpm/">Chapitre 10.2 — Gérer les dépendances RPM</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_10/10.3-gerer-fichiers-configuration-rpm/">Chapitre 10.3 — Gérer les fichiers de configuration RPM</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_10/10.4-signer-paquets-rpm/">Chapitre 10.4 — Signer les paquets RPM</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_10/10.5-exploiter-depot-rpm-prive/">Chapitre 10.5 — Exploiter un dépôt RPM privé</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_10/10.6-packager-sentinel/">Chapitre 10.6 — Packager Sentinel</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 11 - Conteneurs Podman</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_11/11.1-decouvrir-podman/">Chapitre 11.1 — Découvrir Podman</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_11/11.2-conteneurs-rootless/">Chapitre 11.2 — Exécuter des conteneurs rootless</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_11/11.3-construire-images-securisees/">Chapitre 11.3 — Construire des images sécurisées</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_11/11.4-reseaux-conteneurs/">Chapitre 11.4 — Concevoir les réseaux de conteneurs</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_11/11.5-gerer-secrets-podman/">Chapitre 11.5 — Gérer les secrets avec Podman</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_11/11.6-executer-sentinel-securite/">Chapitre 11.6 — Exécuter Sentinel en sécurité</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 12 - Supervision et audit</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_12/12.1-centraliser-journaux-rsyslog/">Chapitre 12.1 — Centraliser les journaux avec Rsyslog</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_12/12.2-auditer-systeme-auditd/">Chapitre 12.2 — Auditer le système avec auditd</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_12/12.3-controler-integrite-fichiers-aide/">Chapitre 12.3 — Contrôler l'intégrité des fichiers avec AIDE</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_12/12.4-superviser-sentinel-prometheus/">Chapitre 12.4 — Superviser Sentinel avec Prometheus</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_12/12.5-concevoir-alertes-alertmanager/">Chapitre 12.5 — Concevoir des alertes avec Alertmanager</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_12/12.6-construire-tableau-bord-sentinel/">Chapitre 12.6 — Construire le tableau de bord Sentinel</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 13 - Attaques et défense</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.1-reconnaissance/">Chapitre 13.1 — Reconnaissance</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.2-scan-reseau/">Chapitre 13.2 — Scan réseau</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.3-brute-force-ssh/">Chapitre 13.3 — Brute force SSH</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.4-escalade-privileges/">Chapitre 13.4 — Escalade de privilèges</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.5-mouvements-lateraux/">Chapitre 13.5 — Mouvements latéraux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.6-persistance/">Chapitre 13.6 — Persistance</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.7-exfiltration/">Chapitre 13.7 — Exfiltration</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.8-etude-cas-complete/">Chapitre 13.8 — Étude de cas complète</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 14 - Projet final</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.1-deployer-sentinel-almalinux-minimale/">Chapitre 14.1 — Déployer Sentinel sur une AlmaLinux minimale</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.2-securiser-hote/">Chapitre 14.2 — Sécuriser l'hôte</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.3-integrer-freeipa/">Chapitre 14.3 — Intégrer FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.4-deployer-ansible/">Chapitre 14.4 — Déployer avec Ansible</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.5-packager-rpm/">Chapitre 14.5 — Packager avec RPM</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.6-conteneuriser-podman/">Chapitre 14.6 — Conteneuriser avec Podman</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.7-superviser-auditer/">Chapitre 14.7 — Superviser et auditer</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.8-audit-final-tests-kali/">Chapitre 14.8 — Audit final et tests depuis Kali</a>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</nav>
+<section class="wy-nav-content-wrap" data-toggle="wy-nav-shift">
+<nav aria-label="Mobile navigation menu" class="wy-nav-top" role="navigation">
+<i class="fa fa-bars" data-toggle="wy-nav-top"></i>
+<a href="../..">Formation Sentinel — AlmaLinux sécurisé</a>
+</nav>
+<div class="wy-nav-content">
+<div class="rst-content"><div aria-label="breadcrumbs navigation" role="navigation">
+<ul class="wy-breadcrumbs">
+<li><a aria-label="Docs" class="icon icon-home" href="../.."></a></li>
+<li class="breadcrumb-item">Campagnes</li>
+<li class="breadcrumb-item">Campagne 2 - Gestion des permissions et des identités</li>
+<li class="breadcrumb-item active">Chapitre 2.3 — L'umask</li>
+<li class="wy-breadcrumbs-aside">
+<a href="https://github.com/tdelaclos/formations/edit/master/docs/campagne_02/2.3-umask.md">Edit on tdelaclos/formations</a>
+</li>
+</ul>
+<hr/>
+</div>
+<div class="document" itemscope="itemscope" itemtype="http://schema.org/Article" role="main">
+<div class="section" itemprop="articleBody">
+<h1 id="chapitre-23-lumask">Chapitre 2.3 — L'<code>umask</code></h1>
+<blockquote>
+<p><strong>Campagne 2 — Contrôle des accès</strong></p>
+<p><em>« Le meilleur moyen de protéger un fichier est souvent de ne jamais lui accorder de permissions inutiles dès sa création. »</em></p>
+</blockquote>
+<h2 id="vous-etes-ici">Vous êtes ici</h2>
+<pre><code class="language-text">PARTIE I — Construire un socle sécurisé
+
+Campagne 1  [██████████] ✔
+Campagne 2  [███░░░░░░░]
+
+      2.1 Les permissions UNIX ✔
+      2.2 ACL ✔
+   ►  2.3 umask
+      2.4 Attributs étendus
+      2.5 PAM
+      2.6 Politique de mots de passe
+      2.7 Comptes système
+      2.8 sudo avancé
+      2.9 passwd / shadow / group
+      2.10 Synthèse
+</code></pre>
+<h2 id="objectifs-pedagogiques">Objectifs pédagogiques</h2>
+<p>À la fin de ce chapitre, vous serez capable de :</p>
+<ul>
+<li>comprendre le rôle exact de l'<code>umask</code> ;</li>
+<li>expliquer pourquoi les permissions d'un fichier nouvellement créé ne sont pas toujours celles attendues ;</li>
+<li>calculer les permissions résultantes ;</li>
+<li>modifier temporairement ou durablement une <code>umask</code> ;</li>
+<li>comprendre l'interaction entre l'<code>umask</code>, les ACL par défaut et les applications ;</li>
+<li>définir une politique de création de fichiers adaptée à un environnement professionnel.</li>
+</ul>
+<h2 id="pourquoi-ce-chapitre-existe">Pourquoi ce chapitre existe</h2>
+<p>Nous avons appris à lire les permissions. Nous savons maintenant les modifier. Nous savons également créer des ACL. Mais une question demeure. Prenons cette commande.</p>
+<pre><code class="language-bash">touch document.txt
+</code></pre>
+<p>Le fichier apparaît immédiatement. Observons ses permissions.</p>
+<pre><code class="language-bash">-rw-r--r--
+</code></pre>
+<p>Pourquoi ces permissions ? Pourquoi pas : <code>-rwxrwxrwx</code> Ou : <code>-r--------</code> Qui a pris cette décision ? À première vue, on pourrait penser que c'est <code>touch</code>. Pourtant, remplaçons <code>touch</code> par un programme Python.</p>
+<pre><code class="language-python">open("document.txt", "w")
+</code></pre>
+<p>Le résultat est pratiquement identique. Essayons maintenant avec :</p>
+<ul>
+<li><code>vim</code> ;</li>
+<li><code>nano</code> ;</li>
+<li><code>cp</code> ;</li>
+<li><code>tar</code>.</li>
+</ul>
+<p>Les permissions initiales restent cohérentes. Ce n'est donc pas chaque application qui décide individuellement. Il existe une règle commune. Cette règle est l'<code>umask</code>.</p>
+<h2 id="une-idee-contre-intuitive">Une idée contre-intuitive</h2>
+<p>Le nom <strong>umask</strong> est souvent mal interprété. Beaucoup pensent qu'il s'agit des permissions qui seront accordées. C'est l'inverse. L'<code>umask</code> indique les permissions qui seront <strong>retirées</strong>. Autrement dit :</p>
+<blockquote>
+<p>L'<code>umask</code> ne dit pas ce qu'il faut autoriser.</p>
+<p>Elle indique ce qu'il faut interdire.</p>
+</blockquote>
+<p>C'est une différence fondamentale.</p>
+<h2 id="pourquoi-avoir-concu-lumask-de-cette-maniere">Pourquoi avoir conçu l'<code>umask</code> de cette manière ?</h2>
+<p>Revenons quelques décennies en arrière. Imaginons un programme. Il crée un fichier. Le développeur souhaite généralement obtenir un fichier pleinement utilisable. Il demande donc : <code>rw-rw-rw-</code> Autrement dit : <code>666</code> Pourquoi pas : <code>777</code> Parce qu'un fichier ordinaire n'a normalement aucune raison d'être exécutable dès sa création. Pour un répertoire, la situation est différente. Afin de pouvoir y entrer et y créer des fichiers, il demande généralement : <code>rwxrwxrwx</code> soit : <code>777</code> À partir de là, intervient l'<code>umask</code>.</p>
+<p>Elle retire les permissions jugées excessives. On peut représenter ce principe de la manière suivante.</p>
+<div class="mermaid">flowchart LR
+
+    A[Mode demandé&lt;br/&gt;666 ou 777]
+
+    A --&gt; B[Application de l'umask]
+
+    B --&gt; C[Permissions finales]
+</div>
+<p>L'<code>umask</code> agit comme un filtre. Elle ne crée jamais de nouvelles permissions. Elle ne fait qu'en supprimer.</p>
+<h2 id="le-mode-demande-par-lapplication">Le mode demandé par l'application</h2>
+<p>Voici un détail que beaucoup d'administrateurs découvrent assez tard. L'<code>umask</code> ne travaille jamais seule. Elle agit toujours sur un <strong>mode initial</strong> fourni par l'application. Dans la grande majorité des cas :</p>
+<table>
+<thead>
+<tr>
+<th>Objet créé</th>
+<th style="text-align: right;">Mode demandé</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Fichier</td>
+<td style="text-align: right;"><code>666</code></td>
+</tr>
+<tr>
+<td>Répertoire</td>
+<td style="text-align: right;"><code>777</code></td>
+</tr>
+</tbody>
+</table>
+<p>Pourquoi cette différence ? Parce qu'un fichier n'a pas besoin du bit d'exécution pour être créé. Un répertoire, en revanche, a besoin du droit de traversée (<code>x</code>) pour être utilisable. C'est pourquoi les deux valeurs de départ sont différentes. Nous pouvons résumer ce comportement ainsi.</p>
+<div class="mermaid">graph TD
+
+    A[Création d'un objet]
+
+    A --&gt; B{Type ?}
+
+    B --&gt;|Fichier| C[Mode initial 666]
+
+    B --&gt;|Répertoire| D[Mode initial 777]
+
+    C --&gt; E[Application de l'umask]
+
+    D --&gt; E
+
+    E --&gt; F[Permissions finales]
+</div>
+<p>Cette distinction est essentielle pour comprendre les calculs qui suivent.</p>
+<h2 id="une-premiere-umask">Une première <code>umask</code></h2>
+<p>Affichons la valeur actuelle.</p>
+<pre><code class="language-bash">umask
+</code></pre>
+<p>Vous obtiendrez probablement quelque chose comme : <code>0022</code> ou : <code>0002</code> À première vue, cette valeur ne ressemble pas aux permissions UNIX. Pourtant, elle utilise exactement la même représentation octale. La différence est purement conceptuelle. Les permissions indiquent ce qui est <strong>autorisé</strong>. L'<code>umask</code> indique ce qui sera <strong>supprimé</strong>.</p>
+<h2 id="comprendre-la-notation-octale">Comprendre la notation octale</h2>
+<p>Avant d'aller plus loin, nous devons faire un détour par la notation octale. Cette représentation est omniprésente sous Linux. Vous la rencontrerez dans :</p>
+<ul>
+<li><code>chmod</code> ;</li>
+<li>l'<code>umask</code> ;</li>
+<li>certains appels système ;</li>
+<li>des scripts shell ;</li>
+<li>du code C ;</li>
+<li>des programmes Python.</li>
+</ul>
+<p>Il est donc indispensable de la maîtriser.</p>
+<h2 id="pourquoi-utiliser-loctal">Pourquoi utiliser l'octal ?</h2>
+<p>Les permissions UNIX sont constituées de trois droits.</p>
+<ul>
+<li>lecture ;</li>
+<li>écriture ;</li>
+<li>exécution.</li>
+</ul>
+<p>Chacun de ces droits peut être :</p>
+<ul>
+<li>présent ;</li>
+<li>absent.</li>
+</ul>
+<p>Autrement dit, chaque droit peut être représenté par un bit.</p>
+<pre><code class="language-text">Lecture      1 ou 0
+Écriture     1 ou 0
+Exécution    1 ou 0
+</code></pre>
+<p>Nous obtenons donc trois bits. <code>r w x</code> Trois bits permettent de représenter exactement huit combinaisons. Or : <code>2³ = 8</code> C'est précisément le nombre de chiffres disponibles en base huit. L'octal devient donc une représentation naturelle des permissions.</p>
+<h2 id="de-binaire-a-octal">De binaire à octal</h2>
+<p>Observons toutes les combinaisons possibles.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">Binaire</th>
+<th style="text-align: right;">Octal</th>
+<th>Permissions</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">000</td>
+<td style="text-align: right;">0</td>
+<td><code>---</code></td>
+</tr>
+<tr>
+<td style="text-align: right;">001</td>
+<td style="text-align: right;">1</td>
+<td><code>--x</code></td>
+</tr>
+<tr>
+<td style="text-align: right;">010</td>
+<td style="text-align: right;">2</td>
+<td><code>-w-</code></td>
+</tr>
+<tr>
+<td style="text-align: right;">011</td>
+<td style="text-align: right;">3</td>
+<td><code>-wx</code></td>
+</tr>
+<tr>
+<td style="text-align: right;">100</td>
+<td style="text-align: right;">4</td>
+<td><code>r--</code></td>
+</tr>
+<tr>
+<td style="text-align: right;">101</td>
+<td style="text-align: right;">5</td>
+<td><code>r-x</code></td>
+</tr>
+<tr>
+<td style="text-align: right;">110</td>
+<td style="text-align: right;">6</td>
+<td><code>rw-</code></td>
+</tr>
+<tr>
+<td style="text-align: right;">111</td>
+<td style="text-align: right;">7</td>
+<td><code>rwx</code></td>
+</tr>
+</tbody>
+</table>
+<p>Cette table mérite d'être mémorisée. Avec l'habitude, un administrateur lit immédiatement : <code>755</code> comme : <code>rwxr-xr-x</code> sans effectuer le moindre calcul.</p>
+<h2 id="decomposer-un-nombre-octal">Décomposer un nombre octal</h2>
+<p>Prenons l'exemple : <code>754</code> Chaque chiffre correspond à une catégorie.</p>
+<div class="mermaid">flowchart TB
+    Mode["Mode 754"] --&gt; U["7 — propriétaire — rwx"]
+    Mode --&gt; G["5 — groupe — r-x"]
+    Mode --&gt; O["4 — autres — r--"]
+</div>
+<p>Développons chaque chiffre.</p>
+<pre><code class="language-text">7 = rwx
+
+5 = r-x
+
+4 = r--
+</code></pre>
+<p>Nous obtenons donc : <code>rwxr-xr--</code> Le noyau ne voit jamais réellement : <code>754</code> Il manipule des bits. L'écriture octale est simplement une représentation plus compacte pour les administrateurs.</p>
+<h2 id="revenons-a-lumask">Revenons à l'<code>umask</code></h2>
+<p>Supposons maintenant : <code>umask 022</code> Que signifie ce nombre ? Il ne représente pas les permissions finales. Il représente les permissions qui seront retirées. Découpons-le. <code>0 2 2</code> Développons.</p>
+<pre><code class="language-text">0 = ---
+
+2 = -w-
+
+2 = -w-
+</code></pre>
+<p>Autrement dit :</p>
+<pre><code class="language-text">Le propriétaire ne perd rien.
+
+Le groupe perd l'écriture.
+
+Les autres perdent l'écriture.
+</code></pre>
+<p>Cette lecture est beaucoup plus parlante.</p>
+<h2 id="calculer-les-permissions-dun-fichier">Calculer les permissions d'un fichier</h2>
+<p>Prenons un exemple concret. Une application crée un fichier. Mode demandé : <code>666</code> L'<code>umask</code> vaut : <code>022</code> Le calcul consiste à retirer les bits présents dans l'<code>umask</code>. On peut le représenter ainsi.</p>
+<pre><code class="language-text">Mode demandé
+
+666
+
+Retirer
+
+022
+
+Résultat
+
+644
+</code></pre>
+<p>Autrement dit : <code>rw-r--r--</code> C'est précisément ce que l'on observe sur la plupart des distributions Linux.</p>
+<h2 id="calculer-les-permissions-dun-repertoire">Calculer les permissions d'un répertoire</h2>
+<p>Le raisonnement est identique. Cette fois, le mode demandé est : <code>777</code> L'<code>umask</code> reste : <code>022</code> Le résultat devient :</p>
+<pre><code class="language-text">777
+
+022
+
+↓
+
+755
+</code></pre>
+<p>Le répertoire possède alors : <code>rwxr-xr-x</code> Ce résultat est extrêmement courant. Vous l'avez probablement déjà rencontré des centaines de fois sans savoir d'où il provenait.</p>
+<h2 id="pourquoi-les-fichiers-ordinaires-ne-deviennent-ils-pas-executables-par-defaut">Pourquoi les fichiers ordinaires ne deviennent-ils pas exécutables par défaut ?</h2>
+<p>Une question revient régulièrement. Si l'<code>umask</code> vaut <code>000</code>, pourquoi un fichier créé par <code>touch</code> n'obtient-il pas <code>777</code> ? Parce que cet outil demande normalement <code>0666</code> pour un fichier ordinaire. Même si l'<code>umask</code> ne retire rien, le bit d'exécution n'existe pas dans cette demande. Une autre application pourrait demander un mode contenant <code>x</code>, mais l'<code>umask</code> ne peut jamais ajouter une permission absente du mode demandé.</p>
+<p>L'<code>umask</code> est un mécanisme de <strong>restriction</strong>, jamais d'ajout.</p>
+<h3 id="culture-technique">Culture technique</h3>
+<p>Sous Linux, l'<code>umask</code> est une propriété du <strong>processus</strong>. Cela signifie que deux programmes exécutés simultanément peuvent utiliser des <code>umask</code> différentes. Par exemple :</p>
+<ul>
+<li>votre shell interactif peut utiliser <code>0022</code> ;</li>
+<li>un service <code>systemd</code> peut utiliser <code>0027</code> ;</li>
+<li>un conteneur Podman peut utiliser une autre valeur ;</li>
+<li>un programme peut même modifier sa propre <code>umask</code> avant de créer un fichier.</li>
+</ul>
+<p>Autrement dit, l'<code>umask</code> n'est pas une propriété globale du système. Elle appartient au contexte d'exécution du processus. Cette particularité explique pourquoi deux applications peuvent créer des fichiers avec des permissions différentes sur une même machine. Nous exploiterons cette possibilité lorsque nous étudierons <code>systemd</code>, qui permet de définir une <code>UMask=</code> spécifique à un service.</p>
+<h3 id="piege-classique">Piège classique</h3>
+<p>L'une des idées reçues les plus répandues consiste à croire que l'<code>umask</code> peut rendre un programme exécutable. Prenons un exemple.</p>
+<pre><code class="language-bash">umask 000
+</code></pre>
+<p>Puis :</p>
+<pre><code class="language-bash">touch script.sh
+</code></pre>
+<p>Le fichier obtenu sera <code>-rw-rw-rw-</code>, et non <code>-rwxrwxrwx</code>, parce que <code>touch</code> demande au noyau le mode de base <code>0666</code>. Pour rendre ensuite un script exécutable, on peut utiliser :</p>
+<pre><code class="language-bash">chmod +x script.sh
+</code></pre>
+<p>ou demander explicitement ce droit lors de la création via un appel système approprié.</p>
+<h2 id="tp-1-experimenter-sur-almalinux">TP 1 — Expérimenter sur AlmaLinux</h2>
+<p>Observons l'effet de différentes valeurs d'<code>umask</code>. Affichons la valeur actuelle.</p>
+<pre><code class="language-bash">umask
+</code></pre>
+<p>Créons un fichier.</p>
+<pre><code class="language-bash">touch test1.txt
+</code></pre>
+<p>Puis vérifions ses permissions.</p>
+<pre><code class="language-bash">ls -l test1.txt
+</code></pre>
+<p>Modifions temporairement l'<code>umask</code>.</p>
+<pre><code class="language-bash">umask 077
+</code></pre>
+<p>Créons un nouveau fichier.</p>
+<pre><code class="language-bash">touch test2.txt
+</code></pre>
+<p>Affichons ses permissions.</p>
+<pre><code class="language-bash">ls -l test2.txt
+</code></pre>
+<p>Vous devriez observer un résultat proche de : <code>-rw-------</code> Essayons maintenant :</p>
+<pre><code class="language-bash">umask 002
+</code></pre>
+<p>Créons un troisième fichier.</p>
+<pre><code class="language-bash">touch test3.txt
+</code></pre>
+<p>Puis :</p>
+<pre><code class="language-bash">ls -l test3.txt
+</code></pre>
+<p>Comparez les trois résultats. Vous constaterez que le comportement de <code>touch</code> n'a jamais changé. Seule la politique de retrait des permissions a évolué. Enfin, pensez à rétablir votre configuration initiale. Par exemple :</p>
+<pre><code class="language-bash">umask 022
+</code></pre>
+<h2 id="ou-lumask-est-elle-definie">Où l'<code>umask</code> est-elle définie ?</h2>
+<p>Une question se pose naturellement. D'où vient la valeur affichée par :</p>
+<pre><code class="language-bash">umask
+</code></pre>
+<p>La réponse dépend du contexte d'exécution. Plusieurs composants peuvent définir une <code>umask</code>. Par exemple :</p>
+<ul>
+<li>le shell de connexion ;</li>
+<li>PAM ;</li>
+<li><code>systemd</code> ;</li>
+<li>un script de démarrage ;</li>
+<li>une application elle-même.</li>
+</ul>
+<p>On peut représenter ces différentes sources ainsi.</p>
+<div class="mermaid">flowchart TD
+
+    A[Connexion utilisateur]
+
+    A --&gt; B[PAM]
+
+    B --&gt; C[Shell]
+
+    C --&gt; D[umask du shell]
+
+    A --&gt; E[systemd]
+
+    E --&gt; F[UMask= du service]
+
+    D --&gt; G[Processus utilisateur]
+
+    F --&gt; H[Service système]
+</div>
+<p>La valeur utilisée par un processus est celle qu'il hérite de son parent, sauf si elle est modifiée en cours d'exécution. Cette notion d'héritage est commune à de nombreux paramètres des processus Linux.</p>
+<h2 id="linteraction-entre-lumask-et-les-acl">L'interaction entre l'<code>umask</code> et les ACL</h2>
+<p>Nous avons étudié ces deux mécanismes séparément. Dans la réalité, ils interviennent souvent ensemble. Lorsqu'un nouveau fichier est créé dans un répertoire possédant des ACL par défaut, plusieurs étapes se succèdent. Le noyau ne choisit pas arbitrairement l'un ou l'autre mécanisme. Il combine leurs effets. Schématiquement, le processus est le suivant.</p>
+<div class="mermaid">sequenceDiagram
+    participant App as Application
+    participant Kernel as Noyau
+    participant Dir as Répertoire parent
+    participant File as Nouveau fichier
+
+    App-&gt;&gt;Kernel: Créer un fichier (mode demandé)
+    Kernel-&gt;&gt;Kernel: Appliquer l'umask
+    Kernel-&gt;&gt;Dir: Lire les ACL par défaut
+    Dir--&gt;&gt;Kernel: ACL d'héritage
+    Kernel-&gt;&gt;File: Créer le fichier avec ses permissions et ACL
+</div>
+<p>Les détails de cette interaction peuvent être subtils. Retenez pour l'instant l'idée suivante :</p>
+<ul>
+<li>l'<code>umask</code> fixe une politique générale de création ;</li>
+<li>les ACL permettent d'ajouter des règles spécifiques héritées du répertoire.</li>
+</ul>
+<p>Ces deux mécanismes sont complémentaires. Ils ne poursuivent pas exactement le même objectif.</p>
+<h2 id="quelle-valeur-dumask-choisir">Quelle valeur d'<code>umask</code> choisir ?</h2>
+<p>Il n'existe pas de valeur universelle. Le choix dépend du contexte. Cependant, certaines valeurs sont devenues des standards.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;"><code>umask</code></th>
+<th>Fichiers créés</th>
+<th>Répertoires créés</th>
+<th>Usage courant</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;"><code>000</code></td>
+<td><code>666</code></td>
+<td><code>777</code></td>
+<td>Très rarement justifiée, extrêmement permissive</td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>002</code></td>
+<td><code>664</code></td>
+<td><code>775</code></td>
+<td>Travail collaboratif avec groupe partagé</td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>022</code></td>
+<td><code>644</code></td>
+<td><code>755</code></td>
+<td>Valeur classique sur de nombreuses distributions</td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>027</code></td>
+<td><code>640</code></td>
+<td><code>750</code></td>
+<td>Serveurs d'entreprise, réduction de l'exposition</td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>077</code></td>
+<td><code>600</code></td>
+<td><code>700</code></td>
+<td>Données très sensibles, comptes administratifs, clés privées</td>
+</tr>
+</tbody>
+</table>
+<p>On remarque une tendance claire. Plus les données sont sensibles, plus l'<code>umask</code> retire de permissions dès la création.</p>
+<h2 id="pourquoi-0022-est-elle-si-repandue">Pourquoi <code>0022</code> est-elle si répandue ?</h2>
+<p>Pendant longtemps, les systèmes UNIX étaient utilisés par de nombreux utilisateurs partageant la même machine. Il était courant de rendre les fichiers lisibles par tous. En revanche, il était dangereux de les rendre modifiables. L'<code>umask</code> : <code>022</code> répond précisément à ce besoin. Elle retire uniquement les permissions d'écriture pour :</p>
+<ul>
+<li>le groupe ;</li>
+<li>les autres utilisateurs.</li>
+</ul>
+<p>Le propriétaire conserve tous les droits prévus. Le résultat est : <code>644</code> pour les fichiers. Et : <code>755</code> pour les répertoires. Cette politique reste adaptée à de nombreux environnements. Mais elle n'est plus toujours suffisante pour des infrastructures modernes où les données sont plus sensibles.</p>
+<h2 id="pourquoi-de-nombreuses-entreprises-preferent-0027-ou-0077">Pourquoi de nombreuses entreprises préfèrent <code>0027</code> ou <code>0077</code></h2>
+<p>Dans un serveur d'entreprise, il est rarement souhaitable que tous les utilisateurs puissent lire automatiquement les nouveaux fichiers. Prenons un exemple. Une application génère un rapport. <code>rapport-financier.csv</code> Avec une <code>umask</code> : <code>022</code> le fichier devient : <code>644</code> Tous les utilisateurs locaux peuvent le lire. Ce comportement est rarement souhaitable. Une entreprise choisira souvent : <code>027</code> Le résultat devient : <code>640</code> Les autres utilisateurs n'ont plus aucun accès.</p>
+<p>Cette simple modification réduit considérablement la surface d'exposition des données.</p>
+<h3 id="culture-technique_1">Culture technique</h3>
+<p>L'<code>umask</code> est apparue très tôt dans l'histoire d'UNIX. À cette époque, les développeurs étaient confrontés à un dilemme. Chaque programme créait des fichiers. Fallait-il demander aux développeurs de choisir systématiquement les bonnes permissions ? Cette solution présentait un risque évident. Chaque logiciel aurait implémenté sa propre logique. Certaines applications auraient été trop permissives. D'autres trop restrictives. Les comportements auraient varié d'un programme à l'autre.</p>
+<p>Les concepteurs d'UNIX ont alors fait un choix particulièrement élégant. Ils ont séparé les responsabilités.</p>
+<ul>
+<li>L'application indique les permissions <strong>maximales</strong> dont elle pourrait avoir besoin.</li>
+<li>Le système applique ensuite une politique de sécurité commune grâce à l'<code>umask</code>.</li>
+</ul>
+<p>Cette séparation est un excellent exemple de conception modulaire. L'application décrit son besoin fonctionnel. Le système applique la politique de sécurité. Ce principe se retrouvera de nombreuses fois dans Linux. Par exemple avec :</p>
+<ul>
+<li>SELinux ;</li>
+<li>les capacités Linux ;</li>
+<li>les politiques PAM ;</li>
+<li><code>systemd</code>.</li>
+</ul>
+<p>Chaque couche possède une responsabilité clairement définie.</p>
+<h3 id="piege-classique_1">Piège classique</h3>
+<p>Une erreur fréquente consiste à croire que modifier l'<code>umask</code> d'un shell modifie tout le système. Prenons un terminal.</p>
+<pre><code class="language-bash">umask 077
+</code></pre>
+<p>Puis ouvrons un second terminal.</p>
+<pre><code class="language-bash">umask
+</code></pre>
+<p>Il affichera probablement : <code>022</code> Pourquoi ? Parce que chaque session possède ses propres processus. Chaque processus hérite de l'<code>umask</code> de son parent. Modifier l'<code>umask</code> dans un shell n'affecte pas les autres shells déjà ouverts. De même, cela ne modifie pas les services <code>systemd</code> déjà démarrés. Autrement dit :</p>
+<div class="mermaid">flowchart LR
+    Shell["Shell : umask 077"] --&gt; Children["Processus enfants du shell"]
+    Other["Autre session ou service déjà lancé"] --&gt; Unchanged["Valeur inchangée"]
+    Shell -. "n'affecte pas" .-&gt; Other
+</div>
+<p>Cette distinction est essentielle lorsqu'on administre un environnement de production.</p>
+<h2 id="tp-2-experimenter-sur-almalinux">TP 2 — Expérimenter sur AlmaLinux</h2>
+<p>Nous allons vérifier expérimentalement que l'<code>umask</code> appartient bien au processus. Ouvrez deux terminaux. Dans le premier :</p>
+<pre><code class="language-bash">umask 077
+</code></pre>
+<p>Puis vérifiez.</p>
+<pre><code class="language-bash">umask
+</code></pre>
+<p>Résultat : <code>0077</code> Dans le second terminal :</p>
+<pre><code class="language-bash">umask
+</code></pre>
+<p>Vous constaterez généralement une autre valeur. Par exemple : <code>0022</code> Les deux sessions sont indépendantes. Essayons maintenant de créer un fichier dans chaque terminal. Terminal 1 :</p>
+<pre><code class="language-bash">touch secret.txt
+ls -l secret.txt
+</code></pre>
+<p>Terminal 2 :</p>
+<pre><code class="language-bash">touch public.txt
+ls -l public.txt
+</code></pre>
+<p>Comparez les permissions obtenues. Vous venez d'observer que deux processus travaillant sur le même système peuvent créer des fichiers avec des politiques différentes. C'est précisément ce qui permet à un service sensible d'utiliser une <code>UMask=</code> très restrictive, sans perturber les autres applications du serveur.</p>
+<h2 id="au-dela-du-calcul-limites-et-variantes">Au-delà du calcul : limites et variantes</h2>
+<p>Parler de « soustraction » est une aide mnémotechnique qui fonctionne pour les exemples courants, mais l'opération réelle est un masquage de bits : <code>mode_final = mode_demandé &amp; ~umask</code>. Une application peut demander moins de droits que <code>0666</code> ou <code>0777</code> ; l'<code>umask</code> ne peut jamais ajouter ce qu'elle n'a pas demandé. Elle n'agit pas non plus rétroactivement sur les objets existants.</p>
+<p>Le shell peut afficher la valeur sous forme symbolique avec <code>umask -S</code>. Cette vue est lisible, mais attention au sens : elle présente les permissions <strong>conservées</strong>, alors que la valeur octale indique les bits retirés.</p>
+<pre><code class="language-bash">umask
+umask -S
+</code></pre>
+<p>La valeur est héritée lors de la création d'un processus. Une session interactive peut la recevoir des fichiers de shell ou de PAM ; un service <code>systemd</code> peut employer <code>UMask=</code> ; une application peut appeler la fonction système <code>umask()</code> avant de créer des fichiers sensibles. Pour diagnostiquer une permission initiale surprenante, il faut donc identifier le processus créateur et son environnement, pas seulement lire <code>/etc/profile</code>.</p>
+<p>Enfin, une ACL par défaut peut modifier le résultat visible. Le noyau combine le mode demandé, l'<code>umask</code> et les règles d'héritage ACL : appliquer mentalement uniquement <code>0666 - 0022</code> peut alors conduire à une conclusion fausse. <code>getfacl</code> reste la preuve de référence.</p>
+<h2 id="mission-dingenieur-choisir-les-valeurs-de-creation-de-sentinel">Mission d'ingénieur — Choisir les valeurs de création de Sentinel</h2>
+<p>Classez les objets créés par Sentinel en quatre familles : secrets, configuration générée, données et journaux. Pour chacune, indiquez le mode maximal demandé, l'<code>umask</code> du service, le mode final attendu et l'éventuelle ACL par défaut. Vérifiez le résultat avec <code>stat</code> et <code>getfacl</code>, puis justifiez pourquoi une valeur unique comme <code>0027</code> suffit ou pourquoi une création applicative plus restrictive reste nécessaire.</p>
+<h2 id="impact-sur-sentinel">Impact sur Sentinel</h2>
+<p>Lorsque Sentinel deviendra un service <code>systemd</code>, il créera différents types de fichiers :</p>
+<ul>
+<li>des journaux ;</li>
+<li>des fichiers temporaires ;</li>
+<li>des fichiers d'état ;</li>
+<li>des exports ;</li>
+<li>éventuellement des certificats ou des clés.</li>
+</ul>
+<p>Nous ne voulons pas que ces fichiers soient accidentellement lisibles par tous les utilisateurs du système. Nous définirons donc une politique adaptée directement dans l'unité <code>systemd</code>. Par exemple :</p>
+<pre><code class="language-ini">[Service]
+UMask=0027
+</code></pre>
+<p>Avec cette configuration :</p>
+<ul>
+<li>Sentinel continuera à fonctionner normalement ;</li>
+<li>les fichiers créés seront immédiatement protégés ;</li>
+<li>aucune commande <code>chmod</code> corrective ne sera nécessaire après leur création.</li>
+</ul>
+<p>Cette approche réduit le risque d'erreur et s'inscrit pleinement dans une stratégie de <strong>sécurité dès la conception</strong> (<em>Security by Design</em>).</p>
+<h2 id="synthese">Synthèse</h2>
+<ul>
+<li>L'<code>umask</code> ne définit pas les permissions d'un fichier : elle retire certaines permissions au mode demandé par l'application.</li>
+<li>Les fichiers sont généralement créés avec un mode initial de <code>0666</code> et les répertoires avec un mode initial de <code>0777</code>.</li>
+<li>Les permissions finales résultent d'une opération logique entre le mode demandé et l'<code>umask</code>.</li>
+<li>L'<code>umask</code> est une propriété du <strong>processus</strong>, pas du système de fichiers.</li>
+<li>Deux processus exécutés sur le même serveur peuvent utiliser des <code>umask</code> différentes.</li>
+<li>Une <code>umask</code> restrictive limite l'exposition des nouveaux fichiers dès leur création.</li>
+<li><code>systemd</code> permet de définir une <code>UMask=</code> spécifique pour chaque service.</li>
+</ul>
+<h2 id="pour-aller-plus-loin">Pour aller plus loin</h2>
+<p>Jusqu'à présent, nous avons manipulé trois grandes familles de mécanismes.</p>
+<ul>
+<li>Les permissions UNIX.</li>
+<li>Les ACL.</li>
+<li>L'<code>umask</code>.</li>
+</ul>
+<p>Tous agissent sur les <strong>droits d'accès</strong>. Pourtant, Linux est capable d'associer à un fichier bien plus que des permissions. Un fichier peut également porter des <strong>métadonnées supplémentaires</strong>. Par exemple :</p>
+<ul>
+<li>empêcher sa suppression, même par <code>root</code> dans certains cas ;</li>
+<li>interdire toute modification ;</li>
+<li>demander un effacement sécurisé ;</li>
+<li>signaler qu'il doit être compressé ;</li>
+<li>stocker une ACL ;</li>
+<li>conserver des informations utilisées par SELinux.</li>
+</ul>
+<p>Toutes ces informations reposent sur un mécanisme commun : les <strong>attributs étendus</strong> (<em>Extended Attributes</em>, ou <em>xattr</em>). Dans le prochain chapitre, nous allons découvrir que, sous Linux, un fichier ne se résume pas à son contenu et à ses permissions. Il peut également transporter un ensemble de propriétés qui jouent un rôle essentiel dans la sécurité moderne des systèmes.</p>
+<p>← <a href="../2.2-acl/">2.2 — Les ACL</a> · <a href="../2.4-attributs-etendus/">2.4 — Les attributs étendus</a> →</p>
+</div>
+</div><footer>
+<div aria-label="Footer Navigation" class="rst-footer-buttons" role="navigation">
+<a class="btn btn-neutral float-left" href="../2.2-acl/" title="Chapitre 2.2 — Les ACL"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+<a class="btn btn-neutral float-right" href="../2.4-attributs-etendus/" title="Chapitre 2.4 — Les attributs étendus">Next <span class="icon icon-circle-arrow-right"></span></a>
+</div>
+<hr/>
+<div role="contentinfo">
+<!-- Copyright etc -->
+</div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+</div>
+</div>
+</section>
+</div>
+<div aria-label="Versions" class="rst-versions" role="note">
+<span class="rst-current-version" data-toggle="rst-current-version">
+<span>
+<a class="fa fa-code-fork" href="https://github.com/tdelaclos/formations" style="color: #fcfcfc"> tdelaclos/formations</a>
+</span>
+<span><a href="../2.2-acl/" style="color: #fcfcfc">« Previous</a></span>
+<span><a href="../2.4-attributs-etendus/" style="color: #fcfcfc">Next »</a></span>
+</span>
+</div>
+<script src="../../js/jquery-3.6.0.min.js"></script>
+<script>var base_url = "../..";</script>
+<script src="../../js/theme_extra.js"></script>
+<script src="../../js/theme.js"></script>
+<script src="../../search/main.js"></script>
+<script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+<script type="module">import mermaid from "https://unpkg.com/mermaid@10.4.0/dist/mermaid.esm.min.mjs";
+mermaid.initialize({});</script></body>
+</html>

@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+
+<html class="writer-html5" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="IE=edge" http-equiv="X-UA-Compatible"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="../../img/favicon.ico" rel="shortcut icon"/>
+<title>Chapitre 1.5 — Mettre à jour et gérer les dépôts - Formation Sentinel — AlmaLinux sécurisé</title>
+<link href="../../css/theme.css" rel="stylesheet"/>
+<link href="../../css/theme_extra.css" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" rel="stylesheet"/>
+<script>
+        // Current page data
+        var mkdocs_page_name = "Chapitre 1.5 \u2014 Mettre \u00e0 jour et g\u00e9rer les d\u00e9p\u00f4ts";
+        var mkdocs_page_input_path = "campagne_01/1.5-mise-a-jour-gestion-depots.md";
+        var mkdocs_page_url = null;
+      </script>
+<!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+<script>hljs.highlightAll();</script>
+</head>
+<body class="wy-body-for-nav" role="document">
+<div class="wy-grid-for-nav">
+<nav class="wy-nav-side stickynav" data-toggle="wy-nav-shift">
+<div class="wy-side-scroll">
+<div class="wy-side-nav-search">
+<a class="icon icon-home" href="../.."> Formation Sentinel — AlmaLinux sécurisé
+        </a><div role="search">
+<form action="../../search.html" class="wy-form" id="rtd-search-form" method="get">
+<input aria-label="Search docs" name="q" placeholder="Search docs" title="Type search term here" type="text"/>
+</form>
+</div>
+</div>
+<div aria-label="Navigation menu" class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../..">Accueil</a>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">A propos</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../GUIDE-REDACTION/">Guide de rédaction</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../PARCOURS-SENTINEL/">Parcours applicatif Sentinel</a>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Campagnes</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal current">Campagne 1 - Sécuriser le socle Linux</a>
+<ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../1.1-pourquoi-securiser-socle-linux/">Chapitre 1.1 — Pourquoi sécuriser un socle Linux ?</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../1.2-installation-almalinux-minimal/">Chapitre 1.2 — Installer AlmaLinux minimal</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../1.3-composants-systeme-linux/">Chapitre 1.3 — Comprendre les composants d'un système Linux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../1.4-premier-demarrage-verifications/">Chapitre 1.4 — Établir la baseline du serveur</a>
+</li>
+<li class="toctree-l2 current"><a class="reference internal current" href="#">Chapitre 1.5 — Mettre à jour et gérer les dépôts</a>
+<ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="#vous-etes-ici">Vous êtes ici</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#objectifs-pedagogiques">Objectifs pédagogiques</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pourquoi-ce-chapitre-existe">Pourquoi ce chapitre existe</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#la-chaine-de-confiance-logicielle">La chaîne de confiance logicielle</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#comprendre-les-depots-actives">Comprendre les dépôts activés</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#rechercher-avant-dinstaller">Rechercher avant d'installer</a>
+<ul>
+<li class="toctree-l4"><a class="reference internal" href="#dependances-fournisseurs-et-flux-de-versions">Dépendances, fournisseurs et flux de versions</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#appliquer-et-prouver-une-installation">Appliquer et prouver une installation</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#signatures-et-cles-approuvees">Signatures et clés approuvées</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#preparer-une-mise-a-jour">Préparer une mise à jour</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#historique-retrait-et-retour-arriere">Historique, retrait et retour arrière</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#cache-et-metadonnees">Cache et métadonnées</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#tp-1-qualifier-puis-installer-un-outil">TP 1 — Qualifier puis installer un outil</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#tp-2-preparer-une-maintenance-sans-lexecuter">TP 2 — Préparer une maintenance sans l'exécuter</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#mission-dingenieur-accepter-ou-refuser-un-nouveau-depot">Mission d'ingénieur — Accepter ou refuser un nouveau dépôt</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#impact-sur-sentinel">Impact sur Sentinel</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#synthese">Synthèse</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#schema-recapitulatif">Schéma récapitulatif</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pour-aller-plus-loin">Pour aller plus loin</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../1.6-architecture-systemes-fichiers/">Chapitre 1.6 — Organiser les systèmes de fichiers</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../1.7-utilisateurs-groupes-permissions/">Chapitre 1.7 — Comprendre identités et permissions</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../1.8-sudo-moindre-privilege/">Chapitre 1.8 — Administrer avec sudo</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../1.9-premiere-mise-en-securite-serveur/">Chapitre 1.9 — Mission : mettre le serveur en sécurité</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../1.10-creation-laboratoire-sentinel/">Chapitre 1.10 — Créer le laboratoire Sentinel</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 2 - Gestion des permissions et des identités</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.1-permissions-unix/">Chapitre 2.1 — Les permissions UNIX</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.2-acl/">Chapitre 2.2 — Les ACL</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.3-umask/">Chapitre 2.3 — L'umask</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.4-attributs-etendus/">Chapitre 2.4 — Les attributs étendus</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.5-pam/">Chapitre 2.5 — PAM</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.6-politique-mots-de-passe/">Chapitre 2.6 — Politique de mots de passe</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.7-comptes-systeme/">Chapitre 2.7 — Les comptes système</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.8-sudo-avance/">Chapitre 2.8 — sudo avancé</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.9-fichiers-identites-linux/">Chapitre 2.9 — Comprendre les fichiers d'identités Linux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.10-synthese-securiser-identites/">Chapitre 2.10 — Synthèse : sécuriser les identités</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 3 - TCP/IP et Firewalld</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.1-tcp-ip-administrateur/">Chapitre 3.1 — TCP/IP côté administrateur</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.2-architecture-firewalld/">Chapitre 3.2 — Architecture de Firewalld</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.3-zones-firewalld/">Chapitre 3.3 — Les zones Firewalld</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.4-services-firewalld/">Chapitre 3.4 — Les services Firewalld</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.5-conntrack-filtrage-etats/">Chapitre 3.5 — Conntrack et le filtrage par états</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.6-rich-rules-firewalld/">Chapitre 3.6 — Les Rich Rules Firewalld</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.7-journalisation-firewalld/">Chapitre 3.7 — Journalisation et analyse Firewalld</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.8-ip-sets-firewalld/">Chapitre 3.8 — Les IP Sets Firewalld</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.9-runtime-permanent/">Chapitre 3.9 — Runtime et Permanent</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.10-politique-reseau-sentinel/">Chapitre 3.10 — Concevoir la politique réseau de Sentinel</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 4 - SSH</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_04/4.1-architecture-openssh/">Chapitre 4.1 — Architecture d'OpenSSH</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_04/4.2-authentification-mot-de-passe/">Chapitre 4.2 — Authentification par mot de passe</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_04/4.3-authentification-par-cles/">Chapitre 4.3 — Authentification par clés</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_04/4.4-durcissement-sshd-config/">Chapitre 4.4 — Durcissement de sshd_config</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_04/4.5-bastion-administration/">Chapitre 4.5 — Bastion d'administration</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_04/4.6-journalisation-audit-ssh/">Chapitre 4.6 — Journalisation et audit SSH</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_04/4.7-protection-attaques-ssh/">Chapitre 4.7 — Protection contre les attaques SSH</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_04/4.8-mission-administration-sentinel/">Chapitre 4.8 — Mission : administrer Sentinel en sécurité</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 5 - Systemd</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.1-comprendre-systemd/">Chapitre 5.1 — Comprendre systemd</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.2-unites-systemd/">Chapitre 5.2 — Les unités systemd</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.3-creer-service-sentinel/">Chapitre 5.3 — Créer le service Sentinel</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.4-sandboxing-systemd/">Chapitre 5.4 — Sandboxing systemd</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.5-capacites-linux/">Chapitre 5.5 — Les capacités Linux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.6-journalisation-journald/">Chapitre 5.6 — Journalisation avec journald</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.7-supervision-redemarrage/">Chapitre 5.7 — Supervision et redémarrage automatique</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.8-mission-sentinel-resilient/">Chapitre 5.8 — Mission : rendre Sentinel résilient</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 6 - SELinux</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_06/6.1-pourquoi-selinux-existe/">Chapitre 6.1 — Pourquoi SELinux existe</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_06/6.2-contextes-selinux/">Chapitre 6.2 — Comprendre les contextes SELinux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_06/6.3-politiques-selinux/">Chapitre 6.3 — Les politiques SELinux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_06/6.4-diagnostic-refus-selinux/">Chapitre 6.4 — Diagnostiquer les refus SELinux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_06/6.5-creation-regles-selinux/">Chapitre 6.5 — Créer des règles SELinux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_06/6.6-securiser-sentinel-selinux/">Chapitre 6.6 — Sécuriser Sentinel avec SELinux</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 7 - TLS et PKI</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.1-comprendre-cryptographie-appliquee/">Chapitre 7.1 — Comprendre la cryptographie appliquée</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.2-lire-verifier-certificats-x509/">Chapitre 7.2 — Lire et vérifier les certificats X.509</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.3-construire-autorite-certification/">Chapitre 7.3 — Construire une autorité de certification</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.4-authentification-mutuelle-tls/">Chapitre 7.4 — Authentifier les deux extrémités avec mTLS</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.5-preparer-integration-freeipa/">Chapitre 7.5 — Préparer l'intégration à FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.6-renouveler-revoquer-certificats/">Chapitre 7.6 — Renouveler et révoquer les certificats</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.7-securiser-sentinel-tls/">Chapitre 7.7 — Sécuriser Sentinel avec TLS</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 8 - FreeIPA</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.1-presentation-freeipa/">Chapitre 8.1 — Découvrir FreeIPA et la gestion centralisée des identités</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.2-architecture-interne-freeipa/">Chapitre 8.2 — Comprendre l'architecture interne de FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.3-installation-freeipa/">Chapitre 8.3 — Installer un serveur FreeIPA de laboratoire</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.4-gestion-utilisateurs/">Chapitre 8.4 — Gérer le cycle de vie des utilisateurs FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.5-groupes-roles/">Chapitre 8.5 — Organiser les groupes et les rôles FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.6-politiques-sudo/">Chapitre 8.6 — Centraliser les politiques sudo avec FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.7-gestion-hotes/">Chapitre 8.7 — Enrôler les hôtes et contrôler les accès avec HBAC</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.8-certificats/">Chapitre 8.8 — Gérer les certificats de service avec FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.9-integration-sentinel/">Chapitre 8.9 — Intégrer Sentinel à FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.10-mission-administration-freeipa/">Chapitre 8.10 — Mission : administrer Sentinel avec FreeIPA</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 9 - Déploiement avec Ansible</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.1-architecture-ansible/">Chapitre 9.1 — Comprendre l'architecture Ansible</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.2-composants-ansible/">Chapitre 9.2 — Comprendre les composants et l'idempotence Ansible</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.3-inventaires/">Chapitre 9.3 — Construire les inventaires Ansible</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.4-premiers-playbooks/">Chapitre 9.4 — Écrire les premiers playbooks</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.5-variables-templates/">Chapitre 9.5 — Piloter la configuration avec variables et templates</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.6-roles-ansible/">Chapitre 9.6 — Concevoir des rôles Ansible réutilisables</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.7-deployer-sentinel-ansible/">Chapitre 9.7 — Déployer Sentinel avec Ansible</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.8-integrer-sentinel-freeipa/">Chapitre 9.8 — Automatiser l'intégration de Sentinel à FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.9-industrialiser-laboratoire/">Chapitre 9.9 — Industrialiser le projet Ansible</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.10-mission-deploiement-sentinel/">Chapitre 9.10 — Mission : reconstruire Sentinel avec Ansible</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 10 - Packaging RPM</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_10/10.1-construire-paquet-rpm/">Chapitre 10.1 — Construire un paquet RPM</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_10/10.2-gerer-dependances-rpm/">Chapitre 10.2 — Gérer les dépendances RPM</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_10/10.3-gerer-fichiers-configuration-rpm/">Chapitre 10.3 — Gérer les fichiers de configuration RPM</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_10/10.4-signer-paquets-rpm/">Chapitre 10.4 — Signer les paquets RPM</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_10/10.5-exploiter-depot-rpm-prive/">Chapitre 10.5 — Exploiter un dépôt RPM privé</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_10/10.6-packager-sentinel/">Chapitre 10.6 — Packager Sentinel</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 11 - Conteneurs Podman</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_11/11.1-decouvrir-podman/">Chapitre 11.1 — Découvrir Podman</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_11/11.2-conteneurs-rootless/">Chapitre 11.2 — Exécuter des conteneurs rootless</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_11/11.3-construire-images-securisees/">Chapitre 11.3 — Construire des images sécurisées</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_11/11.4-reseaux-conteneurs/">Chapitre 11.4 — Concevoir les réseaux de conteneurs</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_11/11.5-gerer-secrets-podman/">Chapitre 11.5 — Gérer les secrets avec Podman</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_11/11.6-executer-sentinel-securite/">Chapitre 11.6 — Exécuter Sentinel en sécurité</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 12 - Supervision et audit</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_12/12.1-centraliser-journaux-rsyslog/">Chapitre 12.1 — Centraliser les journaux avec Rsyslog</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_12/12.2-auditer-systeme-auditd/">Chapitre 12.2 — Auditer le système avec auditd</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_12/12.3-controler-integrite-fichiers-aide/">Chapitre 12.3 — Contrôler l'intégrité des fichiers avec AIDE</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_12/12.4-superviser-sentinel-prometheus/">Chapitre 12.4 — Superviser Sentinel avec Prometheus</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_12/12.5-concevoir-alertes-alertmanager/">Chapitre 12.5 — Concevoir des alertes avec Alertmanager</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_12/12.6-construire-tableau-bord-sentinel/">Chapitre 12.6 — Construire le tableau de bord Sentinel</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 13 - Attaques et défense</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.1-reconnaissance/">Chapitre 13.1 — Reconnaissance</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.2-scan-reseau/">Chapitre 13.2 — Scan réseau</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.3-brute-force-ssh/">Chapitre 13.3 — Brute force SSH</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.4-escalade-privileges/">Chapitre 13.4 — Escalade de privilèges</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.5-mouvements-lateraux/">Chapitre 13.5 — Mouvements latéraux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.6-persistance/">Chapitre 13.6 — Persistance</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.7-exfiltration/">Chapitre 13.7 — Exfiltration</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.8-etude-cas-complete/">Chapitre 13.8 — Étude de cas complète</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 14 - Projet final</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.1-deployer-sentinel-almalinux-minimale/">Chapitre 14.1 — Déployer Sentinel sur une AlmaLinux minimale</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.2-securiser-hote/">Chapitre 14.2 — Sécuriser l'hôte</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.3-integrer-freeipa/">Chapitre 14.3 — Intégrer FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.4-deployer-ansible/">Chapitre 14.4 — Déployer avec Ansible</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.5-packager-rpm/">Chapitre 14.5 — Packager avec RPM</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.6-conteneuriser-podman/">Chapitre 14.6 — Conteneuriser avec Podman</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.7-superviser-auditer/">Chapitre 14.7 — Superviser et auditer</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.8-audit-final-tests-kali/">Chapitre 14.8 — Audit final et tests depuis Kali</a>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</nav>
+<section class="wy-nav-content-wrap" data-toggle="wy-nav-shift">
+<nav aria-label="Mobile navigation menu" class="wy-nav-top" role="navigation">
+<i class="fa fa-bars" data-toggle="wy-nav-top"></i>
+<a href="../..">Formation Sentinel — AlmaLinux sécurisé</a>
+</nav>
+<div class="wy-nav-content">
+<div class="rst-content"><div aria-label="breadcrumbs navigation" role="navigation">
+<ul class="wy-breadcrumbs">
+<li><a aria-label="Docs" class="icon icon-home" href="../.."></a></li>
+<li class="breadcrumb-item">Campagnes</li>
+<li class="breadcrumb-item">Campagne 1 - Sécuriser le socle Linux</li>
+<li class="breadcrumb-item active">Chapitre 1.5 — Mettre à jour et gérer les dépôts</li>
+<li class="wy-breadcrumbs-aside">
+<a href="https://github.com/tdelaclos/formations/edit/master/docs/campagne_01/1.5-mise-a-jour-gestion-depots.md">Edit on tdelaclos/formations</a>
+</li>
+</ul>
+<hr/>
+</div>
+<div class="document" itemscope="itemscope" itemtype="http://schema.org/Article" role="main">
+<div class="section" itemprop="articleBody">
+<h1 id="chapitre-15-mettre-a-jour-et-gerer-les-depots">Chapitre 1.5 — Mettre à jour et gérer les dépôts</h1>
+<blockquote>
+<p><strong>Campagne 1 — Installation et fondations</strong></p>
+<p><em>« Installer un logiciel, c'est accepter sa provenance, ses dépendances et son cycle de maintenance. »</em></p>
+</blockquote>
+<h2 id="vous-etes-ici">Vous êtes ici</h2>
+<pre><code class="language-text">PARTIE I — Construire un socle sécurisé
+
+Campagne 1
+
+  1.1 Pourquoi sécuriser un socle Linux ? ✔
+  1.2 Installer AlmaLinux minimal ✔
+  1.3 Comprendre les composants du système ✔
+  1.4 Établir la baseline du serveur ✔
+► 1.5 Mettre à jour et gérer les dépôts
+  1.6 Organiser les systèmes de fichiers
+  1.7 Comprendre identités et permissions
+  1.8 Administrer avec sudo
+  1.9 Mission : mettre le serveur en sécurité
+  1.10 Créer le laboratoire Sentinel
+</code></pre>
+<h2 id="objectifs-pedagogiques">Objectifs pédagogiques</h2>
+<p>À l'issue de ce chapitre, vous serez capable de :</p>
+<ul>
+<li>distinguer paquet RPM, dépôt, métadonnées, signature et transaction DNF ;</li>
+<li>expliquer les rôles de BaseOS, AppStream et des avis d'errata AlmaLinux ;</li>
+<li>rechercher, installer, mettre à jour et retirer un paquet depuis une source approuvée ;</li>
+<li>vérifier la provenance et les fichiers d'un paquet installé ;</li>
+<li>préparer une maintenance avec contrôle, preuve et retour arrière réaliste ;</li>
+<li>éviter les installations manuelles qui échappent au cycle de vie du système.</li>
+</ul>
+<h2 id="pourquoi-ce-chapitre-existe">Pourquoi ce chapitre existe</h2>
+<p>Un serveur minimal doit évoluer : correctifs de sécurité, nouveaux outils et dépendances de Sentinel. Chaque ajout modifie la surface d'attaque et crée une responsabilité de mise à jour. Copier un binaire dans <code>/usr/local/bin</code> peut sembler rapide, mais le système ignore alors sa provenance, sa version et les fichiers qu'il a installés.</p>
+<p>AlmaLinux s'appuie sur RPM pour représenter les paquets et sur DNF pour résoudre leur installation depuis des dépôts. Ce chapitre traite le point de vue du <strong>consommateur et de l'exploitant</strong>. La fabrication, la signature et la publication des paquets Sentinel appartiennent à la campagne 10.</p>
+<h2 id="la-chaine-de-confiance-logicielle">La chaîne de confiance logicielle</h2>
+<div class="mermaid">flowchart LR
+    Repo["Dépôt approuvé"] --&gt; Meta["Métadonnées"]
+    Meta --&gt; DNF["DNF résout une transaction"]
+    Repo --&gt; RPM["Paquets RPM signés"]
+    RPM --&gt; DNF
+    Keys["Clés approuvées"] --&gt; Verify["Vérification"]
+    DNF --&gt; Verify
+    Verify --&gt; DB["Base RPM locale"]
+    DB --&gt; Files["Fichiers installés"]
+    DB --&gt; History["Historique DNF"]
+</div>
+<p>Un <strong>RPM</strong> contient des fichiers, des métadonnées, des dépendances et des scripts de cycle de vie. La base RPM locale sait quels paquets sont installés et quels fichiers leur appartiennent. Elle ne télécharge rien par elle-même.</p>
+<p>Un <strong>dépôt</strong> publie des RPM et des métadonnées qui permettent de les rechercher. <strong>DNF</strong> consulte les dépôts activés, calcule les dépendances et applique une transaction cohérente. Utiliser directement <code>rpm -i</code> pour un paquet téléchargé contourne une partie de cette résolution et rend la provenance plus difficile à gouverner.</p>
+<h2 id="comprendre-les-depots-actives">Comprendre les dépôts activés</h2>
+<p>AlmaLinux sépare les contenus en dépôts ayant des rôles et des cycles distincts. Les noms exacts dépendent de la version installée ; n'activez pas un dépôt en vous fondant sur une capture d'écran d'une autre version.</p>
+<p>Deux ensembles constituent les repères principaux de la famille Enterprise Linux :</p>
+<table>
+<thead>
+<tr>
+<th>Dépôt</th>
+<th>Contenu attendu</th>
+<th>Décision d'exploitation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>BaseOS</td>
+<td>fonctions fondamentales du système d'exploitation</td>
+<td>reste une fondation de l'installation</td>
+</tr>
+<tr>
+<td>AppStream</td>
+<td>applications en espace utilisateur, langages et bases de données</td>
+<td>fournit les composants adaptés aux charges de travail</td>
+</tr>
+</tbody>
+</table>
+<p>Des dépôts complémentaires tels qu'Extras ou un dépôt de construction destiné aux dépendances de développement peuvent exister selon la version. Ils ne sont pas équivalents à BaseOS et AppStream et ne doivent pas être activés « au cas où ». Vérifiez leur identifiant, leur rôle et leur politique de support sur l'hôte réel.</p>
+<pre><code class="language-bash">sudo dnf repolist
+sudo dnf repolist --all
+sudo dnf repoinfo
+</code></pre>
+<p>Les fichiers de définition se trouvent généralement sous <code>/etc/yum.repos.d/</code>. Ils indiquent l'emplacement des métadonnées, l'état du dépôt et les paramètres de vérification.</p>
+<pre><code class="language-bash">sudo grep -R -E '^(\[|name=|baseurl=|mirrorlist=|metalink=|enabled=|gpgcheck=|gpgkey=)' \
+  /etc/yum.repos.d/
+</code></pre>
+<p>Ne modifiez pas encore ces fichiers. Relevez le propriétaire RPM d'une définition et son origine :</p>
+<pre><code class="language-bash">rpm -qf /etc/yum.repos.d/*.repo
+</code></pre>
+<p>Un dépôt additionnel élargit la chaîne de confiance. Avant de l'activer, l'équipe doit connaître son propriétaire, sa politique de signature, son support, les risques de conflit et la procédure de retrait.</p>
+<h2 id="rechercher-avant-dinstaller">Rechercher avant d'installer</h2>
+<p>Partez du besoin, pas d'un nom supposé :</p>
+<pre><code class="language-bash">dnf search tree
+dnf info tree
+dnf repoquery --info tree
+dnf repoquery --requires tree
+</code></pre>
+<p>Selon l'installation, certaines sous-commandes peuvent nécessiter un paquet de greffons. Vérifiez la commande avec <code>dnf --help</code> et installez seulement l'outil nécessaire depuis les dépôts approuvés.</p>
+<p>Avant une installation, simulez ou examinez la transaction proposée :</p>
+<pre><code class="language-bash">sudo dnf install tree --assumeno
+</code></pre>
+<p>DNF affiche le paquet, la version, l'architecture, le dépôt source, la taille et les dépendances. <code>--assumeno</code> permet d'étudier la proposition sans l'appliquer. Lisez cette sortie : une commande familière peut déclencher une transaction plus large que prévu.</p>
+<h3 id="dependances-fournisseurs-et-flux-de-versions">Dépendances, fournisseurs et flux de versions</h3>
+<p>Une dépendance exprime souvent une capacité plutôt qu'un nom de fichier précis. Plusieurs paquets peuvent fournir une commande ou une bibliothèque ; DNF choisit une solution compatible avec les dépôts et l'architecture activés. Pour rechercher le fournisseur d'un chemin ou d'une capacité :</p>
+<pre><code class="language-bash">dnf provides '*/semanage'
+dnf repoquery --whatprovides 'python(abi)'
+</code></pre>
+<p>Les jokers doivent être cités afin que le shell ne les développe pas avant DNF. La sortie peut contenir plusieurs versions ou architectures : sélectionnez celle qui correspond au système, puis examinez le dépôt source.</p>
+<p>AppStream peut proposer des flux de versions pour certains composants. Un flux choisi influence les versions compatibles disponibles pour l'hôte ; le changer n'est pas une simple mise à jour mineure. Observez l'état sans le modifier :</p>
+<pre><code class="language-bash">dnf module list --enabled
+dnf module list NOM_DU_MODULE
+</code></pre>
+<p>Selon la version AlmaLinux et le composant, le mécanisme de modules peut être moins présent ou évoluer. La documentation locale et la transaction proposée restent les références. Ne réinitialisez pas ou ne basculez pas un flux sur un serveur utilisé sans étudier les dépendances et la procédure de migration.</p>
+<p>Les <strong>dépendances faibles</strong> et paquets recommandés peuvent aussi élargir une transaction. Leur désactivation globale pour obtenir une machine plus petite peut supprimer des fonctions attendues. À l'inverse, les accepter sans lecture ajoute des composants. La décision doit être prise par rôle et vérifiée avec les tests de l'application.</p>
+<p>Cette complexité justifie l'usage de DNF : il rend visible un graphe que l'installation manuelle répartirait entre téléchargements, scripts et copies impossibles à relire comme une transaction unique.</p>
+<h2 id="appliquer-et-prouver-une-installation">Appliquer et prouver une installation</h2>
+<pre><code class="language-bash">sudo dnf install tree
+rpm -q tree
+rpm -qi tree
+rpm -ql tree
+rpm -V tree
+</code></pre>
+<p><code>rpm -qi</code> décrit le paquet installé, <code>rpm -ql</code> liste ses fichiers et <code>rpm -V</code> compare certains attributs aux métadonnées enregistrées. Une absence de sortie de <code>rpm -V</code> signifie qu'aucune différence vérifiée n'a été détectée ; ce n'est pas une analyse complète de compromission.</p>
+<p>Reliez également une commande à son paquet :</p>
+<pre><code class="language-bash">command -v tree
+rpm -qf "$(command -v tree)"
+</code></pre>
+<p>Cette relation est centrale pour l'exploitation : lorsqu'un fichier pose problème, l'équipe peut retrouver son paquet, sa version et sa source de mise à jour.</p>
+<h2 id="signatures-et-cles-approuvees">Signatures et clés approuvées</h2>
+<p>La vérification GPG permet de contrôler qu'un paquet a été signé par une clé approuvée et n'a pas été modifié après signature. Elle ne garantit pas que le logiciel est exempt de vulnérabilité ni que le dépôt répond à votre besoin.</p>
+<pre><code class="language-bash">rpm -qa 'gpg-pubkey*'
+sudo dnf config-manager --dump 2&gt;/dev/null | grep -E '^(gpgcheck|repo_gpgcheck)'
+</code></pre>
+<p>Ne contournez pas un échec avec <code>--nogpgcheck</code>. Un tel échec indique une rupture de la chaîne de confiance : mauvaise source, clé absente, métadonnées incohérentes ou téléchargement altéré. La bonne action est d'identifier la cause et de comparer la clé par un canal fiable.</p>
+<div class="mermaid">flowchart TD
+    Download["Paquet proposé"] --&gt; Signature{"Signature valide ?"}
+    Key["Clé approuvée"] --&gt; Signature
+    Signature --&gt;|Non| Block["Bloquer et diagnostiquer"]
+    Signature --&gt;|Oui| Source{"Dépôt autorisé ?"}
+    Source --&gt;|Non| Block
+    Source --&gt;|Oui| Transaction["Évaluer la transaction"]
+    Transaction --&gt; Install["Installer et tracer"]
+</div>
+<h2 id="preparer-une-mise-a-jour">Préparer une mise à jour</h2>
+<p>Une mise à jour corrige des défauts mais peut modifier un comportement. Le processus doit donc inclure l'observation avant et après, la fenêtre de changement et la stratégie de récupération.</p>
+<p>AlmaLinux publie des <strong>avis</strong> qui donnent du sens aux paquets proposés :</p>
+<table>
+<thead>
+<tr>
+<th>Préfixe</th>
+<th>Type d'avis</th>
+<th>Question à poser</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ALSA</code></td>
+<td>sécurité</td>
+<td>quelles vulnérabilités et quelle sévérité ?</td>
+</tr>
+<tr>
+<td><code>ALBA</code></td>
+<td>correction d'anomalie</td>
+<td>quel défaut fonctionnel est corrigé ?</td>
+</tr>
+<tr>
+<td><code>ALEA</code></td>
+<td>amélioration</td>
+<td>quel comportement ou quelle capacité évolue ?</td>
+</tr>
+</tbody>
+</table>
+<p>Consultez les avis disponibles avant de réduire une mise à jour à une simple liste de versions :</p>
+<pre><code class="language-bash">dnf updateinfo --list
+dnf updateinfo list updates security
+dnf updateinfo info IDENTIFIANT_AVIS
+</code></pre>
+<p>La seconde commande cible les avis de sécurité non encore appliqués. Les métadonnées disponibles dépendent des dépôts activés ; une absence de résultat ne prouve pas à elle seule que le système est à jour. Comparez la date de rafraîchissement, les dépôts attendus et, pour une enquête précise, le portail officiel des errata.</p>
+<pre><code class="language-bash">sudo dnf check-update
+sudo dnf upgrade --assumeno
+dnf needs-restarting 2&gt;/dev/null || true
+</code></pre>
+<p><code>dnf check-update</code> utilise un code de retour particulier lorsqu'il existe des mises à jour ; ne traitez pas automatiquement toute valeur non nulle comme une panne sans consulter la page de manuel. La commande <code>needs-restarting</code> dépend des greffons disponibles et aide à identifier les processus utilisant encore d'anciens fichiers.</p>
+<p>Avant la transaction, enregistrez : baseline utile, espace disque, unités en échec, paquets proposés et sauvegarde des données concernées. Pendant une maintenance, évitez les commandes concurrentes DNF ou RPM.</p>
+<p>Appliquez ensuite :</p>
+<pre><code class="language-bash">sudo dnf upgrade
+sudo dnf history info last
+</code></pre>
+<p>Après la transaction, vérifiez les services critiques, les journaux, le noyau actif et la nécessité d'un redémarrage. « La commande a réussi » n'est pas un test fonctionnel de Sentinel.</p>
+<h2 id="historique-retrait-et-retour-arriere">Historique, retrait et retour arrière</h2>
+<p>DNF conserve un historique des transactions :</p>
+<pre><code class="language-bash">sudo dnf history
+sudo dnf history info last
+</code></pre>
+<p>L'historique apporte la traçabilité des paquets ajoutés, mis à jour ou retirés. Les fonctions <code>undo</code> ou <code>rollback</code> ne sont pas une garantie universelle : une ancienne version peut ne plus être disponible, un script de paquet peut avoir migré des données et un service peut avoir changé de format.</p>
+<p>Le retour arrière réel combine selon le risque : versions conservées dans un dépôt, sauvegarde restaurable, configuration versionnée, procédure applicative et test. Pour un outil sans données, le retrait est simple :</p>
+<pre><code class="language-bash">sudo dnf remove tree --assumeno
+sudo dnf remove tree
+</code></pre>
+<p>Relisez la transaction de suppression : une dépendance devenue inutile peut être proposée, tandis qu'un paquet partagé doit rester.</p>
+<h2 id="cache-et-metadonnees">Cache et métadonnées</h2>
+<p>DNF conserve des métadonnées et des paquets dans un cache pour accélérer les opérations. Le nettoyer n'est pas une routine de sécurité ; cela force de nouveaux téléchargements et peut compliquer un diagnostic.</p>
+<pre><code class="language-bash">sudo dnf clean metadata
+sudo dnf makecache
+du -sh /var/cache/dnf
+</code></pre>
+<p>Utilisez <code>clean all</code> pour résoudre un besoin identifié ou libérer de l'espace, pas comme réflexe après chaque transaction.</p>
+<h2 id="tp-1-qualifier-puis-installer-un-outil">TP 1 — Qualifier puis installer un outil</h2>
+<p>Pour le paquet <code>tree</code>, produisez avant installation : besoin, dépôt source, version, dépendances et transaction simulée. Appliquez l'installation, puis prouvez :</p>
+<ul>
+<li>la version installée ;</li>
+<li>le fichier exécutable fourni ;</li>
+<li>la liste de fichiers ;</li>
+<li>l'absence de modification détectée par <code>rpm -V</code> ;</li>
+<li>l'identifiant de transaction DNF.</li>
+</ul>
+<p>Terminez par un test fonctionnel dans votre répertoire personnel. Ne confondez pas la preuve d'installation avec la preuve que l'outil répond au besoin.</p>
+<h2 id="tp-2-preparer-une-maintenance-sans-lexecuter">TP 2 — Préparer une maintenance sans l'exécuter</h2>
+<p>Construisez une fiche pour la prochaine mise à jour du serveur :</p>
+<ol>
+<li>état avant changement ;</li>
+<li>liste et origine des paquets proposés ;</li>
+<li>capacité disque ;</li>
+<li>services à tester ;</li>
+<li>critères de succès ;</li>
+<li>conditions d'arrêt ;</li>
+<li>sauvegarde ou reconstruction disponible ;</li>
+<li>décision de redémarrage ;</li>
+<li>preuves à joindre au compte rendu.</li>
+</ol>
+<p>Exécutez seulement les commandes de lecture et la transaction avec <code>--assumeno</code>. La mission 1.9 appliquera une maintenance maîtrisée.</p>
+<h2 id="mission-dingenieur-accepter-ou-refuser-un-nouveau-depot">Mission d'ingénieur — Accepter ou refuser un nouveau dépôt</h2>
+<p>Une équipe propose un dépôt tiers pour obtenir un outil plus récent. Rédigez une décision comprenant : propriétaire, URL, clé de signature et empreinte vérifiée, paquets concernés, risques de remplacement, durée de support, procédure de désactivation et alternative fournie par les dépôts actuels.</p>
+<p>La décision ne doit pas se limiter à « le site est connu ». Elle doit préciser la frontière de confiance ajoutée et les preuves nécessaires avant activation.</p>
+<h2 id="impact-sur-sentinel">Impact sur Sentinel</h2>
+<p>Les dépendances de Sentinel seront installées et maintenues par des transactions relisibles. À terme, Sentinel sera lui-même livré comme RPM signé depuis un dépôt gouverné. Dès maintenant, aucune dépendance ne doit être ajoutée hors du système de paquets sans exception documentée.</p>
+<h2 id="synthese">Synthèse</h2>
+<ul>
+<li>RPM décrit les paquets et leurs fichiers ; DNF résout des transactions depuis des dépôts.</li>
+<li>BaseOS fournit la fondation du système ; AppStream apporte applications, langages et composants adaptés aux charges de travail.</li>
+<li>Un dépôt activé élargit la chaîne de confiance et doit avoir un propriétaire.</li>
+<li>Les avis ALSA, ALBA et ALEA relient une mise à jour à un risque de sécurité, une anomalie ou une amélioration.</li>
+<li>La transaction proposée doit être lue avant installation, mise à jour ou suppression.</li>
+<li>Les signatures protègent provenance et intégrité, pas la qualité fonctionnelle du logiciel.</li>
+<li>L'historique DNF trace les changements mais ne remplace pas une stratégie de retour arrière.</li>
+<li>Une maintenance se termine par des tests du système et de l'application.</li>
+</ul>
+<h2 id="schema-recapitulatif">Schéma récapitulatif</h2>
+<p><img alt="Récapitulatif visuel du chapitre 1.5" src="../media/recap-1.5.png"/></p>
+<h2 id="pour-aller-plus-loin">Pour aller plus loin</h2>
+<p>Utilisez <code>man dnf</code>, <code>man rpm</code>, la documentation des <a href="https://wiki.almalinux.org/repos/AlmaLinux">dépôts AlmaLinux</a> et celle des <a href="https://wiki.almalinux.org/documentation/errata.html">avis d'errata</a>. La campagne 10 reprendra la chaîne du côté producteur : construction, dépendances, configuration, signature, dépôt privé et packaging de Sentinel.</p>
+<p>Chapitre suivant : placer correctement exécutables, configuration, données, journaux et fichiers temporaires dans l'arborescence Linux.</p>
+<p>← <a href="../1.4-premier-demarrage-verifications/">1.4 — Établir la baseline du serveur</a> · <a href="../1.6-architecture-systemes-fichiers/">1.6 — Organiser les systèmes de fichiers</a> →</p>
+</div>
+</div><footer>
+<div aria-label="Footer Navigation" class="rst-footer-buttons" role="navigation">
+<a class="btn btn-neutral float-left" href="../1.4-premier-demarrage-verifications/" title="Chapitre 1.4 — Établir la baseline du serveur"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+<a class="btn btn-neutral float-right" href="../1.6-architecture-systemes-fichiers/" title="Chapitre 1.6 — Organiser les systèmes de fichiers">Next <span class="icon icon-circle-arrow-right"></span></a>
+</div>
+<hr/>
+<div role="contentinfo">
+<!-- Copyright etc -->
+</div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+</div>
+</div>
+</section>
+</div>
+<div aria-label="Versions" class="rst-versions" role="note">
+<span class="rst-current-version" data-toggle="rst-current-version">
+<span>
+<a class="fa fa-code-fork" href="https://github.com/tdelaclos/formations" style="color: #fcfcfc"> tdelaclos/formations</a>
+</span>
+<span><a href="../1.4-premier-demarrage-verifications/" style="color: #fcfcfc">« Previous</a></span>
+<span><a href="../1.6-architecture-systemes-fichiers/" style="color: #fcfcfc">Next »</a></span>
+</span>
+</div>
+<script src="../../js/jquery-3.6.0.min.js"></script>
+<script>var base_url = "../..";</script>
+<script src="../../js/theme_extra.js"></script>
+<script src="../../js/theme.js"></script>
+<script src="../../search/main.js"></script>
+<script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+<script type="module">import mermaid from "https://unpkg.com/mermaid@10.4.0/dist/mermaid.esm.min.mjs";
+mermaid.initialize({});</script></body>
+</html>

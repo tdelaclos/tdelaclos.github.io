@@ -1,0 +1,1163 @@
+<!DOCTYPE html>
+
+<html class="writer-html5" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="IE=edge" http-equiv="X-UA-Compatible"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="../../img/favicon.ico" rel="shortcut icon"/>
+<title>Chapitre 4.5 — Bastion d'administration - Formation Sentinel — AlmaLinux sécurisé</title>
+<link href="../../css/theme.css" rel="stylesheet"/>
+<link href="../../css/theme_extra.css" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" rel="stylesheet"/>
+<script>
+        // Current page data
+        var mkdocs_page_name = "Chapitre 4.5 \u2014 Bastion d\u0027administration";
+        var mkdocs_page_input_path = "campagne_04/4.5-bastion-administration.md";
+        var mkdocs_page_url = null;
+      </script>
+<!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+<script>hljs.highlightAll();</script>
+</head>
+<body class="wy-body-for-nav" role="document">
+<div class="wy-grid-for-nav">
+<nav class="wy-nav-side stickynav" data-toggle="wy-nav-shift">
+<div class="wy-side-scroll">
+<div class="wy-side-nav-search">
+<a class="icon icon-home" href="../.."> Formation Sentinel — AlmaLinux sécurisé
+        </a><div role="search">
+<form action="../../search.html" class="wy-form" id="rtd-search-form" method="get">
+<input aria-label="Search docs" name="q" placeholder="Search docs" title="Type search term here" type="text"/>
+</form>
+</div>
+</div>
+<div aria-label="Navigation menu" class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../..">Accueil</a>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">A propos</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../GUIDE-REDACTION/">Guide de rédaction</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../PARCOURS-SENTINEL/">Parcours applicatif Sentinel</a>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Campagnes</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal">Campagne 1 - Sécuriser le socle Linux</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.1-pourquoi-securiser-socle-linux/">Chapitre 1.1 — Pourquoi sécuriser un socle Linux ?</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.2-installation-almalinux-minimal/">Chapitre 1.2 — Installer AlmaLinux minimal</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.3-composants-systeme-linux/">Chapitre 1.3 — Comprendre les composants d'un système Linux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.4-premier-demarrage-verifications/">Chapitre 1.4 — Établir la baseline du serveur</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.5-mise-a-jour-gestion-depots/">Chapitre 1.5 — Mettre à jour et gérer les dépôts</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.6-architecture-systemes-fichiers/">Chapitre 1.6 — Organiser les systèmes de fichiers</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.7-utilisateurs-groupes-permissions/">Chapitre 1.7 — Comprendre identités et permissions</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.8-sudo-moindre-privilege/">Chapitre 1.8 — Administrer avec sudo</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.9-premiere-mise-en-securite-serveur/">Chapitre 1.9 — Mission : mettre le serveur en sécurité</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.10-creation-laboratoire-sentinel/">Chapitre 1.10 — Créer le laboratoire Sentinel</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 2 - Gestion des permissions et des identités</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.1-permissions-unix/">Chapitre 2.1 — Les permissions UNIX</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.2-acl/">Chapitre 2.2 — Les ACL</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.3-umask/">Chapitre 2.3 — L'umask</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.4-attributs-etendus/">Chapitre 2.4 — Les attributs étendus</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.5-pam/">Chapitre 2.5 — PAM</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.6-politique-mots-de-passe/">Chapitre 2.6 — Politique de mots de passe</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.7-comptes-systeme/">Chapitre 2.7 — Les comptes système</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.8-sudo-avance/">Chapitre 2.8 — sudo avancé</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.9-fichiers-identites-linux/">Chapitre 2.9 — Comprendre les fichiers d'identités Linux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.10-synthese-securiser-identites/">Chapitre 2.10 — Synthèse : sécuriser les identités</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 3 - TCP/IP et Firewalld</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.1-tcp-ip-administrateur/">Chapitre 3.1 — TCP/IP côté administrateur</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.2-architecture-firewalld/">Chapitre 3.2 — Architecture de Firewalld</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.3-zones-firewalld/">Chapitre 3.3 — Les zones Firewalld</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.4-services-firewalld/">Chapitre 3.4 — Les services Firewalld</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.5-conntrack-filtrage-etats/">Chapitre 3.5 — Conntrack et le filtrage par états</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.6-rich-rules-firewalld/">Chapitre 3.6 — Les Rich Rules Firewalld</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.7-journalisation-firewalld/">Chapitre 3.7 — Journalisation et analyse Firewalld</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.8-ip-sets-firewalld/">Chapitre 3.8 — Les IP Sets Firewalld</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.9-runtime-permanent/">Chapitre 3.9 — Runtime et Permanent</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.10-politique-reseau-sentinel/">Chapitre 3.10 — Concevoir la politique réseau de Sentinel</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal current">Campagne 4 - SSH</a>
+<ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../4.1-architecture-openssh/">Chapitre 4.1 — Architecture d'OpenSSH</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../4.2-authentification-mot-de-passe/">Chapitre 4.2 — Authentification par mot de passe</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../4.3-authentification-par-cles/">Chapitre 4.3 — Authentification par clés</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../4.4-durcissement-sshd-config/">Chapitre 4.4 — Durcissement de sshd_config</a>
+</li>
+<li class="toctree-l2 current"><a class="reference internal current" href="#">Chapitre 4.5 — Bastion d'administration</a>
+<ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="#vous-etes-ici">Vous êtes ici</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#objectifs-pedagogiques">Objectifs pédagogiques</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pourquoi-ce-chapitre-existe">Pourquoi ce chapitre existe</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#theorie-detaillee">Théorie détaillée</a>
+<ul>
+<li class="toctree-l4"><a class="reference internal" href="#quest-ce-quun-bastion">Qu'est-ce qu'un bastion ?</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pourquoi-utiliser-un-bastion">Pourquoi utiliser un bastion ?</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#une-analogie-simple">Une analogie simple</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#ce-que-fait-reellement-un-bastion">Ce que fait réellement un bastion</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#ou-placer-le-bastion">Où placer le bastion ?</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#les-serveurs-internes-deviennent-invisibles">Les serveurs internes deviennent invisibles</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#une-architecture-complete">Une architecture complète</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#le-principe-du-rebond">Le principe du rebond</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#les-differents-types-de-bastions">Les différents types de bastions</a>
+<ul>
+<li class="toctree-l4"><a class="reference internal" href="#bastion-unique">Bastion unique</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#bastions-redondants">Bastions redondants</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#bastion-par-zone">Bastion par zone</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#le-bastion-ne-doit-pas-etre-un-serveur-normal">Le bastion ne doit pas être un serveur "normal"</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#le-bastion-devient-un-point-de-controle">Le bastion devient un point de contrôle</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#une-identite-nominative">Une identité nominative</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#le-rebond-automatique-avec-proxyjump">Le rebond automatique avec ProxyJump</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#simplifier-avec-sshconfig">Simplifier avec ~/.ssh/config</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#une-architecture-sentinel">Une architecture Sentinel</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#approfondissement">Approfondissement</a>
+<ul>
+<li class="toctree-l4"><a class="reference internal" href="#le-bastion-protege-autant-les-serveurs-que-les-administrateurs">Le bastion protège autant les serveurs que les administrateurs</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#le-bastion-devient-lidentite-de-ladministration">Le bastion devient l'identité de l'administration</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#le-bastion-reduit-considerablement-la-surface-dattaque">Le bastion réduit considérablement la surface d'attaque</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#le-bastion-est-un-actif-critique">Le bastion est un actif critique</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#concevoir-la-politique">Concevoir la politique</a>
+<ul>
+<li class="toctree-l4"><a class="reference internal" href="#le-bastion-prepare-le-zero-trust">Le bastion prépare le Zero Trust</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#le-bastion-facilite-lautomatisation">Le bastion facilite l'automatisation</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#point-de-vue-offensif">Point de vue offensif</a>
+<ul>
+<li class="toctree-l4"><a class="reference internal" href="#le-bastion-ralentit-la-progression-dun-attaquant">Le bastion ralentit la progression d'un attaquant</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#en-entreprise">En entreprise</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#culture-technique">Culture technique</a>
+<ul>
+<li class="toctree-l4"><a class="reference internal" href="#le-bastion-nest-pas-un-vpn">Le bastion n'est pas un VPN</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#proxyjump-nest-pas-un-tunnel-permanent">ProxyJump n'est pas un tunnel permanent</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#le-bastion-nest-pas-forcement-interactif">Le bastion n'est pas forcément interactif</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#openssh-facilite-enormement-les-rebonds">OpenSSH facilite énormément les rebonds</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#piege-classique">Piège classique</a>
+<ul>
+<li class="toctree-l4"><a class="reference internal" href="#transformer-le-bastion-en-serveur-dadministration-generaliste">Transformer le bastion en serveur d'administration généraliste</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#autoriser-tous-les-utilisateurs-a-utiliser-le-bastion">Autoriser tous les utilisateurs à utiliser le bastion</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#tp-1-preparer-le-bastion-et-les-identites">TP 1 — Préparer le bastion et les identités</a>
+<ul>
+<li class="toctree-l4"><a class="reference internal" href="#objectif">Objectif</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#etape-1-preparer-trois-machines">Étape 1 — Préparer trois machines</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#etape-2-deployer-les-cles-ssh">Étape 2 — Déployer les clés SSH</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#tp-2-configurer-et-verifier-le-rebond">TP 2 — Configurer et vérifier le rebond</a>
+<ul>
+<li class="toctree-l4"><a class="reference internal" href="#etape-3-configurer-proxyjump">Étape 3 — Configurer ProxyJump</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#etape-4-verifier-lisolation">Étape 4 — Vérifier l'isolation</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#mission-dingenieur">Mission d'ingénieur</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#impact-sur-sentinel">Impact sur Sentinel</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#synthese">Synthèse</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pour-aller-plus-loin">Pour aller plus loin</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#schema-recapitulatif">Schéma récapitulatif</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../4.6-journalisation-audit-ssh/">Chapitre 4.6 — Journalisation et audit SSH</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../4.7-protection-attaques-ssh/">Chapitre 4.7 — Protection contre les attaques SSH</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../4.8-mission-administration-sentinel/">Chapitre 4.8 — Mission : administrer Sentinel en sécurité</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 5 - Systemd</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.1-comprendre-systemd/">Chapitre 5.1 — Comprendre systemd</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.2-unites-systemd/">Chapitre 5.2 — Les unités systemd</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.3-creer-service-sentinel/">Chapitre 5.3 — Créer le service Sentinel</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.4-sandboxing-systemd/">Chapitre 5.4 — Sandboxing systemd</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.5-capacites-linux/">Chapitre 5.5 — Les capacités Linux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.6-journalisation-journald/">Chapitre 5.6 — Journalisation avec journald</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.7-supervision-redemarrage/">Chapitre 5.7 — Supervision et redémarrage automatique</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.8-mission-sentinel-resilient/">Chapitre 5.8 — Mission : rendre Sentinel résilient</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 6 - SELinux</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_06/6.1-pourquoi-selinux-existe/">Chapitre 6.1 — Pourquoi SELinux existe</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_06/6.2-contextes-selinux/">Chapitre 6.2 — Comprendre les contextes SELinux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_06/6.3-politiques-selinux/">Chapitre 6.3 — Les politiques SELinux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_06/6.4-diagnostic-refus-selinux/">Chapitre 6.4 — Diagnostiquer les refus SELinux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_06/6.5-creation-regles-selinux/">Chapitre 6.5 — Créer des règles SELinux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_06/6.6-securiser-sentinel-selinux/">Chapitre 6.6 — Sécuriser Sentinel avec SELinux</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 7 - TLS et PKI</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.1-comprendre-cryptographie-appliquee/">Chapitre 7.1 — Comprendre la cryptographie appliquée</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.2-lire-verifier-certificats-x509/">Chapitre 7.2 — Lire et vérifier les certificats X.509</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.3-construire-autorite-certification/">Chapitre 7.3 — Construire une autorité de certification</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.4-authentification-mutuelle-tls/">Chapitre 7.4 — Authentifier les deux extrémités avec mTLS</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.5-preparer-integration-freeipa/">Chapitre 7.5 — Préparer l'intégration à FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.6-renouveler-revoquer-certificats/">Chapitre 7.6 — Renouveler et révoquer les certificats</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.7-securiser-sentinel-tls/">Chapitre 7.7 — Sécuriser Sentinel avec TLS</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 8 - FreeIPA</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.1-presentation-freeipa/">Chapitre 8.1 — Découvrir FreeIPA et la gestion centralisée des identités</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.2-architecture-interne-freeipa/">Chapitre 8.2 — Comprendre l'architecture interne de FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.3-installation-freeipa/">Chapitre 8.3 — Installer un serveur FreeIPA de laboratoire</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.4-gestion-utilisateurs/">Chapitre 8.4 — Gérer le cycle de vie des utilisateurs FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.5-groupes-roles/">Chapitre 8.5 — Organiser les groupes et les rôles FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.6-politiques-sudo/">Chapitre 8.6 — Centraliser les politiques sudo avec FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.7-gestion-hotes/">Chapitre 8.7 — Enrôler les hôtes et contrôler les accès avec HBAC</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.8-certificats/">Chapitre 8.8 — Gérer les certificats de service avec FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.9-integration-sentinel/">Chapitre 8.9 — Intégrer Sentinel à FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.10-mission-administration-freeipa/">Chapitre 8.10 — Mission : administrer Sentinel avec FreeIPA</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 9 - Déploiement avec Ansible</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.1-architecture-ansible/">Chapitre 9.1 — Comprendre l'architecture Ansible</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.2-composants-ansible/">Chapitre 9.2 — Comprendre les composants et l'idempotence Ansible</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.3-inventaires/">Chapitre 9.3 — Construire les inventaires Ansible</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.4-premiers-playbooks/">Chapitre 9.4 — Écrire les premiers playbooks</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.5-variables-templates/">Chapitre 9.5 — Piloter la configuration avec variables et templates</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.6-roles-ansible/">Chapitre 9.6 — Concevoir des rôles Ansible réutilisables</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.7-deployer-sentinel-ansible/">Chapitre 9.7 — Déployer Sentinel avec Ansible</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.8-integrer-sentinel-freeipa/">Chapitre 9.8 — Automatiser l'intégration de Sentinel à FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.9-industrialiser-laboratoire/">Chapitre 9.9 — Industrialiser le projet Ansible</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.10-mission-deploiement-sentinel/">Chapitre 9.10 — Mission : reconstruire Sentinel avec Ansible</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 10 - Packaging RPM</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_10/10.1-construire-paquet-rpm/">Chapitre 10.1 — Construire un paquet RPM</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_10/10.2-gerer-dependances-rpm/">Chapitre 10.2 — Gérer les dépendances RPM</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_10/10.3-gerer-fichiers-configuration-rpm/">Chapitre 10.3 — Gérer les fichiers de configuration RPM</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_10/10.4-signer-paquets-rpm/">Chapitre 10.4 — Signer les paquets RPM</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_10/10.5-exploiter-depot-rpm-prive/">Chapitre 10.5 — Exploiter un dépôt RPM privé</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_10/10.6-packager-sentinel/">Chapitre 10.6 — Packager Sentinel</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 11 - Conteneurs Podman</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_11/11.1-decouvrir-podman/">Chapitre 11.1 — Découvrir Podman</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_11/11.2-conteneurs-rootless/">Chapitre 11.2 — Exécuter des conteneurs rootless</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_11/11.3-construire-images-securisees/">Chapitre 11.3 — Construire des images sécurisées</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_11/11.4-reseaux-conteneurs/">Chapitre 11.4 — Concevoir les réseaux de conteneurs</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_11/11.5-gerer-secrets-podman/">Chapitre 11.5 — Gérer les secrets avec Podman</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_11/11.6-executer-sentinel-securite/">Chapitre 11.6 — Exécuter Sentinel en sécurité</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 12 - Supervision et audit</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_12/12.1-centraliser-journaux-rsyslog/">Chapitre 12.1 — Centraliser les journaux avec Rsyslog</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_12/12.2-auditer-systeme-auditd/">Chapitre 12.2 — Auditer le système avec auditd</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_12/12.3-controler-integrite-fichiers-aide/">Chapitre 12.3 — Contrôler l'intégrité des fichiers avec AIDE</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_12/12.4-superviser-sentinel-prometheus/">Chapitre 12.4 — Superviser Sentinel avec Prometheus</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_12/12.5-concevoir-alertes-alertmanager/">Chapitre 12.5 — Concevoir des alertes avec Alertmanager</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_12/12.6-construire-tableau-bord-sentinel/">Chapitre 12.6 — Construire le tableau de bord Sentinel</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 13 - Attaques et défense</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.1-reconnaissance/">Chapitre 13.1 — Reconnaissance</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.2-scan-reseau/">Chapitre 13.2 — Scan réseau</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.3-brute-force-ssh/">Chapitre 13.3 — Brute force SSH</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.4-escalade-privileges/">Chapitre 13.4 — Escalade de privilèges</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.5-mouvements-lateraux/">Chapitre 13.5 — Mouvements latéraux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.6-persistance/">Chapitre 13.6 — Persistance</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.7-exfiltration/">Chapitre 13.7 — Exfiltration</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.8-etude-cas-complete/">Chapitre 13.8 — Étude de cas complète</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 14 - Projet final</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.1-deployer-sentinel-almalinux-minimale/">Chapitre 14.1 — Déployer Sentinel sur une AlmaLinux minimale</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.2-securiser-hote/">Chapitre 14.2 — Sécuriser l'hôte</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.3-integrer-freeipa/">Chapitre 14.3 — Intégrer FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.4-deployer-ansible/">Chapitre 14.4 — Déployer avec Ansible</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.5-packager-rpm/">Chapitre 14.5 — Packager avec RPM</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.6-conteneuriser-podman/">Chapitre 14.6 — Conteneuriser avec Podman</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.7-superviser-auditer/">Chapitre 14.7 — Superviser et auditer</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.8-audit-final-tests-kali/">Chapitre 14.8 — Audit final et tests depuis Kali</a>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</nav>
+<section class="wy-nav-content-wrap" data-toggle="wy-nav-shift">
+<nav aria-label="Mobile navigation menu" class="wy-nav-top" role="navigation">
+<i class="fa fa-bars" data-toggle="wy-nav-top"></i>
+<a href="../..">Formation Sentinel — AlmaLinux sécurisé</a>
+</nav>
+<div class="wy-nav-content">
+<div class="rst-content"><div aria-label="breadcrumbs navigation" role="navigation">
+<ul class="wy-breadcrumbs">
+<li><a aria-label="Docs" class="icon icon-home" href="../.."></a></li>
+<li class="breadcrumb-item">Campagnes</li>
+<li class="breadcrumb-item">Campagne 4 - SSH</li>
+<li class="breadcrumb-item active">Chapitre 4.5 — Bastion d'administration</li>
+<li class="wy-breadcrumbs-aside">
+<a href="https://github.com/tdelaclos/formations/edit/master/docs/campagne_04/4.5-bastion-administration.md">Edit on tdelaclos/formations</a>
+</li>
+</ul>
+<hr/>
+</div>
+<div class="document" itemscope="itemscope" itemtype="http://schema.org/Article" role="main">
+<div class="section" itemprop="articleBody">
+<h1 id="chapitre-45-bastion-dadministration">Chapitre 4.5 — Bastion d'administration</h1>
+<blockquote>
+<p><strong>Campagne 4 — SSH et accès distant</strong></p>
+<p><em>« Le serveur SSH le plus sécurisé est souvent celui qui n'est jamais directement accessible depuis Internet. »</em></p>
+</blockquote>
+<h2 id="vous-etes-ici">Vous êtes ici</h2>
+<pre><code class="language-text">Partie I — Construire un socle sécurisé
+
+Campagne 4 — SSH et accès distant
+
+      4.1 Architecture d'OpenSSH
+      4.2 Authentification par mot de passe
+      4.3 Authentification par clés
+      4.4 Durcissement de sshd_config
+    ► 4.5 Bastion d'administration
+      4.6 Journalisation et audit SSH
+      4.7 Protection contre les attaques
+      4.8 Mission : administration sécurisée de Sentinel
+</code></pre>
+<h2 id="objectifs-pedagogiques">Objectifs pédagogiques</h2>
+<p>À la fin de ce chapitre, vous serez capable de :</p>
+<ul>
+<li>comprendre le rôle d'un bastion d'administration ;</li>
+<li>distinguer un serveur de production d'un serveur de rebond ;</li>
+<li>comprendre pourquoi les infrastructures modernes n'exposent plus directement leurs serveurs ;</li>
+<li>mettre en place une architecture d'administration sécurisée ;</li>
+<li>intégrer Sentinel dans une chaîne d'administration professionnelle.</li>
+</ul>
+<h2 id="pourquoi-ce-chapitre-existe">Pourquoi ce chapitre existe</h2>
+<p>Depuis le début de cette campagne, nous avons cherché à sécuriser OpenSSH. Nous avons :</p>
+<ul>
+<li>renforcé l'authentification ;</li>
+<li>supprimé les mots de passe ;</li>
+<li>durci <code>sshd_config</code>.</li>
+</ul>
+<p>Mais une question demeure.</p>
+<blockquote>
+<p><strong>Pourquoi exposer directement un serveur de production à Internet ?</strong></p>
+</blockquote>
+<p>Même parfaitement configuré, un serveur SSH reste :</p>
+<ul>
+<li>détectable ;</li>
+<li>attaquable ;</li>
+<li>scannable.</li>
+</ul>
+<p>Une approche beaucoup plus robuste consiste à supprimer totalement cette exposition. C'est précisément le rôle d'un <strong>bastion d'administration</strong>.</p>
+<h2 id="theorie-detaillee">Théorie détaillée</h2>
+<h3 id="quest-ce-quun-bastion">Qu'est-ce qu'un bastion ?</h3>
+<p>Un bastion est un serveur spécialement dédié à l'administration. Son rôle est extrêmement simple. Il constitue l'unique point d'entrée vers les autres serveurs. Visuellement.</p>
+<div class="mermaid">flowchart LR
+    Admin["Poste administrateur"] --&gt; Bastion["Bastion SSH"]
+    Bastion --&gt; App["Serveur Sentinel"]
+    Bastion --&gt; IPA["Serveur FreeIPA"]
+    Bastion --&gt; Logs["Traçabilité centralisée"]
+    Internet["Internet"] -.-&gt;|accès direct interdit| App
+</div>
+<p>Les serveurs internes ne sont plus accessibles directement.</p>
+<h2 id="pourquoi-utiliser-un-bastion">Pourquoi utiliser un bastion ?</h2>
+<p>Imaginons une infrastructure de vingt serveurs. Sans bastion.</p>
+<p>Chaque serveur devient une cible. Chaque serveur reçoit :</p>
+<ul>
+<li>des scans ;</li>
+<li>des attaques ;</li>
+<li>des tentatives de brute force.</li>
+</ul>
+<p>Maintenant, avec un bastion.</p>
+<div class="mermaid">flowchart TD
+    N0["Internet"]
+    N1["1 seul serveur SSH"]
+    N2["Infrastructure interne"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+</div>
+<p>La surface d'attaque est immédiatement divisée.</p>
+<h2 id="une-analogie-simple">Une analogie simple</h2>
+<p>Imaginez un immeuble. Sans bastion.</p>
+<p>Avec un bastion.</p>
+<div class="mermaid">flowchart TD
+    N0["Rue"]
+    N1["Hall sécurisé"]
+    N2["Contrôle"]
+    N3["Ascenseurs"]
+    N4["Appartements"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+    N2 --&gt; N3
+    N3 --&gt; N4
+</div>
+<p>Le bastion joue exactement le rôle du hall d'entrée sécurisé.</p>
+<h2 id="ce-que-fait-reellement-un-bastion">Ce que fait réellement un bastion</h2>
+<p>Contrairement à une idée reçue, le bastion ne remplace pas SSH. Il exécute lui-même OpenSSH. Il agit simplement comme un intermédiaire.</p>
+<div class="mermaid">flowchart TD
+    N0["Administrateur"]
+    N1["SSH"]
+    N2["Bastion"]
+    N3["SSH"]
+    N4["Sentinel"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+    N2 --&gt; N3
+    N3 --&gt; N4
+</div>
+<p>Deux connexions SSH existent donc. Une première.</p>
+<p>Puis une seconde.</p>
+<p>Le bastion devient le seul serveur autorisé à dialoguer avec les machines internes.</p>
+<h2 id="ou-placer-le-bastion">Où placer le bastion ?</h2>
+<p>Dans une architecture classique, on distingue plusieurs zones réseau.</p>
+<div class="mermaid">flowchart TD
+    N0["Internet"]
+    N1["Firewall"]
+    N2["DMZ"]
+    N3["Bastion"]
+    N4["Réseau d'administration"]
+    N5["Serveurs internes"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+    N2 --&gt; N3
+    N3 --&gt; N4
+    N4 --&gt; N5
+</div>
+<p>Le bastion se situe généralement :</p>
+<ul>
+<li>dans une DMZ ;</li>
+<li>ou dans un réseau d'administration dédié.</li>
+</ul>
+<p>Il ne doit jamais être placé au hasard. Sa position fait partie intégrante de l'architecture de sécurité.</p>
+<h2 id="les-serveurs-internes-deviennent-invisibles">Les serveurs internes deviennent invisibles</h2>
+<p>L'un des plus grands avantages est celui-ci. Prenons Sentinel. Sans bastion.</p>
+<p>Tout le monde peut détecter son existence. Avec un bastion.</p>
+<p>Même un scan complet du réseau ne verra jamais le serveur. Il devient invisible depuis l'extérieur. Cette réduction de visibilité constitue un gain de sécurité considérable.</p>
+<h2 id="une-architecture-complete">Une architecture complète</h2>
+<p>Nous obtenons maintenant.</p>
+<div class="mermaid">flowchart TD
+    admin[Administrateur&lt;br/&gt;identité et clé publique] --&gt; bastion[Bastion SSH&lt;br/&gt;authentification et autorisation]
+    bastion --&gt; internal[Réseau interne sécurisé]
+    internal --&gt; sentinel[Sentinel]
+    internal --&gt; freeipa[FreeIPA]
+    internal --&gt; postgres[PostgreSQL]
+</div>
+<p>Le bastion devient le point central de toute l'administration.</p>
+<h2 id="le-principe-du-rebond">Le principe du rebond</h2>
+<p>Le terme anglais est souvent : <code>Jump Host</code> ou <code>Jump Server</code> Pourquoi ? Parce que l'administrateur effectue un "rebond".</p>
+<div class="mermaid">flowchart TD
+    N0["PC"]
+    N1["Bastion"]
+    N2["Serveur cible"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+</div>
+<p>Aujourd'hui, OpenSSH permet même d'automatiser ce rebond, comme nous le verrons un peu plus loin avec : <code>ProxyJump</code> Cette fonctionnalité simplifie énormément l'administration des grandes infrastructures.</p>
+<h2 id="les-differents-types-de-bastions">Les différents types de bastions</h2>
+<p>Toutes les infrastructures n'utilisent pas exactement le même modèle. On distingue généralement plusieurs architectures.</p>
+<h3 id="bastion-unique">Bastion unique</h3>
+<p>La plus simple.</p>
+<div class="mermaid">flowchart TD
+    internet[Internet ou réseau d'administration] --&gt; bastion[Bastion SSH unique]
+    bastion --&gt; sentinel[Sentinel]
+    bastion --&gt; freeipa[FreeIPA]
+    bastion --&gt; postgres[PostgreSQL]
+</div>
+<p>Cette architecture est suffisante pour :</p>
+<ul>
+<li>une PME ;</li>
+<li>un laboratoire ;</li>
+<li>un environnement de développement.</li>
+</ul>
+<h3 id="bastions-redondants">Bastions redondants</h3>
+<p>Dans une infrastructure critique, le bastion devient lui-même un point sensible. On le redonde.</p>
+<div class="mermaid">flowchart TD
+    entry[Point d'entrée d'administration] --&gt; bastionA[Bastion A]
+    entry --&gt; bastionB[Bastion B]
+    bastionA --&gt; internal[Réseau interne]
+    bastionB --&gt; internal
+</div>
+<p>La perte d'un bastion ne bloque plus l'administration.</p>
+<h3 id="bastion-par-zone">Bastion par zone</h3>
+<p>Certaines entreprises vont encore plus loin.</p>
+<div class="mermaid">flowchart TD
+    entry[Point d'entrée] --&gt; external[Bastion d'accès]
+    external --&gt; admin[Réseau d'administration]
+    admin --&gt; prodBastion[Bastion production]
+    admin --&gt; preprodBastion[Bastion préproduction]
+    prodBastion --&gt; prod[Serveurs PROD]
+    preprodBastion --&gt; test[Serveurs TEST]
+</div>
+<p>Chaque environnement possède son propre niveau de sécurité.</p>
+<h2 id="le-bastion-ne-doit-pas-etre-un-serveur-normal">Le bastion ne doit pas être un serveur "normal"</h2>
+<p>Une erreur fréquente consiste à transformer un serveur classique en bastion. Par exemple.</p>
+<pre><code class="language-text">SSH
+
++
+
+Apache
+
++
+
+MariaDB
+
++
+
+Podman
+
++
+
+Docker
+
++
+
+Grafana
+</code></pre>
+<p>C'est une très mauvaise idée. Pourquoi ? Parce que le bastion constitue le cœur de l'administration. Il doit rester aussi simple que possible. En pratique, un bastion contient souvent uniquement :</p>
+<ul>
+<li>OpenSSH ;</li>
+<li>les outils d'administration ;</li>
+<li>les journaux ;</li>
+<li>éventuellement un agent de supervision.</li>
+</ul>
+<p>Moins il exécute de services, plus sa surface d'attaque est réduite.</p>
+<h2 id="le-bastion-devient-un-point-de-controle">Le bastion devient un point de contrôle</h2>
+<p>Puisque tous les administrateurs passent par lui, il devient extrêmement intéressant. Toutes les connexions peuvent y être :</p>
+<ul>
+<li>authentifiées ;</li>
+<li>journalisées ;</li>
+<li>corrélées ;</li>
+<li>supervisées.</li>
+</ul>
+<p>Visuellement.</p>
+<div class="mermaid">flowchart TD
+    N0["Administrateur"]
+    N1["Authentification"]
+    N2["Journalisation"]
+    N3["Autorisation"]
+    N4["Connexion au serveur"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+    N2 --&gt; N3
+    N3 --&gt; N4
+</div>
+<p>Le bastion devient alors un véritable poste de contrôle.</p>
+<h2 id="une-identite-nominative">Une identité nominative</h2>
+<p>Le bastion permet également d'imposer une règle essentielle. Chaque administrateur utilise son propre compte.</p>
+<p>Il n'existe plus de compte partagé. Toutes les opérations deviennent attribuables. Nous retrouvons ici un principe fondamental des audits de sécurité.</p>
+<h2 id="le-rebond-automatique-avec-proxyjump">Le rebond automatique avec ProxyJump</h2>
+<p>Pendant longtemps, les administrateurs réalisaient deux connexions.</p>
+<pre><code class="language-bash">ssh bastion
+</code></pre>
+<p>Puis.</p>
+<pre><code class="language-bash">ssh sentinel
+</code></pre>
+<p>OpenSSH simplifie énormément cette opération.</p>
+<pre><code class="language-bash">ssh -J bastion sentinel
+</code></pre>
+<p>Le client établit automatiquement le rebond. L'utilisateur a l'impression de se connecter directement au serveur cible. En réalité, la connexion traverse toujours le bastion. Schématiquement.</p>
+<div class="mermaid">flowchart TD
+    N0["Client"]
+    N1["ProxyJump"]
+    N2["Bastion"]
+    N3["Sentinel"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+    N2 --&gt; N3
+</div>
+<p>Cette fonctionnalité est aujourd'hui très utilisée dans les grandes infrastructures.</p>
+<p>Avec <code>ProxyJump</code>, le client ouvre un canal de relais sur le bastion puis négocie lui-même la connexion SSH avec la cible. La clé privée destinée à Sentinel reste sur le poste : il n'est pas nécessaire de la copier sur le bastion ni d'activer le transfert d'agent. Le bastion voit les métadonnées du relais, mais ne déchiffre pas la session SSH interne ; il doit néanmoins être durci, car sa compromission permettrait de perturber ou de rediriger les connexions.</p>
+<h2 id="simplifier-avec-sshconfig">Simplifier avec ~/.ssh/config</h2>
+<p>OpenSSH permet également de définir des alias. Par exemple.</p>
+<pre><code class="language-text">Host sentinel
+
+    HostName 10.0.10.12
+
+    User admin
+
+    ProxyJump bastion
+</code></pre>
+<p>L'administrateur peut ensuite simplement taper.</p>
+<pre><code class="language-bash">ssh sentinel
+</code></pre>
+<p>Le client applique automatiquement :</p>
+<ul>
+<li>le bon utilisateur ;</li>
+<li>la bonne adresse ;</li>
+<li>le rebond sur le bastion ;</li>
+<li>la clé SSH adaptée.</li>
+</ul>
+<p>Cette approche réduit considérablement les erreurs humaines.</p>
+<h2 id="une-architecture-sentinel">Une architecture Sentinel</h2>
+<p>Notre laboratoire peut désormais être représenté ainsi.</p>
+<div class="mermaid">flowchart TD
+    admin[Administrateur&lt;br/&gt;clé conforme à la politique] --&gt; bastion[Bastion Sentinel]
+    bastion --&gt; api[Sentinel API]
+    bastion --&gt; freeipa[FreeIPA]
+    bastion --&gt; postgres[PostgreSQL]
+    bastion --&gt; logs[Journalisation des accès]
+    api --&gt; logs
+    freeipa --&gt; logs
+    postgres --&gt; logs
+</div>
+<p>Toutes les opérations d'administration passent désormais par un point unique, facilitant :</p>
+<ul>
+<li>les audits ;</li>
+<li>la supervision ;</li>
+<li>la détection d'incidents ;</li>
+<li>la gestion des accès.</li>
+</ul>
+<h2 id="approfondissement">Approfondissement</h2>
+<h3 id="le-bastion-protege-autant-les-serveurs-que-les-administrateurs">Le bastion protège autant les serveurs que les administrateurs</h3>
+<p>Lorsqu'on découvre le principe du bastion, on pense immédiatement :</p>
+<blockquote>
+<p>« Il protège les serveurs. »</p>
+</blockquote>
+<p>C'est vrai. Mais ce n'est qu'une partie de son intérêt. Il protège également les administrateurs eux-mêmes. Pourquoi ? Parce qu'il devient le point unique où sont appliquées toutes les politiques de sécurité. Par exemple.</p>
+<div class="mermaid">flowchart TD
+    N0["Authentification MFA"]
+    N1["Bastion"]
+    N2["Tous les serveurs"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+</div>
+<p>Sans bastion, il faudrait configurer la même politique sur chaque machine. Avec un bastion, une seule configuration suffit.</p>
+<h3 id="le-bastion-devient-lidentite-de-ladministration">Le bastion devient l'identité de l'administration</h3>
+<p>Dans une infrastructure moderne, les serveurs internes ne connaissent parfois plus les administrateurs. Ils ne connaissent que le bastion. Visualisons. Sans bastion.</p>
+<p>Avec bastion.</p>
+<div class="mermaid">flowchart TD
+    N0["Alice"]
+    N1["Bastion"]
+    N2["Sentinel"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+</div>
+<p>Le bastion devient donc un véritable <strong>courtier d'identité</strong> (<em>Identity Broker</em>). Il authentifie l'utilisateur, vérifie qu'il est autorisé, puis lui ouvre l'accès aux ressources internes. Cette philosophie est très proche de celle des solutions de type :</p>
+<ul>
+<li>Privileged Access Management (PAM) ;</li>
+<li>Zero Trust ;</li>
+<li>Identity Provider (IdP).</li>
+</ul>
+<h3 id="le-bastion-reduit-considerablement-la-surface-dattaque">Le bastion réduit considérablement la surface d'attaque</h3>
+<p>Prenons un exemple. Une entreprise possède : <code>150 serveurs</code> Sans bastion.</p>
+<pre><code class="language-text">150 ports SSH
+
+ouverts
+</code></pre>
+<p>Un attaquant peut lancer :</p>
+<ul>
+<li>150 attaques parallèles ;</li>
+<li>150 scans ;</li>
+<li>150 campagnes de brute force.</li>
+</ul>
+<p>Avec un bastion.</p>
+<pre><code class="language-text">1 seul port SSH
+
+visible
+</code></pre>
+<p>Les autres machines disparaissent complètement du périmètre Internet. La réduction de surface d'attaque est spectaculaire.</p>
+<h3 id="le-bastion-est-un-actif-critique">Le bastion est un actif critique</h3>
+<p>Parce que tout passe par lui, le bastion devient l'un des serveurs les plus sensibles de l'entreprise. Il doit donc être plus sécurisé que les autres. On y applique généralement :</p>
+<ul>
+<li>authentification multifacteur ;</li>
+<li>clés SSH obligatoires ;</li>
+<li>journalisation renforcée ;</li>
+<li>supervision permanente ;</li>
+<li>mises à jour prioritaires ;</li>
+<li>surveillance d'intégrité.</li>
+</ul>
+<p>Un bastion compromis représente un risque majeur. Sa protection constitue donc une priorité absolue.</p>
+<h2 id="concevoir-la-politique">Concevoir la politique</h2>
+<p>Un architecte ne voit jamais un bastion comme une simple machine. Il le considère comme un <strong>plan de contrôle</strong>. Toutes les opérations d'administration passent par lui.</p>
+<div class="mermaid">flowchart TD
+    bastion[Bastion — plan de contrôle] --&gt; authenticate[Authentifier]
+    bastion --&gt; authorize[Autoriser]
+    bastion --&gt; log[Journaliser]
+    authenticate --&gt; access[Accès aux serveurs]
+    authorize --&gt; access
+    log --&gt; evidence[Preuves d'audit]
+</div>
+<p>Le bastion devient le point central de gouvernance. Il simplifie :</p>
+<ul>
+<li>les audits ;</li>
+<li>les revues de sécurité ;</li>
+<li>la conformité ;</li>
+<li>les investigations.</li>
+</ul>
+<h3 id="le-bastion-prepare-le-zero-trust">Le bastion prépare le Zero Trust</h3>
+<p>Les architectures modernes abandonnent progressivement la notion de réseau de confiance. On parle désormais de : <code>Zero Trust</code> Le principe est simple. Chaque connexion doit être :</p>
+<ul>
+<li>authentifiée ;</li>
+<li>autorisée ;</li>
+<li>tracée.</li>
+</ul>
+<p>Même si elle provient du réseau interne. Le bastion constitue souvent la première étape vers cette philosophie. Il impose une vérification systématique, quelle que soit l'origine de la connexion.</p>
+<h3 id="le-bastion-facilite-lautomatisation">Le bastion facilite l'automatisation</h3>
+<p>Prenons Ansible. Sans bastion.</p>
+<div class="mermaid">flowchart TD
+    N0["Ansible"]
+    N1["150 connexions"]
+    N2["150 serveurs"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+</div>
+<p>Avec bastion.</p>
+<div class="mermaid">flowchart TD
+    N0["Ansible"]
+    N1["Bastion"]
+    N2["150 serveurs"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+</div>
+<p>Les règles de filtrage deviennent beaucoup plus simples. Les clés privées restent concentrées sur les postes d'administration ou sur les plateformes d'automatisation. Les serveurs de production restent totalement isolés d'Internet.</p>
+<h2 id="point-de-vue-offensif">Point de vue offensif</h2>
+<p>Face à une infrastructure moderne, l'attaquant cherche d'abord : <code>Un accès SSH direct</code> S'il découvre qu'aucun serveur de production n'est accessible, sa stratégie change complètement. Il doit désormais :</p>
+<ul>
+<li>compromettre le bastion ;</li>
+<li>compromettre un administrateur ;</li>
+<li>compromettre un VPN ;</li>
+<li>compromettre une solution d'identité.</li>
+</ul>
+<p>Le coût de l'attaque augmente considérablement.</p>
+<h3 id="le-bastion-ralentit-la-progression-dun-attaquant">Le bastion ralentit la progression d'un attaquant</h3>
+<p>Imaginons qu'un serveur Sentinel soit compromis. Sans bastion.</p>
+<div class="mermaid">flowchart TD
+    N0["Sentinel"]
+    N1["SSH"]
+    N2["Autres serveurs"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+</div>
+<p>Le mouvement latéral est relativement simple. Avec un bastion.</p>
+<div class="mermaid">flowchart TD
+    N0["Sentinel"]
+    N1["Aucun accès SSH"]
+    N2["Blocage"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+</div>
+<p>Le serveur compromis ne possède aucun accès direct vers les autres machines. Cette séparation limite fortement la propagation d'une compromission. Nous retrouvons ici la logique de compartimentation étudiée avec SELinux, mais cette fois à l'échelle du réseau.</p>
+<h2 id="en-entreprise">En entreprise</h2>
+<p>Les grandes entreprises vont souvent encore plus loin. Le bastion devient une véritable plateforme d'administration. Il intègre :</p>
+<ul>
+<li>MFA ;</li>
+<li>gestion centralisée des clés ;</li>
+<li>enregistrement vidéo des sessions ;</li>
+<li>journalisation des commandes ;</li>
+<li>approbation préalable de certaines opérations ;</li>
+<li>intégration avec l'annuaire (FreeIPA, Active Directory).</li>
+</ul>
+<p>Certaines solutions commerciales permettent même de revoir une session SSH exactement comme une vidéo. L'objectif est double.</p>
+<ul>
+<li>empêcher les abus ;</li>
+<li>faciliter les investigations après incident.</li>
+</ul>
+<p>Le bastion devient ainsi l'un des piliers de la gouvernance des accès privilégiés.</p>
+<h2 id="culture-technique">Culture technique</h2>
+<h3 id="le-bastion-nest-pas-un-vpn">Le bastion n'est pas un VPN</h3>
+<p>Les deux technologies sont souvent confondues. Pourtant, elles répondent à des problématiques différentes. Le VPN répond à la question.</p>
+<blockquote>
+<p><strong>Comment rejoindre le réseau privé ?</strong></p>
+</blockquote>
+<p>Le bastion répond à une autre question.</p>
+<blockquote>
+<p><strong>Qui est autorisé à administrer les serveurs ?</strong></p>
+</blockquote>
+<p>Visualisons.</p>
+<h4 id="vpn">VPN</h4>
+<div class="mermaid">flowchart TD
+    N0["Internet"]
+    N1["Tunnel VPN"]
+    N2["Réseau privé"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+</div>
+<p>Le VPN transporte le trafic.</p>
+<h4 id="bastion">Bastion</h4>
+<div class="mermaid">flowchart TD
+    N0["Administrateur"]
+    N1["Authentification"]
+    N2["Bastion"]
+    N3["Serveurs"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+    N2 --&gt; N3
+</div>
+<p>Le bastion contrôle les accès. Les deux technologies sont donc complémentaires. Dans beaucoup d'entreprises, le bastion est lui-même uniquement accessible après connexion VPN.</p>
+<h3 id="proxyjump-nest-pas-un-tunnel-permanent">ProxyJump n'est pas un tunnel permanent</h3>
+<p>Une autre confusion fréquente concerne : <code>ProxyJump</code> Lorsque l'on exécute :</p>
+<pre><code class="language-bash">ssh -J bastion sentinel
+</code></pre>
+<p>OpenSSH ne crée pas une connexion permanente entre le bastion et Sentinel. Le client établit simplement un relais temporaire. Schématiquement.</p>
+<div class="mermaid">flowchart TD
+    N0["Client"]
+    N1["Connexion SSH"]
+    N2["Bastion"]
+    N3["Relais"]
+    N4["Serveur cible"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+    N2 --&gt; N3
+    N3 --&gt; N4
+</div>
+<p>Le bastion ne fait que transmettre les données. Il ne termine pas la connexion SSH. Le chiffrement de bout en bout reste assuré entre le client et le serveur final. C'est une propriété très importante. Même le bastion ne peut pas lire les données de la session.</p>
+<h3 id="le-bastion-nest-pas-forcement-interactif">Le bastion n'est pas forcément interactif</h3>
+<p>On imagine souvent un administrateur ouvrant un shell. Pourtant, de nombreuses connexions via un bastion sont réalisées par :</p>
+<ul>
+<li>Ansible ;</li>
+<li>Terraform ;</li>
+<li>scripts CI/CD ;</li>
+<li>sauvegardes ;</li>
+<li>supervision.</li>
+</ul>
+<p>Dans ces cas, aucun terminal interactif n'est ouvert. Le bastion devient simplement un point de passage sécurisé.</p>
+<h3 id="openssh-facilite-enormement-les-rebonds">OpenSSH facilite énormément les rebonds</h3>
+<p>Avant OpenSSH 7.3, les administrateurs devaient souvent utiliser :</p>
+<pre><code class="language-bash">ProxyCommand
+</code></pre>
+<p>avec <code>netcat</code>. Par exemple.</p>
+<pre><code class="language-bash">ssh \
+-o ProxyCommand="ssh bastion nc %h %p"
+</code></pre>
+<p>Cette syntaxe était difficile à maintenir. Aujourd'hui, elle est remplacée par :</p>
+<pre><code class="language-bash">ProxyJump
+</code></pre>
+<p>ou plus simplement.</p>
+<pre><code class="language-bash">ssh -J bastion serveur
+</code></pre>
+<p>Cette évolution a largement simplifié les architectures à rebond.</p>
+<h2 id="piege-classique">Piège classique</h2>
+<h3 id="transformer-le-bastion-en-serveur-dadministration-generaliste">Transformer le bastion en serveur d'administration généraliste</h3>
+<p>Beaucoup d'entreprises installent progressivement sur le bastion :</p>
+<ul>
+<li>Grafana ;</li>
+<li>GitLab Runner ;</li>
+<li>Docker ;</li>
+<li>Podman ;</li>
+<li>Jenkins ;</li>
+<li>Apache ;</li>
+<li>bases de données.</li>
+</ul>
+<p>Au fil des années, le bastion devient un serveur "à tout faire". Cette évolution est dangereuse. Pourquoi ? Parce que chaque nouveau service :</p>
+<ul>
+<li>augmente la surface d'attaque ;</li>
+<li>ajoute des dépendances ;</li>
+<li>complexifie les mises à jour ;</li>
+<li>augmente le risque de compromission.</li>
+</ul>
+<p>Un bastion doit rester spécialisé. Sa mission est unique : <strong>contrôler les accès privilégiés.</strong></p>
+<h3 id="autoriser-tous-les-utilisateurs-a-utiliser-le-bastion">Autoriser tous les utilisateurs à utiliser le bastion</h3>
+<p>Autre erreur fréquente. Le bastion est parfois ouvert à l'ensemble des employés. Cette approche est contraire à sa philosophie. Le bastion est réservé :</p>
+<ul>
+<li>aux administrateurs ;</li>
+<li>aux équipes d'exploitation ;</li>
+<li>aux automatisations autorisées.</li>
+</ul>
+<p>Limiter les utilisateurs réduit fortement le risque d'abus.</p>
+<h2 id="tp-1-preparer-le-bastion-et-les-identites">TP 1 — Préparer le bastion et les identités</h2>
+<h3 id="objectif">Objectif</h3>
+<p>Construire une architecture d'administration basée sur un bastion SSH.</p>
+<h3 id="etape-1-preparer-trois-machines">Étape 1 — Préparer trois machines</h3>
+<p>Créer trois VM.</p>
+<p>Configurer le réseau afin que Sentinel ne soit accessible que depuis le bastion.</p>
+<h3 id="etape-2-deployer-les-cles-ssh">Étape 2 — Déployer les clés SSH</h3>
+<p>Installer :</p>
+<ul>
+<li>la clé publique de l'administrateur sur le bastion ;</li>
+<li>la clé publique du bastion sur Sentinel.</li>
+</ul>
+<p>Tester les deux connexions séparément.</p>
+<h2 id="tp-2-configurer-et-verifier-le-rebond">TP 2 — Configurer et vérifier le rebond</h2>
+<h3 id="etape-3-configurer-proxyjump">Étape 3 — Configurer ProxyJump</h3>
+<p>Sur le poste administrateur. Créer. <code>~/.ssh/config</code> Avec.</p>
+<pre><code class="language-text">Host bastion
+
+    HostName 192.168.10.10
+
+    User admin
+</code></pre>
+<p>Puis.</p>
+<pre><code class="language-text">Host sentinel
+
+    HostName 10.10.0.12
+
+    User admin
+
+    ProxyJump bastion
+</code></pre>
+<p>Tester ensuite.</p>
+<pre><code class="language-bash">ssh sentinel
+</code></pre>
+<p>Observer que le rebond est totalement transparent.</p>
+<h3 id="etape-4-verifier-lisolation">Étape 4 — Vérifier l'isolation</h3>
+<p>Depuis une machine extérieure, effectuer un scan.</p>
+<pre><code class="language-bash">nmap
+</code></pre>
+<p>Vérifier que :</p>
+<ul>
+<li>le bastion est visible ;</li>
+<li>Sentinel ne l'est pas.</li>
+</ul>
+<p>Faire le lien avec la réduction de surface d'attaque étudiée précédemment.</p>
+<h2 id="mission-dingenieur">Mission d'ingénieur</h2>
+<p>Votre entreprise prépare le déploiement de vingt serveurs Sentinel répartis sur plusieurs sites. Vous devez concevoir l'architecture d'administration. Votre proposition devra préciser :</p>
+<ul>
+<li>où sera placé le bastion ;</li>
+<li>quelles interfaces réseau il utilisera ;</li>
+<li>quelles méthodes d'authentification seront autorisées ;</li>
+<li>quels utilisateurs pourront s'y connecter ;</li>
+<li>comment seront journalisées les sessions ;</li>
+<li>comment les connexions Ansible traverseront le bastion ;</li>
+<li>comment les administrateurs utiliseront <code>ProxyJump</code>.</li>
+</ul>
+<p>L'objectif est de fournir une architecture évolutive capable d'accueillir plusieurs centaines de serveurs sans augmenter leur exposition directe.</p>
+<h2 id="impact-sur-sentinel">Impact sur Sentinel</h2>
+<p>Grâce au bastion, les serveurs Sentinel ne seront plus directement exposés à Internet. L'administration suivra désormais le chemin suivant.</p>
+<div class="mermaid">flowchart TD
+    N0["Administrateur"]
+    N1["VPN (si nécessaire)"]
+    N2["Bastion SSH"]
+    N3["Sentinel"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+    N2 --&gt; N3
+</div>
+<p>Cette architecture apporte plusieurs bénéfices.</p>
+<ul>
+<li>réduction drastique de la surface d'attaque ;</li>
+<li>centralisation des accès ;</li>
+<li>meilleure traçabilité ;</li>
+<li>intégration simplifiée avec FreeIPA et Ansible ;</li>
+<li>préparation à une architecture Zero Trust.</li>
+</ul>
+<p>Le prochain chapitre s'intéressera à un autre pilier essentiel de la sécurité SSH : <strong>la journalisation et l'audit des connexions</strong>.</p>
+<h2 id="synthese">Synthèse</h2>
+<ul>
+<li>Un bastion est un point d'entrée unique pour l'administration des serveurs.</li>
+<li>Il réduit fortement la surface d'attaque en supprimant l'exposition directe des machines de production.</li>
+<li><code>ProxyJump</code> permet de traverser automatiquement un bastion sans complexifier le travail des administrateurs.</li>
+<li>Un bastion doit rester minimaliste et exclusivement dédié à l'administration.</li>
+<li>Toutes les connexions administratives doivent être authentifiées, journalisées et attribuables à une identité nominative.</li>
+<li>Le bastion constitue un élément central des architectures modernes de type Zero Trust et Privileged Access Management.</li>
+</ul>
+<h2 id="pour-aller-plus-loin">Pour aller plus loin</h2>
+<p>La page <code>ssh_config(5)</code> précise <code>ProxyJump</code>, <code>ProxyCommand</code>, les identités et la vérification des clés d'hôte. Le chapitre suivant traite les traces produites par cette architecture et les limites de ce qu'OpenSSH peut prouver seul.</p>
+<p>← <a href="../4.4-durcissement-sshd-config/">4.4 — Durcissement de <code>sshd_config</code></a> · <a href="../4.6-journalisation-audit-ssh/">4.6 — Journalisation et audit SSH</a> →</p>
+<h2 id="schema-recapitulatif">Schéma récapitulatif</h2>
+<p><img alt="Récapitulatif du chapitre 4.5" src="../media/recap-4.5.png"/></p>
+</div>
+</div><footer>
+<div aria-label="Footer Navigation" class="rst-footer-buttons" role="navigation">
+<a class="btn btn-neutral float-left" href="../4.4-durcissement-sshd-config/" title="Chapitre 4.4 — Durcissement de sshd_config"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+<a class="btn btn-neutral float-right" href="../4.6-journalisation-audit-ssh/" title="Chapitre 4.6 — Journalisation et audit SSH">Next <span class="icon icon-circle-arrow-right"></span></a>
+</div>
+<hr/>
+<div role="contentinfo">
+<!-- Copyright etc -->
+</div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+</div>
+</div>
+</section>
+</div>
+<div aria-label="Versions" class="rst-versions" role="note">
+<span class="rst-current-version" data-toggle="rst-current-version">
+<span>
+<a class="fa fa-code-fork" href="https://github.com/tdelaclos/formations" style="color: #fcfcfc"> tdelaclos/formations</a>
+</span>
+<span><a href="../4.4-durcissement-sshd-config/" style="color: #fcfcfc">« Previous</a></span>
+<span><a href="../4.6-journalisation-audit-ssh/" style="color: #fcfcfc">Next »</a></span>
+</span>
+</div>
+<script src="../../js/jquery-3.6.0.min.js"></script>
+<script>var base_url = "../..";</script>
+<script src="../../js/theme_extra.js"></script>
+<script src="../../js/theme.js"></script>
+<script src="../../search/main.js"></script>
+<script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+<script type="module">import mermaid from "https://unpkg.com/mermaid@10.4.0/dist/mermaid.esm.min.mjs";
+mermaid.initialize({});</script></body>
+</html>

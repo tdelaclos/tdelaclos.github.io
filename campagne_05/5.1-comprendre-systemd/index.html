@@ -1,0 +1,1324 @@
+<!DOCTYPE html>
+
+<html class="writer-html5" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="IE=edge" http-equiv="X-UA-Compatible"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="../../img/favicon.ico" rel="shortcut icon"/>
+<title>Chapitre 5.1 — Comprendre systemd - Formation Sentinel — AlmaLinux sécurisé</title>
+<link href="../../css/theme.css" rel="stylesheet"/>
+<link href="../../css/theme_extra.css" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" rel="stylesheet"/>
+<script>
+        // Current page data
+        var mkdocs_page_name = "Chapitre 5.1 \u2014 Comprendre systemd";
+        var mkdocs_page_input_path = "campagne_05/5.1-comprendre-systemd.md";
+        var mkdocs_page_url = null;
+      </script>
+<!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+<script>hljs.highlightAll();</script>
+</head>
+<body class="wy-body-for-nav" role="document">
+<div class="wy-grid-for-nav">
+<nav class="wy-nav-side stickynav" data-toggle="wy-nav-shift">
+<div class="wy-side-scroll">
+<div class="wy-side-nav-search">
+<a class="icon icon-home" href="../.."> Formation Sentinel — AlmaLinux sécurisé
+        </a><div role="search">
+<form action="../../search.html" class="wy-form" id="rtd-search-form" method="get">
+<input aria-label="Search docs" name="q" placeholder="Search docs" title="Type search term here" type="text"/>
+</form>
+</div>
+</div>
+<div aria-label="Navigation menu" class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../..">Accueil</a>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">A propos</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../GUIDE-REDACTION/">Guide de rédaction</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../PARCOURS-SENTINEL/">Parcours applicatif Sentinel</a>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Campagnes</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal">Campagne 1 - Sécuriser le socle Linux</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.1-pourquoi-securiser-socle-linux/">Chapitre 1.1 — Pourquoi sécuriser un socle Linux ?</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.2-installation-almalinux-minimal/">Chapitre 1.2 — Installer AlmaLinux minimal</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.3-composants-systeme-linux/">Chapitre 1.3 — Comprendre les composants d'un système Linux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.4-premier-demarrage-verifications/">Chapitre 1.4 — Établir la baseline du serveur</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.5-mise-a-jour-gestion-depots/">Chapitre 1.5 — Mettre à jour et gérer les dépôts</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.6-architecture-systemes-fichiers/">Chapitre 1.6 — Organiser les systèmes de fichiers</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.7-utilisateurs-groupes-permissions/">Chapitre 1.7 — Comprendre identités et permissions</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.8-sudo-moindre-privilege/">Chapitre 1.8 — Administrer avec sudo</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.9-premiere-mise-en-securite-serveur/">Chapitre 1.9 — Mission : mettre le serveur en sécurité</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.10-creation-laboratoire-sentinel/">Chapitre 1.10 — Créer le laboratoire Sentinel</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 2 - Gestion des permissions et des identités</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.1-permissions-unix/">Chapitre 2.1 — Les permissions UNIX</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.2-acl/">Chapitre 2.2 — Les ACL</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.3-umask/">Chapitre 2.3 — L'umask</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.4-attributs-etendus/">Chapitre 2.4 — Les attributs étendus</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.5-pam/">Chapitre 2.5 — PAM</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.6-politique-mots-de-passe/">Chapitre 2.6 — Politique de mots de passe</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.7-comptes-systeme/">Chapitre 2.7 — Les comptes système</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.8-sudo-avance/">Chapitre 2.8 — sudo avancé</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.9-fichiers-identites-linux/">Chapitre 2.9 — Comprendre les fichiers d'identités Linux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.10-synthese-securiser-identites/">Chapitre 2.10 — Synthèse : sécuriser les identités</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 3 - TCP/IP et Firewalld</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.1-tcp-ip-administrateur/">Chapitre 3.1 — TCP/IP côté administrateur</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.2-architecture-firewalld/">Chapitre 3.2 — Architecture de Firewalld</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.3-zones-firewalld/">Chapitre 3.3 — Les zones Firewalld</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.4-services-firewalld/">Chapitre 3.4 — Les services Firewalld</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.5-conntrack-filtrage-etats/">Chapitre 3.5 — Conntrack et le filtrage par états</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.6-rich-rules-firewalld/">Chapitre 3.6 — Les Rich Rules Firewalld</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.7-journalisation-firewalld/">Chapitre 3.7 — Journalisation et analyse Firewalld</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.8-ip-sets-firewalld/">Chapitre 3.8 — Les IP Sets Firewalld</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.9-runtime-permanent/">Chapitre 3.9 — Runtime et Permanent</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.10-politique-reseau-sentinel/">Chapitre 3.10 — Concevoir la politique réseau de Sentinel</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 4 - SSH</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_04/4.1-architecture-openssh/">Chapitre 4.1 — Architecture d'OpenSSH</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_04/4.2-authentification-mot-de-passe/">Chapitre 4.2 — Authentification par mot de passe</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_04/4.3-authentification-par-cles/">Chapitre 4.3 — Authentification par clés</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_04/4.4-durcissement-sshd-config/">Chapitre 4.4 — Durcissement de sshd_config</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_04/4.5-bastion-administration/">Chapitre 4.5 — Bastion d'administration</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_04/4.6-journalisation-audit-ssh/">Chapitre 4.6 — Journalisation et audit SSH</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_04/4.7-protection-attaques-ssh/">Chapitre 4.7 — Protection contre les attaques SSH</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_04/4.8-mission-administration-sentinel/">Chapitre 4.8 — Mission : administrer Sentinel en sécurité</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal current">Campagne 5 - Systemd</a>
+<ul class="current">
+<li class="toctree-l2 current"><a class="reference internal current" href="#">Chapitre 5.1 — Comprendre systemd</a>
+<ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="#vous-etes-ici">Vous êtes ici</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#objectifs-pedagogiques">Objectifs pédagogiques</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pourquoi-ce-chapitre-existe">Pourquoi ce chapitre existe</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#theorie-detaillee">Théorie détaillée</a>
+<ul>
+<li class="toctree-l4"><a class="reference internal" href="#avant-systemd">Avant systemd</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#les-limites-de-sysvinit">Les limites de SysVinit</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#larrivee-de-systemd">L'arrivée de systemd</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pid-1">PID 1</a>
+<ul>
+<li class="toctree-l4"><a class="reference internal" href="#pourquoi-pid-1-est-il-particulier">Pourquoi PID 1 est-il particulier ?</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#une-vision-hierarchique">Une vision hiérarchique</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#systemd-ne-lance-pas-seulement-des-services">systemd ne lance pas seulement des services</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#la-philosophie-declarative">La philosophie déclarative</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#le-fonctionnement-interne-de-systemd">Le fonctionnement interne de systemd</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#les-unites-units">Les unités (Units)</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#les-dependances">Les dépendances</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#les-jobs">Les Jobs</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#les-targets">Les Targets</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#les-cgroups">Les cgroups</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pourquoi-les-cgroups-sont-revolutionnaires">Pourquoi les cgroups sont révolutionnaires ?</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#les-ressources">Les ressources</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pourquoi-ecrire-un-demon-est-devenu-beaucoup-plus-simple">Pourquoi écrire un démon est devenu beaucoup plus simple ?</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#larret-propre-dun-service">L'arrêt propre d'un service</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pourquoi-cela-change-notre-maniere-de-developper-sentinel">Pourquoi cela change notre manière de développer Sentinel ?</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#approfondissement">Approfondissement</a>
+<ul>
+<li class="toctree-l4"><a class="reference internal" href="#systemd-est-un-orchestrateur-detat-pas-un-lanceur-de-processus">systemd est un orchestrateur d'état, pas un lanceur de processus</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#pid-1-nest-pas-un-processus-comme-les-autres">PID 1 n'est pas un processus comme les autres</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#la-disparition-du-code-infrastructure">La disparition du code "infrastructure"</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#pourquoi-cela-ameliore-la-securite">Pourquoi cela améliore la sécurité</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#concevoir-la-politique">Concevoir la politique</a>
+<ul>
+<li class="toctree-l4"><a class="reference internal" href="#les-dependances-doivent-etre-explicites">Les dépendances doivent être explicites</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#les-services-doivent-etre-remplacables">Les services doivent être remplaçables</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#point-de-vue-offensif">Point de vue offensif</a>
+<ul>
+<li class="toctree-l4"><a class="reference internal" href="#les-processus-orphelins">Les processus orphelins</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#les-privileges-excessifs">Les privilèges excessifs</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#en-entreprise">En entreprise</a>
+<ul>
+<li class="toctree-l4"><a class="reference internal" href="#les-unites-sont-du-code">Les unités sont du code</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#culture-technique">Culture technique</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#piege-classique">Piège classique</a>
+<ul>
+<li class="toctree-l4"><a class="reference internal" href="#croire-quun-programme-lance-en-arriere-plan-est-un-service">Croire qu'un programme lancé en arrière-plan est un service</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#tp-1-observer-pid-1-et-les-unites">TP 1 — Observer PID 1 et les unités</a>
+<ul>
+<li class="toctree-l4"><a class="reference internal" href="#objectif">Objectif</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#architecture">Architecture</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#etape-1-identifier-pid-1">Étape 1 — Identifier PID 1</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#etape-2-explorer-les-unites">Étape 2 — Explorer les unités</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#etape-3-observer-un-service">Étape 3 — Observer un service</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#tp-2-relier-processus-dependances-et-journaux">TP 2 — Relier processus, dépendances et journaux</a>
+<ul>
+<li class="toctree-l4"><a class="reference internal" href="#etape-4-observer-larbre-des-processus">Étape 4 — Observer l'arbre des processus</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#etape-5-etudier-les-dependances">Étape 5 — Étudier les dépendances</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#etape-6-observer-les-journaux">Étape 6 — Observer les journaux</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#etape-7-reflexion">Étape 7 — Réflexion</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#mission-dingenieur">Mission d'ingénieur</a>
+<ul>
+<li class="toctree-l4"><a class="reference internal" href="#contexte">Contexte</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#votre-mission">Votre mission</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#impact-sur-sentinel">Impact sur Sentinel</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#synthese">Synthèse</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#schema-recapitulatif">Schéma récapitulatif</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pour-aller-plus-loin">Pour aller plus loin</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../5.2-unites-systemd/">Chapitre 5.2 — Les unités systemd</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../5.3-creer-service-sentinel/">Chapitre 5.3 — Créer le service Sentinel</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../5.4-sandboxing-systemd/">Chapitre 5.4 — Sandboxing systemd</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../5.5-capacites-linux/">Chapitre 5.5 — Les capacités Linux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../5.6-journalisation-journald/">Chapitre 5.6 — Journalisation avec journald</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../5.7-supervision-redemarrage/">Chapitre 5.7 — Supervision et redémarrage automatique</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../5.8-mission-sentinel-resilient/">Chapitre 5.8 — Mission : rendre Sentinel résilient</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 6 - SELinux</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_06/6.1-pourquoi-selinux-existe/">Chapitre 6.1 — Pourquoi SELinux existe</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_06/6.2-contextes-selinux/">Chapitre 6.2 — Comprendre les contextes SELinux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_06/6.3-politiques-selinux/">Chapitre 6.3 — Les politiques SELinux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_06/6.4-diagnostic-refus-selinux/">Chapitre 6.4 — Diagnostiquer les refus SELinux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_06/6.5-creation-regles-selinux/">Chapitre 6.5 — Créer des règles SELinux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_06/6.6-securiser-sentinel-selinux/">Chapitre 6.6 — Sécuriser Sentinel avec SELinux</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 7 - TLS et PKI</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.1-comprendre-cryptographie-appliquee/">Chapitre 7.1 — Comprendre la cryptographie appliquée</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.2-lire-verifier-certificats-x509/">Chapitre 7.2 — Lire et vérifier les certificats X.509</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.3-construire-autorite-certification/">Chapitre 7.3 — Construire une autorité de certification</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.4-authentification-mutuelle-tls/">Chapitre 7.4 — Authentifier les deux extrémités avec mTLS</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.5-preparer-integration-freeipa/">Chapitre 7.5 — Préparer l'intégration à FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.6-renouveler-revoquer-certificats/">Chapitre 7.6 — Renouveler et révoquer les certificats</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.7-securiser-sentinel-tls/">Chapitre 7.7 — Sécuriser Sentinel avec TLS</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 8 - FreeIPA</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.1-presentation-freeipa/">Chapitre 8.1 — Découvrir FreeIPA et la gestion centralisée des identités</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.2-architecture-interne-freeipa/">Chapitre 8.2 — Comprendre l'architecture interne de FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.3-installation-freeipa/">Chapitre 8.3 — Installer un serveur FreeIPA de laboratoire</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.4-gestion-utilisateurs/">Chapitre 8.4 — Gérer le cycle de vie des utilisateurs FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.5-groupes-roles/">Chapitre 8.5 — Organiser les groupes et les rôles FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.6-politiques-sudo/">Chapitre 8.6 — Centraliser les politiques sudo avec FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.7-gestion-hotes/">Chapitre 8.7 — Enrôler les hôtes et contrôler les accès avec HBAC</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.8-certificats/">Chapitre 8.8 — Gérer les certificats de service avec FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.9-integration-sentinel/">Chapitre 8.9 — Intégrer Sentinel à FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.10-mission-administration-freeipa/">Chapitre 8.10 — Mission : administrer Sentinel avec FreeIPA</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 9 - Déploiement avec Ansible</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.1-architecture-ansible/">Chapitre 9.1 — Comprendre l'architecture Ansible</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.2-composants-ansible/">Chapitre 9.2 — Comprendre les composants et l'idempotence Ansible</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.3-inventaires/">Chapitre 9.3 — Construire les inventaires Ansible</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.4-premiers-playbooks/">Chapitre 9.4 — Écrire les premiers playbooks</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.5-variables-templates/">Chapitre 9.5 — Piloter la configuration avec variables et templates</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.6-roles-ansible/">Chapitre 9.6 — Concevoir des rôles Ansible réutilisables</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.7-deployer-sentinel-ansible/">Chapitre 9.7 — Déployer Sentinel avec Ansible</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.8-integrer-sentinel-freeipa/">Chapitre 9.8 — Automatiser l'intégration de Sentinel à FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.9-industrialiser-laboratoire/">Chapitre 9.9 — Industrialiser le projet Ansible</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.10-mission-deploiement-sentinel/">Chapitre 9.10 — Mission : reconstruire Sentinel avec Ansible</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 10 - Packaging RPM</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_10/10.1-construire-paquet-rpm/">Chapitre 10.1 — Construire un paquet RPM</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_10/10.2-gerer-dependances-rpm/">Chapitre 10.2 — Gérer les dépendances RPM</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_10/10.3-gerer-fichiers-configuration-rpm/">Chapitre 10.3 — Gérer les fichiers de configuration RPM</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_10/10.4-signer-paquets-rpm/">Chapitre 10.4 — Signer les paquets RPM</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_10/10.5-exploiter-depot-rpm-prive/">Chapitre 10.5 — Exploiter un dépôt RPM privé</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_10/10.6-packager-sentinel/">Chapitre 10.6 — Packager Sentinel</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 11 - Conteneurs Podman</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_11/11.1-decouvrir-podman/">Chapitre 11.1 — Découvrir Podman</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_11/11.2-conteneurs-rootless/">Chapitre 11.2 — Exécuter des conteneurs rootless</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_11/11.3-construire-images-securisees/">Chapitre 11.3 — Construire des images sécurisées</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_11/11.4-reseaux-conteneurs/">Chapitre 11.4 — Concevoir les réseaux de conteneurs</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_11/11.5-gerer-secrets-podman/">Chapitre 11.5 — Gérer les secrets avec Podman</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_11/11.6-executer-sentinel-securite/">Chapitre 11.6 — Exécuter Sentinel en sécurité</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 12 - Supervision et audit</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_12/12.1-centraliser-journaux-rsyslog/">Chapitre 12.1 — Centraliser les journaux avec Rsyslog</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_12/12.2-auditer-systeme-auditd/">Chapitre 12.2 — Auditer le système avec auditd</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_12/12.3-controler-integrite-fichiers-aide/">Chapitre 12.3 — Contrôler l'intégrité des fichiers avec AIDE</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_12/12.4-superviser-sentinel-prometheus/">Chapitre 12.4 — Superviser Sentinel avec Prometheus</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_12/12.5-concevoir-alertes-alertmanager/">Chapitre 12.5 — Concevoir des alertes avec Alertmanager</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_12/12.6-construire-tableau-bord-sentinel/">Chapitre 12.6 — Construire le tableau de bord Sentinel</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 13 - Attaques et défense</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.1-reconnaissance/">Chapitre 13.1 — Reconnaissance</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.2-scan-reseau/">Chapitre 13.2 — Scan réseau</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.3-brute-force-ssh/">Chapitre 13.3 — Brute force SSH</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.4-escalade-privileges/">Chapitre 13.4 — Escalade de privilèges</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.5-mouvements-lateraux/">Chapitre 13.5 — Mouvements latéraux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.6-persistance/">Chapitre 13.6 — Persistance</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.7-exfiltration/">Chapitre 13.7 — Exfiltration</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.8-etude-cas-complete/">Chapitre 13.8 — Étude de cas complète</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 14 - Projet final</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.1-deployer-sentinel-almalinux-minimale/">Chapitre 14.1 — Déployer Sentinel sur une AlmaLinux minimale</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.2-securiser-hote/">Chapitre 14.2 — Sécuriser l'hôte</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.3-integrer-freeipa/">Chapitre 14.3 — Intégrer FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.4-deployer-ansible/">Chapitre 14.4 — Déployer avec Ansible</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.5-packager-rpm/">Chapitre 14.5 — Packager avec RPM</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.6-conteneuriser-podman/">Chapitre 14.6 — Conteneuriser avec Podman</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.7-superviser-auditer/">Chapitre 14.7 — Superviser et auditer</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.8-audit-final-tests-kali/">Chapitre 14.8 — Audit final et tests depuis Kali</a>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</nav>
+<section class="wy-nav-content-wrap" data-toggle="wy-nav-shift">
+<nav aria-label="Mobile navigation menu" class="wy-nav-top" role="navigation">
+<i class="fa fa-bars" data-toggle="wy-nav-top"></i>
+<a href="../..">Formation Sentinel — AlmaLinux sécurisé</a>
+</nav>
+<div class="wy-nav-content">
+<div class="rst-content"><div aria-label="breadcrumbs navigation" role="navigation">
+<ul class="wy-breadcrumbs">
+<li><a aria-label="Docs" class="icon icon-home" href="../.."></a></li>
+<li class="breadcrumb-item">Campagnes</li>
+<li class="breadcrumb-item">Campagne 5 - Systemd</li>
+<li class="breadcrumb-item active">Chapitre 5.1 — Comprendre systemd</li>
+<li class="wy-breadcrumbs-aside">
+<a href="https://github.com/tdelaclos/formations/edit/master/docs/campagne_05/5.1-comprendre-systemd.md">Edit on tdelaclos/formations</a>
+</li>
+</ul>
+<hr/>
+</div>
+<div class="document" itemscope="itemscope" itemtype="http://schema.org/Article" role="main">
+<div class="section" itemprop="articleBody">
+<h1 id="chapitre-51-comprendre-systemd">Chapitre 5.1 — Comprendre <code>systemd</code></h1>
+<blockquote>
+<p><strong>Campagne 5 — systemd et services</strong></p>
+<p><em>« Un service n'est pas un programme qui tourne. C'est un composant dont tout le cycle de vie est maîtrisé. »</em></p>
+</blockquote>
+<h2 id="vous-etes-ici">Vous êtes ici</h2>
+<pre><code class="language-text">Partie I — Construire un socle sécurisé
+
+Campagne 5 — systemd et les services
+
+    ► 5.1 Comprendre systemd
+      5.2 Les unités (.service, .socket, .target…)
+      5.3 Créer le service Sentinel
+      5.4 Sandboxing systemd
+      5.5 Capacités Linux
+      5.6 Journalisation avec journald
+      5.7 Supervision et redémarrage automatique
+      5.8 Mission : rendre Sentinel résilient
+</code></pre>
+<h2 id="objectifs-pedagogiques">Objectifs pédagogiques</h2>
+<p>À la fin de ce chapitre, vous serez capable de :</p>
+<ul>
+<li>comprendre pourquoi systemd existe ;</li>
+<li>expliquer son rôle dans un système Linux moderne ;</li>
+<li>distinguer PID 1 d'un simple processus utilisateur ;</li>
+<li>comprendre pourquoi un démon n'est plus écrit aujourd'hui comme il l'était il y a vingt ans ;</li>
+<li>identifier les responsabilités exactes de systemd dans une infrastructure de production ;</li>
+<li>préparer Sentinel à devenir un véritable service système.</li>
+</ul>
+<h2 id="pourquoi-ce-chapitre-existe">Pourquoi ce chapitre existe</h2>
+<p>Jusqu'à présent, Sentinel est essentiellement une application Python. Nous la lançons manuellement.</p>
+<pre><code class="language-bash">python3 sentinel.py
+</code></pre>
+<p>ou</p>
+<pre><code class="language-bash">./sentinel
+</code></pre>
+<p>Cette approche est parfaitement adaptée au développement. Elle devient totalement insuffisante dès qu'une application doit fonctionner en production. Une infrastructure professionnelle attend beaucoup plus d'un service. Par exemple :</p>
+<ul>
+<li>démarrer automatiquement après un redémarrage ;</li>
+<li>s'arrêter proprement ;</li>
+<li>redémarrer après un crash ;</li>
+<li>produire des journaux ;</li>
+<li>limiter ses privilèges ;</li>
+<li>dépendre d'autres services ;</li>
+<li>être supervisé ;</li>
+<li>être mis à jour sans intervention manuelle.</li>
+</ul>
+<p>Autrement dit, l'application ne suffit plus. Il faut désormais gérer <strong>son cycle de vie</strong>. C'est précisément le rôle de systemd.</p>
+<h2 id="theorie-detaillee">Théorie détaillée</h2>
+<h3 id="avant-systemd">Avant systemd</h3>
+<p>Pour comprendre pourquoi systemd est devenu incontournable, il faut revenir quelques années en arrière. Pendant longtemps, les distributions Linux utilisaient un système d'initialisation appelé <strong>SysVinit</strong>. Le démarrage d'un serveur ressemblait à ceci :</p>
+<div class="mermaid">flowchart TD
+    N0["BIOS / UEFI"]
+    N1["Bootloader"]
+    N2["Noyau Linux"]
+    N3["init"]
+    N4["Scripts shell"]
+    N5["Services"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+    N2 --&gt; N3
+    N3 --&gt; N4
+    N4 --&gt; N5
+</div>
+<p>Chaque service possédait généralement un script placé dans : <code>/etc/init.d/</code> Par exemple :</p>
+<pre><code class="language-bash">/etc/init.d/httpd start
+</code></pre>
+<p>ou</p>
+<pre><code class="language-bash">service sshd start
+</code></pre>
+<p>Ces scripts étaient de simples scripts Shell. Ils exécutaient généralement :</p>
+<ul>
+<li>quelques vérifications ;</li>
+<li>le lancement du démon ;</li>
+<li>parfois un <code>fork()</code>;</li>
+<li>parfois un fichier PID.</li>
+</ul>
+<p>Cette approche a fonctionné pendant plusieurs décennies. Mais les infrastructures ont profondément évolué.</p>
+<h3 id="les-limites-de-sysvinit">Les limites de SysVinit</h3>
+<p>Les premiers grands centres de données ont rapidement rencontré plusieurs difficultés.</p>
+<h4 id="dependances">Dépendances</h4>
+<p>Prenons un exemple. Sentinel dépend de :</p>
+<ul>
+<li>la pile réseau ;</li>
+<li>FreeIPA ;</li>
+<li>journald ;</li>
+<li>éventuellement Podman.</li>
+</ul>
+<p>Comment garantir l'ordre de démarrage ? Avec SysVinit :</p>
+<div class="mermaid">flowchart TD
+    N0["Script A"]
+    N1["Script B"]
+    N2["Script C"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+</div>
+<p>Le système reposait essentiellement sur :</p>
+<ul>
+<li>un ordre alphabétique ;</li>
+<li>des numéros ;</li>
+<li>quelques dépendances déclarées.</li>
+</ul>
+<p>Les erreurs étaient fréquentes.</p>
+<h4 id="demarrage-lent">Démarrage lent</h4>
+<p>Autre problème. Les scripts étaient souvent exécutés séquentiellement.</p>
+<div class="mermaid">flowchart TD
+    N0["Service A"]
+    N1["attendre"]
+    N2["Service B"]
+    N3["attendre"]
+    N4["Service C"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+    N2 --&gt; N3
+    N3 --&gt; N4
+</div>
+<p>Même lorsque deux services étaient totalement indépendants. Les machines multicœurs restaient largement sous-utilisées.</p>
+<h4 id="supervision">Supervision</h4>
+<p>Supposons maintenant que Sentinel plante. Qui redémarre le processus ? Dans SysVinit : souvent... personne. Il fallait :</p>
+<ul>
+<li>un cron ;</li>
+<li>un script externe ;</li>
+<li>ou une intervention humaine.</li>
+</ul>
+<p>Aujourd'hui, ce comportement serait considéré comme inacceptable.</p>
+<h3 id="larrivee-de-systemd">L'arrivée de systemd</h3>
+<p>systemd est apparu avec un objectif très clair. Ne plus simplement démarrer les services. Mais gérer <strong>l'ensemble du système</strong>. Le changement de philosophie est majeur. Avant :</p>
+<p>Aujourd'hui :</p>
+<div class="mermaid">flowchart TD
+    N0["systemd"]
+    N1["Décrire"]
+    N2["Orchestrer"]
+    N3["Superviser"]
+    N4["Isoler"]
+    N5["Journaliser"]
+    N6["Redémarrer"]
+    N7["Sécuriser"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+    N2 --&gt; N3
+    N3 --&gt; N4
+    N4 --&gt; N5
+    N5 --&gt; N6
+    N6 --&gt; N7
+</div>
+<p>systemd n'est plus un simple lanceur. C'est un gestionnaire de services et d'unités qui orchestre des transactions de démarrage et d'arrêt.</p>
+<h2 id="pid-1">PID 1</h2>
+<p>Sous Linux, tous les processus possèdent un identifiant appelé : <code>PID</code> Le premier processus créé par le noyau est toujours : <code>PID 1</code> Sur AlmaLinux moderne :</p>
+<p>On peut le vérifier.</p>
+<pre><code class="language-bash">ps -p 1
+</code></pre>
+<p>ou</p>
+<pre><code class="language-bash">ps -fp 1
+</code></pre>
+<p>Exemple :</p>
+<pre><code class="language-text">UID   PID  PPID  CMD
+
+root    1     0  /usr/lib/systemd/systemd
+</code></pre>
+<p>L'arbre des processus de l'espace utilisateur est normalement enraciné sous lui. Les threads du noyau constituent un monde distinct et ne sont pas des services enfants de systemd.</p>
+<h3 id="pourquoi-pid-1-est-il-particulier">Pourquoi PID 1 est-il particulier ?</h3>
+<p>Le noyau possède un comportement spécifique vis-à-vis du processus numéro 1. Si un processus ordinaire meurt : le système continue. Si PID 1 disparaît : le système devient incapable de gérer correctement les processus. Sur la plupart des distributions, cela conduit rapidement à un kernel panic ou à un état irrécupérable. PID 1 possède donc des responsabilités très particulières.</p>
+<h2 id="une-vision-hierarchique">Une vision hiérarchique</h2>
+<p>Tous les processus Linux appartiennent à un arbre.</p>
+<div class="mermaid">flowchart TD
+    Kernel["Noyau Linux"] --&gt; PID1["systemd — PID 1"]
+    PID1 --&gt; Targets["Targets"]
+    PID1 --&gt; Services["Services"]
+    PID1 --&gt; Sockets["Sockets et timers"]
+    Services --&gt; Supervision["État, journaux et redémarrage"]
+</div>
+<p>Même lorsqu'un utilisateur ouvre une session SSH.</p>
+<div class="mermaid">flowchart TD
+    N0["systemd"]
+    N1["sshd"]
+    N2["bash"]
+    N3["python"]
+    N4["sentinel"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+    N2 --&gt; N3
+    N3 --&gt; N4
+</div>
+<p>Tous ces processus restent rattachés, directement ou indirectement, à PID 1. Pour suivre un service de manière fiable, systemd ne se contente cependant pas de cette parenté : il place ses processus dans un cgroup, ce qui évite de perdre leur trace lorsqu'ils créent des enfants ou se réorganisent. Cette hiérarchie est essentielle pour comprendre :</p>
+<ul>
+<li>les signaux ;</li>
+<li>les groupes de contrôle (cgroups) ;</li>
+<li>la supervision ;</li>
+<li>l'arrêt du système.</li>
+</ul>
+<h2 id="systemd-ne-lance-pas-seulement-des-services">systemd ne lance pas seulement des services</h2>
+<p>C'est une idée reçue très fréquente. systemd est responsable de nombreux composants. Par exemple : <code>journald</code> pour les journaux. <code>logind</code> pour les sessions. <code>networkd</code> pour certaines configurations réseau. <code>resolved</code> pour la résolution DNS. <code>tmpfiles</code> pour la gestion automatique des répertoires temporaires. <code>timedated</code> pour la gestion de l'heure. Autrement dit : systemd est devenu une véritable plateforme. Il dépasse largement le simple lancement de services.</p>
+<h2 id="la-philosophie-declarative">La philosophie déclarative</h2>
+<p>C'est probablement la caractéristique la plus importante de systemd. Prenons une ancienne approche. Un script Shell contenait :</p>
+<pre><code class="language-bash">Créer un répertoire.
+
+Lancer le démon.
+
+Créer un fichier PID.
+
+Attendre.
+
+Relancer si nécessaire.
+</code></pre>
+<p>Aujourd'hui, systemd demande simplement : <code>Quel est l'état souhaité ?</code> Par exemple :</p>
+<pre><code class="language-text">Le service Sentinel
+
+doit être
+
+actif,
+
+redémarré automatiquement,
+
+après le réseau,
+
+avec peu de privilèges,
+
+et produire des journaux.
+</code></pre>
+<p>systemd se charge ensuite d'atteindre cet état. Cette approche est dite <strong>déclarative</strong>. Elle sera omniprésente dans les prochains chapitres.</p>
+<h2 id="le-fonctionnement-interne-de-systemd">Le fonctionnement interne de systemd</h2>
+<p>Pour comprendre la puissance de systemd, il faut abandonner une vision simpliste consistant à dire :</p>
+<blockquote>
+<p><em>« systemd démarre des services. »</em></p>
+</blockquote>
+<p>En réalité, systemd est un <strong>gestionnaire d'état</strong>. Il possède une représentation complète du système. Pour lui, un serveur est un ensemble d'objets reliés entre eux. Par exemple :</p>
+<div class="mermaid">flowchart TD
+    N0["Réseau"]
+    N1["NetworkManager"]
+    N2["firewalld"]
+    N3["FreeIPA"]
+    N4["Sentinel"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+    N2 --&gt; N3
+    N3 --&gt; N4
+</div>
+<p>Chaque composant possède :</p>
+<ul>
+<li>un état ;</li>
+<li>des dépendances ;</li>
+<li>des conditions ;</li>
+<li>un cycle de vie.</li>
+</ul>
+<p>systemd orchestre l'ensemble.</p>
+<h2 id="les-unites-units">Les unités (Units)</h2>
+<p>L'objet fondamental manipulé par systemd est appelé une <strong>Unit</strong>. Une unité représente une ressource du système. Contrairement à une idée reçue, une unité n'est pas forcément un service. Il existe plusieurs dizaines de types d'unités. Les plus importantes sont : <code>.service</code> Un service. Exemple :</p>
+<pre><code>sshd.service
+</code></pre>
+<p><code>.socket</code> Une socket réseau. <code>.mount</code> Un système de fichiers. <code>.target</code> Un objectif de démarrage. <code>.timer</code> Un planificateur. <code>.path</code> Une surveillance de fichier. <code>.device</code> Un périphérique. Toutes ces ressources sont gérées par le même moteur. Cette uniformité constitue l'une des grandes forces de systemd.</p>
+<h2 id="les-dependances">Les dépendances</h2>
+<p>Supposons que Sentinel nécessite :</p>
+<ul>
+<li>le réseau ;</li>
+<li>FreeIPA ;</li>
+<li>journald.</li>
+</ul>
+<p>Avec SysVinit, cette logique était souvent codée dans un script Shell. Avec systemd, elle devient déclarative. Conceptuellement :</p>
+<div class="mermaid">flowchart TD
+    N0["Sentinel"]
+    N1["After=network.target"]
+    N2["After=ipa.service"]
+    N3["Requires=network.target"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+    N2 --&gt; N3
+</div>
+<p>systemd calcule alors automatiquement l'ordre de démarrage. L'administrateur décrit les relations. systemd construit le plan d'exécution.</p>
+<h2 id="les-jobs">Les Jobs</h2>
+<p>Lorsqu'on demande :</p>
+<pre><code class="language-bash">systemctl start sentinel
+</code></pre>
+<p>systemd ne lance pas immédiatement Sentinel. Il construit d'abord un <strong>Job</strong>. Un Job est une action planifiée. Par exemple :</p>
+<pre><code>Démarrer Sentinel
+</code></pre>
+<p>Mais systemd constate immédiatement :</p>
+<pre><code>Le réseau n'est pas prêt.
+</code></pre>
+<p>Il ajoute alors :</p>
+<pre><code>Démarrer NetworkManager
+</code></pre>
+<p>Puis :</p>
+<pre><code>Attendre network.target
+</code></pre>
+<p>Puis seulement :</p>
+<pre><code>Démarrer Sentinel
+</code></pre>
+<p>Autrement dit : la commande demandée par l'utilisateur est transformée en un graphe d'actions.</p>
+<h2 id="les-targets">Les Targets</h2>
+<p>Une autre innovation majeure est la notion de <strong>Target</strong>. Une Target représente un état souhaité du système. Par exemple : <code>multi-user.target</code> signifie :</p>
+<pre><code>Serveur opérationnel
+
+sans interface graphique.
+</code></pre>
+<p>Autre exemple. <code>graphical.target</code> correspond généralement à :</p>
+<pre><code>Système complet
+
+avec interface graphique.
+</code></pre>
+<p>Une Target ne fait rien. Elle regroupe simplement plusieurs unités. Schématiquement :</p>
+<div class="mermaid">flowchart TD
+    Target["multi-user.target"] --&gt; SSH["sshd.service"]
+    Target --&gt; Firewall["firewalld.service"]
+    Target --&gt; Network["NetworkManager.service"]
+    Target --&gt; Time["chronyd.service"]
+    Target --&gt; Sentinel["sentinel.service"]
+</div>
+<p>Lorsqu'une Target est atteinte, tous les services qui lui sont associés doivent être opérationnels.</p>
+<h2 id="les-cgroups">Les cgroups</h2>
+<p>Nous arrivons maintenant à l'une des technologies les plus importantes de systemd. Les <strong>Control Groups</strong>, ou <strong>cgroups</strong>. Les cgroups permettent au noyau Linux de regrouper des processus. Par exemple.</p>
+<pre><code>Sentinel
+</code></pre>
+<p>peut lancer :</p>
+<ul>
+<li>plusieurs threads ;</li>
+<li>plusieurs processus Python ;</li>
+<li>plusieurs workers.</li>
+</ul>
+<p>systemd ne voit pas uniquement le processus principal. Il voit tout le groupe.</p>
+<div class="mermaid">flowchart TD
+    N0["systemd"]
+    N1["Sentinel.service"]
+    N2["Processus principal"]
+    N3["Worker 1"]
+    N4["Worker 2"]
+    N5["Worker 3"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+    N2 --&gt; N3
+    N3 --&gt; N4
+    N4 --&gt; N5
+</div>
+<p>Cette vision de groupe change complètement la supervision.</p>
+<h2 id="pourquoi-les-cgroups-sont-revolutionnaires">Pourquoi les cgroups sont révolutionnaires ?</h2>
+<p>Avant leur apparition, arrêter proprement un démon pouvait être compliqué. Le processus principal mourait. Les processus fils continuaient parfois à tourner. Ils devenaient :</p>
+<pre><code>Orphelins
+</code></pre>
+<p>ou</p>
+<pre><code>Zombies
+</code></pre>
+<p>Aujourd'hui : <code>systemctl stop sentinel</code> entraîne l'arrêt du groupe complet. systemd connaît tous les processus appartenant au service. Aucun processus ne reste oublié.</p>
+<h2 id="les-ressources">Les ressources</h2>
+<p>Les cgroups permettent également de contrôler les ressources. Par exemple : <code>Mémoire maximale</code> <code>Nombre maximal de processus</code> <code>CPU</code> <code>Entrées/sorties disque</code> Autrement dit, systemd n'est plus uniquement un lanceur. Il devient également un superviseur de ressources. Nous exploiterons ces fonctionnalités dans le chapitre consacré au sandboxing.</p>
+<h2 id="pourquoi-ecrire-un-demon-est-devenu-beaucoup-plus-simple">Pourquoi écrire un démon est devenu beaucoup plus simple ?</h2>
+<p>Historiquement, un démon Linux devait réaliser lui-même de nombreuses opérations. Par exemple :</p>
+<ul>
+<li>effectuer un <code>fork()</code>;</li>
+<li>détacher le terminal ;</li>
+<li>créer un fichier PID ;</li>
+<li>gérer les signaux ;</li>
+<li>parfois abandonner les privilèges Root avec <code>setuid()</code>;</li>
+<li>gérer ses propres journaux ;</li>
+<li>implémenter une logique de redémarrage.</li>
+</ul>
+<p>Un démon ressemblait souvent à plusieurs centaines de lignes de code "infrastructure" avant même de commencer son véritable travail. Aujourd'hui, cette philosophie a changé. Le rôle de l'application est devenu beaucoup plus simple. Sentinel devra essentiellement :</p>
+<ul>
+<li>écouter ;</li>
+<li>traiter des requêtes ;</li>
+<li>produire des événements.</li>
+</ul>
+<p>systemd prendra en charge :</p>
+<ul>
+<li>le lancement ;</li>
+<li>les dépendances ;</li>
+<li>le redémarrage ;</li>
+<li>la journalisation ;</li>
+<li>les limites de ressources ;</li>
+<li>les privilèges ;</li>
+<li>les cgroups ;</li>
+<li>les signaux d'arrêt.</li>
+</ul>
+<p>Cette séparation des responsabilités rend les applications :</p>
+<ul>
+<li>plus simples ;</li>
+<li>plus robustes ;</li>
+<li>plus faciles à maintenir.</li>
+</ul>
+<h2 id="larret-propre-dun-service">L'arrêt propre d'un service</h2>
+<p>Un autre avantage souvent sous-estimé concerne l'arrêt des applications. Supposons que l'on exécute :</p>
+<pre><code class="language-bash">systemctl stop sentinel
+</code></pre>
+<p>systemd ne tue pas immédiatement le processus. La séquence est généralement la suivante.</p>
+<div class="mermaid">flowchart TD
+    N0["systemctl stop"]
+    N1["SIGTERM"]
+    N2["Attente"]
+    N3["L'application termine son travail"]
+    N4["Fermeture des sockets"]
+    N5["Sauvegarde éventuelle"]
+    N6["Fin propre"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+    N2 --&gt; N3
+    N3 --&gt; N4
+    N4 --&gt; N5
+    N5 --&gt; N6
+</div>
+<p>Si le processus refuse de s'arrêter :</p>
+<p>Cette différence est importante. Une application bien écrite doit réagir correctement au signal <code>SIGTERM</code>. Nous adapterons Sentinel dans ce sens lors des prochains chapitres.</p>
+<h2 id="pourquoi-cela-change-notre-maniere-de-developper-sentinel">Pourquoi cela change notre manière de développer Sentinel ?</h2>
+<p>Jusqu'à présent, nous écrivions une application Python. À partir de maintenant, nous allons écrire un <strong>service système</strong>. Cette nuance est fondamentale. Notre réflexion change complètement. Nous ne nous demanderons plus uniquement :</p>
+<blockquote>
+<p><em>« Mon code fonctionne-t-il ? »</em></p>
+</blockquote>
+<p>Nous nous demanderons également :</p>
+<ul>
+<li>démarre-t-il automatiquement ?</li>
+<li>survit-il à un crash ?</li>
+<li>produit-il des journaux exploitables ?</li>
+<li>peut-il être arrêté proprement ?</li>
+<li>peut-il être limité à certains privilèges ?</li>
+<li>est-il compatible avec une supervision ?</li>
+<li>peut-il être déployé automatiquement par Ansible ?</li>
+</ul>
+<p>Autrement dit, nous ne développons plus un programme. Nous construisons un composant d'infrastructure.</p>
+<h2 id="approfondissement">Approfondissement</h2>
+<h3 id="systemd-est-un-orchestrateur-detat-pas-un-lanceur-de-processus">systemd est un orchestrateur d'état, pas un lanceur de processus</h3>
+<p>Lorsqu'un administrateur découvre systemd, il retient souvent les commandes suivantes :</p>
+<pre><code class="language-bash">systemctl start
+</code></pre>
+<pre><code class="language-bash">systemctl stop
+</code></pre>
+<pre><code class="language-bash">systemctl restart
+</code></pre>
+<p>Cela donne l'impression que systemd est simplement un remplaçant de :</p>
+<pre><code class="language-bash">service
+</code></pre>
+<p>C'est une vision très réductrice. Le véritable rôle de systemd consiste à maintenir le système dans <strong>l'état souhaité</strong>. Prenons un exemple. L'état désiré est :</p>
+<div class="mermaid">flowchart TD
+    N0["Sentinel"]
+    N1["Actif"]
+    N2["Après le réseau"]
+    N3["Avec TLS"]
+    N4["Journalisé"]
+    N5["Redémarré automatiquement"]
+    N6["Exécuté sous un utilisateur dédié"]
+    N7["Avec des privilèges limités"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+    N2 --&gt; N3
+    N3 --&gt; N4
+    N4 --&gt; N5
+    N5 --&gt; N6
+    N6 --&gt; N7
+</div>
+<p>systemd ne lance pas seulement Sentinel. Il mémorise l'état de l'unité et applique la politique déclarée — par exemple un redémarrage après échec si <code>Restart=</code> le demande. Il ne garantit pas à lui seul que l'application répond correctement : cette limite justifiera le watchdog et la supervision du chapitre 5.7.</p>
+<h3 id="pid-1-nest-pas-un-processus-comme-les-autres">PID 1 n'est pas un processus comme les autres</h3>
+<p>Les processus de l'espace utilisateur rejoignent normalement un arbre enraciné sous PID 1. Combinée aux unités et aux cgroups, cette position donne à systemd une vision globale des services qu'il gère. Prenons un exemple.</p>
+<div class="mermaid">flowchart TD
+    Manager["systemd — PID 1"] --&gt; SSH["sshd"]
+    Manager --&gt; Firewall["firewalld"]
+    Manager --&gt; Time["chronyd"]
+    Manager --&gt; Podman["podman"]
+    Manager --&gt; Sentinel["Sentinel"]
+    Manager --&gt; Journal["journald"]
+</div>
+<p>Cette vision lui permet :</p>
+<ul>
+<li>d'arrêter proprement un groupe complet de processus ;</li>
+<li>de connaître les dépendances ;</li>
+<li>de limiter les ressources ;</li>
+<li>de redémarrer uniquement ce qui doit l'être.</li>
+</ul>
+<p>Cette capacité n'existe pas lorsqu'une application est simplement lancée avec :</p>
+<pre><code class="language-bash">python sentinel.py
+</code></pre>
+<h3 id="la-disparition-du-code-infrastructure">La disparition du code "infrastructure"</h3>
+<p>Pendant longtemps, les développeurs de démons Linux devaient écrire énormément de code qui n'avait rien à voir avec leur métier. Par exemple :</p>
+<div class="mermaid">flowchart TD
+    N0["fork()"]
+    N1["setsid()"]
+    N2["Création PID"]
+    N3["Gestion des signaux"]
+    N4["Drop des privilèges"]
+    N5["Rotation des logs"]
+    N6["Restart"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+    N2 --&gt; N3
+    N3 --&gt; N4
+    N4 --&gt; N5
+    N5 --&gt; N6
+</div>
+<p>Aujourd'hui, ce code disparaît progressivement. Il est remplacé par une unité systemd. Le résultat est remarquable. L'application se concentre uniquement sur sa mission. Le système d'exploitation prend en charge l'infrastructure. Cette séparation est comparable à celle qui existe entre :</p>
+<ul>
+<li>Python et son interpréteur ;</li>
+<li>Kubernetes et les conteneurs ;</li>
+<li>FreeIPA et les comptes locaux.</li>
+</ul>
+<p>Chaque composant se concentre sur son domaine d'expertise.</p>
+<h3 id="pourquoi-cela-ameliore-la-securite">Pourquoi cela améliore la sécurité</h3>
+<p>Plus une application contient de code d'infrastructure, plus elle risque d'introduire des erreurs. Prenons un exemple. Une application implémente elle-même :</p>
+<ul>
+<li>son mécanisme de redémarrage ;</li>
+<li>sa rotation de logs ;</li>
+<li>son changement d'utilisateur ;</li>
+<li>son sandbox.</li>
+</ul>
+<p>Chaque fonctionnalité représente plusieurs centaines de lignes de code supplémentaires. Autant de possibilités de bogues. En confiant ces responsabilités à systemd, nous utilisons un composant :</p>
+<ul>
+<li>extrêmement testé ;</li>
+<li>utilisé sur des millions de serveurs ;</li>
+<li>audité depuis plus d'une décennie.</li>
+</ul>
+<p>Le meilleur code de sécurité est souvent celui que l'on n'a pas besoin d'écrire.</p>
+<h2 id="concevoir-la-politique">Concevoir la politique</h2>
+<p>Un architecte ne réfléchit pas en termes de processus. Il réfléchit en termes de <strong>services</strong>. La nuance paraît subtile. Elle change pourtant complètement la conception. Prenons Sentinel. Le développeur voit : <code>Programme Python</code> L'architecte voit : <code>Service métier</code> Ce service possède :</p>
+<ul>
+<li>une disponibilité attendue ;</li>
+<li>des dépendances ;</li>
+<li>un niveau de criticité ;</li>
+<li>des contraintes de sécurité ;</li>
+<li>une supervision ;</li>
+<li>un cycle de mise à jour.</li>
+</ul>
+<p>L'application n'est qu'un détail d'implémentation.</p>
+<h3 id="les-dependances-doivent-etre-explicites">Les dépendances doivent être explicites</h3>
+<p>Un service qui dépend implicitement d'un autre finit toujours par provoquer des incidents. Prenons un exemple. Sentinel démarre. FreeIPA n'est pas encore disponible. Deux comportements sont possibles. Premier cas. L'application plante. Deuxième cas. systemd attend simplement que FreeIPA soit opérationnel. L'architecte privilégie toujours la seconde approche. Les dépendances doivent être déclarées, jamais supposées.</p>
+<h3 id="les-services-doivent-etre-remplacables">Les services doivent être remplaçables</h3>
+<p>Imaginons que Sentinel soit entièrement réécrit en Rust dans quelques années. La politique de sécurité devrait-elle changer ? Non. L'unité systemd devrait conserver :</p>
+<ul>
+<li>le même nom ;</li>
+<li>les mêmes dépendances ;</li>
+<li>les mêmes contraintes ;</li>
+<li>la même supervision.</li>
+</ul>
+<p>Le langage n'est pas l'architecture. Cette séparation facilite énormément les évolutions futures.</p>
+<h2 id="point-de-vue-offensif">Point de vue offensif</h2>
+<p>Un attaquant sait que de nombreuses applications maison sont exécutées ainsi.</p>
+<pre><code class="language-bash">python mon_application.py &amp;
+</code></pre>
+<p>Puis plus rien. Pas de supervision. Pas de journalisation. Pas de redémarrage. Pas de limitation mémoire. Pas de restrictions de privilèges. Ces applications représentent souvent des cibles privilégiées.</p>
+<h3 id="les-processus-orphelins">Les processus orphelins</h3>
+<p>Supposons qu'un service démarre plusieurs processus. L'administrateur tue uniquement le processus principal. Des processus secondaires continuent d'exécuter du code. Ces situations existaient fréquemment avant les cgroups. Aujourd'hui, systemd suit l'ensemble du groupe. Cette évolution réduit considérablement les comportements imprévisibles.</p>
+<h3 id="les-privileges-excessifs">Les privilèges excessifs</h3>
+<p>Beaucoup de services historiques continuaient à fonctionner en tant que : <code>root</code> simplement parce qu'ils avaient besoin d'ouvrir un port privilégié au démarrage. Une fois ce port ouvert, ils oubliaient parfois de perdre leurs privilèges. systemd permet aujourd'hui de déléguer cette logique de manière beaucoup plus propre. Nous approfondirons ce mécanisme dans les chapitres consacrés :</p>
+<ul>
+<li>aux capacités Linux ;</li>
+<li>au sandboxing.</li>
+</ul>
+<h2 id="en-entreprise">En entreprise</h2>
+<p>Dans un environnement professionnel, presque aucun service critique n'est lancé manuellement. Prenons un exemple. Le serveur Sentinel redémarre à 3 heures du matin après une mise à jour du noyau. Personne n'est connecté. Pourtant, quelques secondes plus tard, l'ensemble des composants reviennent automatiquement.</p>
+<div class="mermaid">flowchart TD
+    N0["NetworkManager"]
+    N1["firewalld"]
+    N2["FreeIPA"]
+    N3["Sentinel"]
+    N4["Supervision"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+    N2 --&gt; N3
+    N3 --&gt; N4
+</div>
+<p>Aucune intervention humaine. Cette automatisation constitue l'un des fondements de l'exploitation moderne.</p>
+<h3 id="les-unites-sont-du-code">Les unités sont du code</h3>
+<p>Les entreprises les plus matures considèrent désormais les fichiers : <code>.service</code> comme du code. Ils sont :</p>
+<ul>
+<li>versionnés dans Git ;</li>
+<li>relus ;</li>
+<li>testés ;</li>
+<li>validés ;</li>
+<li>déployés automatiquement.</li>
+</ul>
+<p>Modifier une unité systemd directement sur un serveur de production est souvent interdit. La modification passe d'abord par :</p>
+<ul>
+<li>une revue ;</li>
+<li>un pipeline CI/CD ;</li>
+<li>Ansible.</li>
+</ul>
+<p>Cette approche garantit que tous les serveurs restent homogènes.</p>
+<h2 id="culture-technique">Culture technique</h2>
+<p>Lorsque systemd a été introduit, il a suscité d'importants débats dans la communauté Linux. Pourquoi ? Parce qu'il ne se limitait plus au rôle traditionnel d'init. Il intégrait progressivement :</p>
+<ul>
+<li>la journalisation (<code>journald</code>) ;</li>
+<li>la gestion des connexions (<code>logind</code>) ;</li>
+<li>certains aspects du réseau (<code>networkd</code>, <code>resolved</code>) ;</li>
+<li>la synchronisation horaire (<code>timesyncd</code>) ;</li>
+<li>les périphériques (<code>udev</code>, désormais intégré).</li>
+</ul>
+<p>Certains y voyaient une concentration excessive de responsabilités. D'autres considéraient qu'un système moderne avait besoin d'un orchestrateur central capable de coordonner ces composants. Aujourd'hui, quelle que soit l'opinion que l'on puisse avoir sur cette évolution, systemd est devenu le standard de fait de la quasi-totalité des distributions Linux destinées aux serveurs, notamment AlmaLinux, RHEL, Rocky Linux, Fedora, Debian, Ubuntu, SUSE et bien d'autres.</p>
+<p>Dans ce manuel, nous ne cherchons pas à défendre un choix historique. Nous cherchons à maîtriser l'outil réellement utilisé dans les infrastructures professionnelles actuelles.</p>
+<h2 id="piege-classique">Piège classique</h2>
+<h3 id="croire-quun-programme-lance-en-arriere-plan-est-un-service">Croire qu'un programme lancé en arrière-plan est un service</h3>
+<p>Beaucoup d'applications internes sont encore démarrées ainsi :</p>
+<pre><code class="language-bash">nohup python sentinel.py &amp;
+</code></pre>
+<p>ou</p>
+<pre><code class="language-bash">./sentinel &amp;
+</code></pre>
+<p>Techniquement, cela fonctionne. Mais ce n'est pas un service au sens de systemd. Il manque notamment :</p>
+<ul>
+<li>un cycle de vie ;</li>
+<li>une supervision ;</li>
+<li>une intégration avec les journaux ;</li>
+<li>une politique de redémarrage ;</li>
+<li>une gestion des dépendances ;</li>
+<li>un contrôle des ressources ;</li>
+<li>une intégration avec le reste du système.</li>
+</ul>
+<p>Un véritable service est un citoyen du système d'exploitation. Pas simplement un processus exécuté en arrière-plan.</p>
+<h2 id="tp-1-observer-pid-1-et-les-unites">TP 1 — Observer PID 1 et les unités</h2>
+<h3 id="objectif">Objectif</h3>
+<p>Transformer Sentinel, actuellement lancé comme une simple application Python, en un véritable service système intégré à l'environnement AlmaLinux. À la fin de ce laboratoire, vous devrez être capable de :</p>
+<ul>
+<li>identifier les services déjà présents sur un système ;</li>
+<li>comprendre leur cycle de vie ;</li>
+<li>observer leurs dépendances ;</li>
+<li>distinguer un processus d'un service systemd ;</li>
+<li>préparer Sentinel à être intégré dans systemd au chapitre suivant.</li>
+</ul>
+<h3 id="architecture">Architecture</h3>
+<div class="mermaid">flowchart TD
+    System["AlmaLinux — systemd PID 1"] --&gt; Network["NetworkManager"]
+    System --&gt; Firewall["firewalld"]
+    System --&gt; SSH["sshd.service"]
+    System --&gt; Time["chronyd"]
+    SSH --&gt; Session["Session SSH"]
+    Session --&gt; Admin["Administrateur"]
+    Admin --&gt; App["python3 sentinel.py — hors systemd"]
+</div>
+<p>À ce stade du manuel, Sentinel n'est <strong>pas encore</strong> un service systemd. C'est précisément ce qui va évoluer dans cette campagne.</p>
+<h3 id="etape-1-identifier-pid-1">Étape 1 — Identifier PID 1</h3>
+<p>Afficher le processus numéro 1.</p>
+<pre><code class="language-bash">ps -fp 1
+</code></pre>
+<p>Comparer également avec :</p>
+<pre><code class="language-bash">pstree -p
+</code></pre>
+<p>Repérer :</p>
+<ul>
+<li>systemd ;</li>
+<li>ses principaux services ;</li>
+<li>la hiérarchie des processus.</li>
+</ul>
+<h3 id="etape-2-explorer-les-unites">Étape 2 — Explorer les unités</h3>
+<p>Lister quelques unités.</p>
+<pre><code class="language-bash">systemctl list-units
+</code></pre>
+<p>Puis uniquement les services.</p>
+<pre><code class="language-bash">systemctl list-units --type=service
+</code></pre>
+<p>Identifier notamment :</p>
+<ul>
+<li>sshd</li>
+<li>firewalld</li>
+<li>chronyd</li>
+<li>NetworkManager</li>
+</ul>
+<p>Essayez d'imaginer les dépendances entre eux.</p>
+<h3 id="etape-3-observer-un-service">Étape 3 — Observer un service</h3>
+<p>Choisissez par exemple :</p>
+<pre><code class="language-bash">systemctl status firewalld
+</code></pre>
+<p>Observer attentivement :</p>
+<ul>
+<li>l'état Active ;</li>
+<li>le PID principal ;</li>
+<li>les journaux récents ;</li>
+<li>le chemin de l'unité.</li>
+</ul>
+<p>Réalisez le même exercice avec :</p>
+<pre><code class="language-bash">systemctl status sshd
+</code></pre>
+<p>Comparez les deux sorties.</p>
+<h2 id="tp-2-relier-processus-dependances-et-journaux">TP 2 — Relier processus, dépendances et journaux</h2>
+<h3 id="etape-4-observer-larbre-des-processus">Étape 4 — Observer l'arbre des processus</h3>
+<p>Afficher :</p>
+<pre><code class="language-bash">pstree -p
+</code></pre>
+<p>Repérez :</p>
+<div class="mermaid">flowchart TD
+    N0["systemd"]
+    N1["sshd"]
+    N2["bash"]
+    N3["python"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+    N2 --&gt; N3
+</div>
+<p>Lancez ensuite un petit programme Python. Observez où il apparaît dans l'arbre. Répondez à la question suivante :</p>
+<blockquote>
+<p>Pourquoi n'est-il pas considéré comme un service systemd ?</p>
+</blockquote>
+<h3 id="etape-5-etudier-les-dependances">Étape 5 — Étudier les dépendances</h3>
+<p>Afficher :</p>
+<pre><code class="language-bash">systemctl list-dependencies multi-user.target
+</code></pre>
+<p>Identifier :</p>
+<ul>
+<li>quels services démarrent automatiquement ;</li>
+<li>lesquels sont indispensables ;</li>
+<li>lesquels semblent liés au réseau.</li>
+</ul>
+<p>L'objectif n'est pas de tout mémoriser. Il est de comprendre que systemd raisonne sous forme de graphe de dépendances.</p>
+<h3 id="etape-6-observer-les-journaux">Étape 6 — Observer les journaux</h3>
+<p>Afficher les journaux d'un service. Par exemple :</p>
+<pre><code class="language-bash">journalctl -u firewalld
+</code></pre>
+<p>Puis :</p>
+<pre><code class="language-bash">journalctl -u sshd
+</code></pre>
+<p>Comparer avec :</p>
+<pre><code class="language-bash">journalctl -b
+</code></pre>
+<p>Réfléchissez : Pourquoi est-il intéressant que les journaux soient directement associés au service ?</p>
+<h3 id="etape-7-reflexion">Étape 7 — Réflexion</h3>
+<p>Imaginez maintenant Sentinel en production. Listez toutes les fonctionnalités que systemd pourrait lui apporter sans modifier une seule ligne de code Python. Par exemple :</p>
+<ul>
+<li>démarrage automatique ;</li>
+<li>redémarrage après un crash ;</li>
+<li>journalisation ;</li>
+<li>dépendances ;</li>
+<li>limitation mémoire ;</li>
+<li>etc.</li>
+</ul>
+<p>Cette liste servira de cahier des charges pour le chapitre suivant.</p>
+<h2 id="mission-dingenieur">Mission d'ingénieur</h2>
+<h3 id="contexte">Contexte</h3>
+<p>Votre entreprise exploite plusieurs applications internes développées au fil des années. Chaque équipe a adopté sa propre méthode de lancement. Certains utilisent :</p>
+<pre><code class="language-bash">nohup application &amp;
+</code></pre>
+<p>D'autres :</p>
+<pre><code class="language-bash">screen
+</code></pre>
+<p>D'autres encore :</p>
+<pre><code class="language-bash">tmux
+</code></pre>
+<p>Certaines applications sont même lancées depuis :</p>
+<pre><code class="language-bash">rc.local
+</code></pre>
+<p>ou directement depuis des scripts Bash. Les conséquences sont nombreuses :</p>
+<ul>
+<li>aucune homogénéité ;</li>
+<li>supervision difficile ;</li>
+<li>journalisation disparate ;</li>
+<li>arrêt parfois brutal des applications ;</li>
+<li>redémarrage manuel après incident ;</li>
+<li>forte dépendance aux administrateurs historiques.</li>
+</ul>
+<p>La direction souhaite normaliser l'exploitation de toutes les applications.</p>
+<h3 id="votre-mission">Votre mission</h3>
+<p>Vous devez proposer une stratégie de migration vers systemd. Votre proposition devra répondre notamment aux questions suivantes.</p>
+<ul>
+<li>Quels services migrer en priorité ?</li>
+<li>Quels bénéfices immédiats attendre ?</li>
+<li>Quels risques faut-il anticiper ?</li>
+<li>Comment accompagner les équipes de développement ?</li>
+<li>Quels contrôles mettre en place avant la mise en production ?</li>
+</ul>
+<p>Votre réponse devra montrer que systemd constitue une évolution d'architecture, et non un simple changement de commandes.</p>
+<h2 id="impact-sur-sentinel">Impact sur Sentinel</h2>
+<p>Jusqu'à présent, Sentinel était un programme. À partir de maintenant, il devient progressivement un <strong>service système</strong>. Cette évolution est déterminante. Avant :</p>
+<p>Après :</p>
+<div class="mermaid">flowchart TD
+    N0["systemd"]
+    N1["Sentinel.service"]
+    N2["Supervision"]
+    N3["Journalisation"]
+    N4["Sécurité"]
+    N5["Haute disponibilité"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+    N2 --&gt; N3
+    N3 --&gt; N4
+    N4 --&gt; N5
+</div>
+<p>Ce changement influencera directement tous les chapitres suivants. Le service Sentinel pourra alors bénéficier :</p>
+<ul>
+<li>des cgroups ;</li>
+<li>du sandboxing ;</li>
+<li>des capacités Linux ;</li>
+<li>de <code>journald</code> ;</li>
+<li>des politiques de redémarrage ;</li>
+<li>d'Ansible ;</li>
+<li>du packaging RPM.</li>
+</ul>
+<p>Autrement dit, tout l'écosystème Linux moderne devient disponible.</p>
+<h2 id="synthese">Synthèse</h2>
+<ul>
+<li>systemd est le processus <strong>PID 1</strong> d'AlmaLinux.</li>
+<li>Il ne lance pas simplement des services : il orchestre l'état du système.</li>
+<li>Les unités constituent les objets fondamentaux manipulés par systemd.</li>
+<li>Les dépendances sont déclaratives et non codées dans des scripts Shell.</li>
+<li>Les cgroups permettent de superviser un groupe complet de processus.</li>
+<li>Les applications modernes délèguent à systemd la gestion du cycle de vie.</li>
+<li>Un programme lancé en arrière-plan n'est pas un véritable service système.</li>
+<li>Sentinel évoluera progressivement pour exploiter pleinement les capacités offertes par systemd.</li>
+</ul>
+<h2 id="schema-recapitulatif">Schéma récapitulatif</h2>
+<p><img alt="Récapitulatif visuel du chapitre 5.1" src="../media/recap-5.1.png"/></p>
+<h2 id="pour-aller-plus-loin">Pour aller plus loin</h2>
+<p>Maintenant que nous comprenons <strong>ce qu'est systemd</strong>, nous allons étudier <strong>le langage qu'il utilise</strong>. Contrairement à SysVinit, systemd ne manipule pas uniquement des services. Il orchestre une grande variété d'objets appelés <strong>unités</strong> (<em>Units</em>).</p>
+<p>Le chapitre <strong>5.2 — Les unités (.service, .socket, .target, .timer…)</strong> nous permettra de découvrir ces différents types d'unités, leurs interactions et la manière dont elles composent une architecture de services moderne. C'est à partir de ces briques que nous construirons ensuite <strong>Sentinel.service</strong>. <a href="../5.2-unites-systemd/">5.2 — Les unités <code>systemd</code></a> →</p>
+</div>
+</div><footer>
+<div aria-label="Footer Navigation" class="rst-footer-buttons" role="navigation">
+<a class="btn btn-neutral float-left" href="../../campagne_04/4.8-mission-administration-sentinel/" title="Chapitre 4.8 — Mission : administrer Sentinel en sécurité"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+<a class="btn btn-neutral float-right" href="../5.2-unites-systemd/" title="Chapitre 5.2 — Les unités systemd">Next <span class="icon icon-circle-arrow-right"></span></a>
+</div>
+<hr/>
+<div role="contentinfo">
+<!-- Copyright etc -->
+</div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+</div>
+</div>
+</section>
+</div>
+<div aria-label="Versions" class="rst-versions" role="note">
+<span class="rst-current-version" data-toggle="rst-current-version">
+<span>
+<a class="fa fa-code-fork" href="https://github.com/tdelaclos/formations" style="color: #fcfcfc"> tdelaclos/formations</a>
+</span>
+<span><a href="../../campagne_04/4.8-mission-administration-sentinel/" style="color: #fcfcfc">« Previous</a></span>
+<span><a href="../5.2-unites-systemd/" style="color: #fcfcfc">Next »</a></span>
+</span>
+</div>
+<script src="../../js/jquery-3.6.0.min.js"></script>
+<script>var base_url = "../..";</script>
+<script src="../../js/theme_extra.js"></script>
+<script src="../../js/theme.js"></script>
+<script src="../../search/main.js"></script>
+<script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+<script type="module">import mermaid from "https://unpkg.com/mermaid@10.4.0/dist/mermaid.esm.min.mjs";
+mermaid.initialize({});</script></body>
+</html>

@@ -1,0 +1,1377 @@
+<!DOCTYPE html>
+
+<html class="writer-html5" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="IE=edge" http-equiv="X-UA-Compatible"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="../../img/favicon.ico" rel="shortcut icon"/>
+<title>Chapitre 5.4 — Sandboxing systemd - Formation Sentinel — AlmaLinux sécurisé</title>
+<link href="../../css/theme.css" rel="stylesheet"/>
+<link href="../../css/theme_extra.css" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" rel="stylesheet"/>
+<script>
+        // Current page data
+        var mkdocs_page_name = "Chapitre 5.4 \u2014 Sandboxing systemd";
+        var mkdocs_page_input_path = "campagne_05/5.4-sandboxing-systemd.md";
+        var mkdocs_page_url = null;
+      </script>
+<!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+<script>hljs.highlightAll();</script>
+</head>
+<body class="wy-body-for-nav" role="document">
+<div class="wy-grid-for-nav">
+<nav class="wy-nav-side stickynav" data-toggle="wy-nav-shift">
+<div class="wy-side-scroll">
+<div class="wy-side-nav-search">
+<a class="icon icon-home" href="../.."> Formation Sentinel — AlmaLinux sécurisé
+        </a><div role="search">
+<form action="../../search.html" class="wy-form" id="rtd-search-form" method="get">
+<input aria-label="Search docs" name="q" placeholder="Search docs" title="Type search term here" type="text"/>
+</form>
+</div>
+</div>
+<div aria-label="Navigation menu" class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../..">Accueil</a>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">A propos</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../GUIDE-REDACTION/">Guide de rédaction</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../PARCOURS-SENTINEL/">Parcours applicatif Sentinel</a>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Campagnes</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal">Campagne 1 - Sécuriser le socle Linux</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.1-pourquoi-securiser-socle-linux/">Chapitre 1.1 — Pourquoi sécuriser un socle Linux ?</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.2-installation-almalinux-minimal/">Chapitre 1.2 — Installer AlmaLinux minimal</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.3-composants-systeme-linux/">Chapitre 1.3 — Comprendre les composants d'un système Linux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.4-premier-demarrage-verifications/">Chapitre 1.4 — Établir la baseline du serveur</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.5-mise-a-jour-gestion-depots/">Chapitre 1.5 — Mettre à jour et gérer les dépôts</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.6-architecture-systemes-fichiers/">Chapitre 1.6 — Organiser les systèmes de fichiers</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.7-utilisateurs-groupes-permissions/">Chapitre 1.7 — Comprendre identités et permissions</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.8-sudo-moindre-privilege/">Chapitre 1.8 — Administrer avec sudo</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.9-premiere-mise-en-securite-serveur/">Chapitre 1.9 — Mission : mettre le serveur en sécurité</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.10-creation-laboratoire-sentinel/">Chapitre 1.10 — Créer le laboratoire Sentinel</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 2 - Gestion des permissions et des identités</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.1-permissions-unix/">Chapitre 2.1 — Les permissions UNIX</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.2-acl/">Chapitre 2.2 — Les ACL</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.3-umask/">Chapitre 2.3 — L'umask</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.4-attributs-etendus/">Chapitre 2.4 — Les attributs étendus</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.5-pam/">Chapitre 2.5 — PAM</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.6-politique-mots-de-passe/">Chapitre 2.6 — Politique de mots de passe</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.7-comptes-systeme/">Chapitre 2.7 — Les comptes système</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.8-sudo-avance/">Chapitre 2.8 — sudo avancé</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.9-fichiers-identites-linux/">Chapitre 2.9 — Comprendre les fichiers d'identités Linux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.10-synthese-securiser-identites/">Chapitre 2.10 — Synthèse : sécuriser les identités</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 3 - TCP/IP et Firewalld</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.1-tcp-ip-administrateur/">Chapitre 3.1 — TCP/IP côté administrateur</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.2-architecture-firewalld/">Chapitre 3.2 — Architecture de Firewalld</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.3-zones-firewalld/">Chapitre 3.3 — Les zones Firewalld</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.4-services-firewalld/">Chapitre 3.4 — Les services Firewalld</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.5-conntrack-filtrage-etats/">Chapitre 3.5 — Conntrack et le filtrage par états</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.6-rich-rules-firewalld/">Chapitre 3.6 — Les Rich Rules Firewalld</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.7-journalisation-firewalld/">Chapitre 3.7 — Journalisation et analyse Firewalld</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.8-ip-sets-firewalld/">Chapitre 3.8 — Les IP Sets Firewalld</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.9-runtime-permanent/">Chapitre 3.9 — Runtime et Permanent</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.10-politique-reseau-sentinel/">Chapitre 3.10 — Concevoir la politique réseau de Sentinel</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 4 - SSH</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_04/4.1-architecture-openssh/">Chapitre 4.1 — Architecture d'OpenSSH</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_04/4.2-authentification-mot-de-passe/">Chapitre 4.2 — Authentification par mot de passe</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_04/4.3-authentification-par-cles/">Chapitre 4.3 — Authentification par clés</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_04/4.4-durcissement-sshd-config/">Chapitre 4.4 — Durcissement de sshd_config</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_04/4.5-bastion-administration/">Chapitre 4.5 — Bastion d'administration</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_04/4.6-journalisation-audit-ssh/">Chapitre 4.6 — Journalisation et audit SSH</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_04/4.7-protection-attaques-ssh/">Chapitre 4.7 — Protection contre les attaques SSH</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_04/4.8-mission-administration-sentinel/">Chapitre 4.8 — Mission : administrer Sentinel en sécurité</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal current">Campagne 5 - Systemd</a>
+<ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../5.1-comprendre-systemd/">Chapitre 5.1 — Comprendre systemd</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../5.2-unites-systemd/">Chapitre 5.2 — Les unités systemd</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../5.3-creer-service-sentinel/">Chapitre 5.3 — Créer le service Sentinel</a>
+</li>
+<li class="toctree-l2 current"><a class="reference internal current" href="#">Chapitre 5.4 — Sandboxing systemd</a>
+<ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="#vous-etes-ici">Vous êtes ici</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#objectifs-pedagogiques">Objectifs pédagogiques</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pourquoi-ce-chapitre-existe">Pourquoi ce chapitre existe</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#theorie-detaillee">Théorie détaillée</a>
+<ul>
+<li class="toctree-l4"><a class="reference internal" href="#quest-ce-que-le-sandboxing">Qu'est-ce que le sandboxing ?</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#une-nouvelle-philosophie">Une nouvelle philosophie</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#une-defense-supplementaire">Une défense supplémentaire</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pourquoi-systemd">Pourquoi systemd ?</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#le-principe-fondamental">Le principe fondamental</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#une-demarche-progressive">Une démarche progressive</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#la-premiere-protection-nonewprivileges">La première protection : NoNewPrivileges</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pourquoi-cette-directive-est-elle-si-efficace">Pourquoi cette directive est-elle si efficace ?</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#protectsystem">ProtectSystem</a>
+<ul>
+<li class="toctree-l4"><a class="reference internal" href="#les-differents-niveaux">Les différents niveaux</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#pourquoi-est-ce-si-efficace">Pourquoi est-ce si efficace ?</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#readwritepaths">ReadWritePaths</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#protecthome">ProtectHome</a>
+<ul>
+<li class="toctree-l4"><a class="reference internal" href="#les-differents-niveaux_1">Les différents niveaux</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#privatetmp">PrivateTmp</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#privatedevices">PrivateDevices</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#protectkerneltunables">ProtectKernelTunables</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#protectkernelmodules">ProtectKernelModules</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#protectcontrolgroups">ProtectControlGroups</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#une-premiere-unite-durcie">Une première unité durcie</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#restrictaddressfamilies">RestrictAddressFamilies</a>
+<ul>
+<li class="toctree-l4"><a class="reference internal" href="#exemple">Exemple</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#restrictnamespaces">RestrictNamespaces</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#memorydenywriteexecute">MemoryDenyWriteExecute</a>
+<ul>
+<li class="toctree-l4"><a class="reference internal" href="#attention-aux-applications-utilisant-du-jit">Attention aux applications utilisant du JIT</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#lockpersonality">LockPersonality</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#restrictsuidsgid">RestrictSUIDSGID</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#systemcallarchitectures">SystemCallArchitectures</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#le-filtrage-des-appels-systeme">Le filtrage des appels système</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#les-groupes-predefinis">Les groupes prédéfinis</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#une-approche-progressive">Une approche progressive</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#notre-unite-continue-devoluer">Notre unité continue d'évoluer</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#approfondissement">Approfondissement</a>
+<ul>
+<li class="toctree-l4"><a class="reference internal" href="#le-sandboxing-nest-pas-une-protection-contre-les-vulnerabilites">Le sandboxing n'est pas une protection contre les vulnérabilités</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#le-principe-des-privileges-negatifs">Le principe des privilèges négatifs</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#une-bonne-politique-est-ennuyeuse">Une bonne politique est ennuyeuse</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#le-sandboxing-est-une-documentation">Le sandboxing est une documentation</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#concevoir-la-politique">Concevoir la politique</a>
+<ul>
+<li class="toctree-l4"><a class="reference internal" href="#chaque-permission-doit-etre-justifiee">Chaque permission doit être justifiée</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#concevoir-pour-lechec">Concevoir pour l'échec</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#point-de-vue-offensif">Point de vue offensif</a>
+<ul>
+<li class="toctree-l4"><a class="reference internal" href="#la-reconnaissance-post-exploitation">La reconnaissance post-exploitation</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#en-entreprise">En entreprise</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#sentinel-dans-cette-architecture">Sentinel dans cette architecture</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#culture-technique">Culture technique</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#piege-classique">Piège classique</a>
+<ul>
+<li class="toctree-l4"><a class="reference internal" href="#activer-toutes-les-protections-dun-seul-coup">Activer toutes les protections d'un seul coup</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#tp-1-mesurer-puis-durcir-progressivement">TP 1 — Mesurer puis durcir progressivement</a>
+<ul>
+<li class="toctree-l4"><a class="reference internal" href="#objectif">Objectif</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#etape-1-etablir-une-reference">Étape 1 — Établir une référence</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#etape-2-activer-progressivement-les-protections">Étape 2 — Activer progressivement les protections</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#tp-2-tester-les-restrictions-du-bac-a-sable">TP 2 — Tester les restrictions du bac à sable</a>
+<ul>
+<li class="toctree-l4"><a class="reference internal" href="#etape-3-activer-protectsystem">Étape 3 — Activer ProtectSystem</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#etape-4-tester-le-confinement">Étape 4 — Tester le confinement</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#etape-5-ajouter-le-filtrage-des-appels-systeme">Étape 5 — Ajouter le filtrage des appels système</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#mission-dingenieur">Mission d'ingénieur</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#impact-sur-sentinel">Impact sur Sentinel</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#synthese">Synthèse</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#schema-recapitulatif">Schéma récapitulatif</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pour-aller-plus-loin">Pour aller plus loin</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../5.5-capacites-linux/">Chapitre 5.5 — Les capacités Linux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../5.6-journalisation-journald/">Chapitre 5.6 — Journalisation avec journald</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../5.7-supervision-redemarrage/">Chapitre 5.7 — Supervision et redémarrage automatique</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../5.8-mission-sentinel-resilient/">Chapitre 5.8 — Mission : rendre Sentinel résilient</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 6 - SELinux</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_06/6.1-pourquoi-selinux-existe/">Chapitre 6.1 — Pourquoi SELinux existe</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_06/6.2-contextes-selinux/">Chapitre 6.2 — Comprendre les contextes SELinux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_06/6.3-politiques-selinux/">Chapitre 6.3 — Les politiques SELinux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_06/6.4-diagnostic-refus-selinux/">Chapitre 6.4 — Diagnostiquer les refus SELinux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_06/6.5-creation-regles-selinux/">Chapitre 6.5 — Créer des règles SELinux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_06/6.6-securiser-sentinel-selinux/">Chapitre 6.6 — Sécuriser Sentinel avec SELinux</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 7 - TLS et PKI</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.1-comprendre-cryptographie-appliquee/">Chapitre 7.1 — Comprendre la cryptographie appliquée</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.2-lire-verifier-certificats-x509/">Chapitre 7.2 — Lire et vérifier les certificats X.509</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.3-construire-autorite-certification/">Chapitre 7.3 — Construire une autorité de certification</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.4-authentification-mutuelle-tls/">Chapitre 7.4 — Authentifier les deux extrémités avec mTLS</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.5-preparer-integration-freeipa/">Chapitre 7.5 — Préparer l'intégration à FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.6-renouveler-revoquer-certificats/">Chapitre 7.6 — Renouveler et révoquer les certificats</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.7-securiser-sentinel-tls/">Chapitre 7.7 — Sécuriser Sentinel avec TLS</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 8 - FreeIPA</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.1-presentation-freeipa/">Chapitre 8.1 — Découvrir FreeIPA et la gestion centralisée des identités</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.2-architecture-interne-freeipa/">Chapitre 8.2 — Comprendre l'architecture interne de FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.3-installation-freeipa/">Chapitre 8.3 — Installer un serveur FreeIPA de laboratoire</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.4-gestion-utilisateurs/">Chapitre 8.4 — Gérer le cycle de vie des utilisateurs FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.5-groupes-roles/">Chapitre 8.5 — Organiser les groupes et les rôles FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.6-politiques-sudo/">Chapitre 8.6 — Centraliser les politiques sudo avec FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.7-gestion-hotes/">Chapitre 8.7 — Enrôler les hôtes et contrôler les accès avec HBAC</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.8-certificats/">Chapitre 8.8 — Gérer les certificats de service avec FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.9-integration-sentinel/">Chapitre 8.9 — Intégrer Sentinel à FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.10-mission-administration-freeipa/">Chapitre 8.10 — Mission : administrer Sentinel avec FreeIPA</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 9 - Déploiement avec Ansible</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.1-architecture-ansible/">Chapitre 9.1 — Comprendre l'architecture Ansible</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.2-composants-ansible/">Chapitre 9.2 — Comprendre les composants et l'idempotence Ansible</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.3-inventaires/">Chapitre 9.3 — Construire les inventaires Ansible</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.4-premiers-playbooks/">Chapitre 9.4 — Écrire les premiers playbooks</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.5-variables-templates/">Chapitre 9.5 — Piloter la configuration avec variables et templates</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.6-roles-ansible/">Chapitre 9.6 — Concevoir des rôles Ansible réutilisables</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.7-deployer-sentinel-ansible/">Chapitre 9.7 — Déployer Sentinel avec Ansible</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.8-integrer-sentinel-freeipa/">Chapitre 9.8 — Automatiser l'intégration de Sentinel à FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.9-industrialiser-laboratoire/">Chapitre 9.9 — Industrialiser le projet Ansible</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.10-mission-deploiement-sentinel/">Chapitre 9.10 — Mission : reconstruire Sentinel avec Ansible</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 10 - Packaging RPM</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_10/10.1-construire-paquet-rpm/">Chapitre 10.1 — Construire un paquet RPM</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_10/10.2-gerer-dependances-rpm/">Chapitre 10.2 — Gérer les dépendances RPM</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_10/10.3-gerer-fichiers-configuration-rpm/">Chapitre 10.3 — Gérer les fichiers de configuration RPM</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_10/10.4-signer-paquets-rpm/">Chapitre 10.4 — Signer les paquets RPM</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_10/10.5-exploiter-depot-rpm-prive/">Chapitre 10.5 — Exploiter un dépôt RPM privé</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_10/10.6-packager-sentinel/">Chapitre 10.6 — Packager Sentinel</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 11 - Conteneurs Podman</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_11/11.1-decouvrir-podman/">Chapitre 11.1 — Découvrir Podman</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_11/11.2-conteneurs-rootless/">Chapitre 11.2 — Exécuter des conteneurs rootless</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_11/11.3-construire-images-securisees/">Chapitre 11.3 — Construire des images sécurisées</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_11/11.4-reseaux-conteneurs/">Chapitre 11.4 — Concevoir les réseaux de conteneurs</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_11/11.5-gerer-secrets-podman/">Chapitre 11.5 — Gérer les secrets avec Podman</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_11/11.6-executer-sentinel-securite/">Chapitre 11.6 — Exécuter Sentinel en sécurité</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 12 - Supervision et audit</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_12/12.1-centraliser-journaux-rsyslog/">Chapitre 12.1 — Centraliser les journaux avec Rsyslog</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_12/12.2-auditer-systeme-auditd/">Chapitre 12.2 — Auditer le système avec auditd</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_12/12.3-controler-integrite-fichiers-aide/">Chapitre 12.3 — Contrôler l'intégrité des fichiers avec AIDE</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_12/12.4-superviser-sentinel-prometheus/">Chapitre 12.4 — Superviser Sentinel avec Prometheus</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_12/12.5-concevoir-alertes-alertmanager/">Chapitre 12.5 — Concevoir des alertes avec Alertmanager</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_12/12.6-construire-tableau-bord-sentinel/">Chapitre 12.6 — Construire le tableau de bord Sentinel</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 13 - Attaques et défense</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.1-reconnaissance/">Chapitre 13.1 — Reconnaissance</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.2-scan-reseau/">Chapitre 13.2 — Scan réseau</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.3-brute-force-ssh/">Chapitre 13.3 — Brute force SSH</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.4-escalade-privileges/">Chapitre 13.4 — Escalade de privilèges</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.5-mouvements-lateraux/">Chapitre 13.5 — Mouvements latéraux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.6-persistance/">Chapitre 13.6 — Persistance</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.7-exfiltration/">Chapitre 13.7 — Exfiltration</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.8-etude-cas-complete/">Chapitre 13.8 — Étude de cas complète</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 14 - Projet final</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.1-deployer-sentinel-almalinux-minimale/">Chapitre 14.1 — Déployer Sentinel sur une AlmaLinux minimale</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.2-securiser-hote/">Chapitre 14.2 — Sécuriser l'hôte</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.3-integrer-freeipa/">Chapitre 14.3 — Intégrer FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.4-deployer-ansible/">Chapitre 14.4 — Déployer avec Ansible</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.5-packager-rpm/">Chapitre 14.5 — Packager avec RPM</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.6-conteneuriser-podman/">Chapitre 14.6 — Conteneuriser avec Podman</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.7-superviser-auditer/">Chapitre 14.7 — Superviser et auditer</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.8-audit-final-tests-kali/">Chapitre 14.8 — Audit final et tests depuis Kali</a>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</nav>
+<section class="wy-nav-content-wrap" data-toggle="wy-nav-shift">
+<nav aria-label="Mobile navigation menu" class="wy-nav-top" role="navigation">
+<i class="fa fa-bars" data-toggle="wy-nav-top"></i>
+<a href="../..">Formation Sentinel — AlmaLinux sécurisé</a>
+</nav>
+<div class="wy-nav-content">
+<div class="rst-content"><div aria-label="breadcrumbs navigation" role="navigation">
+<ul class="wy-breadcrumbs">
+<li><a aria-label="Docs" class="icon icon-home" href="../.."></a></li>
+<li class="breadcrumb-item">Campagnes</li>
+<li class="breadcrumb-item">Campagne 5 - Systemd</li>
+<li class="breadcrumb-item active">Chapitre 5.4 — Sandboxing systemd</li>
+<li class="wy-breadcrumbs-aside">
+<a href="https://github.com/tdelaclos/formations/edit/master/docs/campagne_05/5.4-sandboxing-systemd.md">Edit on tdelaclos/formations</a>
+</li>
+</ul>
+<hr/>
+</div>
+<div class="document" itemscope="itemscope" itemtype="http://schema.org/Article" role="main">
+<div class="section" itemprop="articleBody">
+<h1 id="chapitre-54-sandboxing-systemd">Chapitre 5.4 — Sandboxing <code>systemd</code></h1>
+<blockquote>
+<p><strong>Campagne 5 — systemd et services</strong></p>
+<p><em>« Le meilleur code est celui qui n'a jamais accès aux ressources dont il n'a pas besoin. »</em></p>
+</blockquote>
+<h2 id="vous-etes-ici">Vous êtes ici</h2>
+<pre><code class="language-text">Partie I — Construire un socle sécurisé
+
+Campagne 5 — systemd et les services
+
+      5.1 Comprendre systemd
+      5.2 Les unités (.service, .socket, .target…)
+      5.3 Créer le service Sentinel
+    ► 5.4 Sandboxing systemd
+      5.5 Capacités Linux
+      5.6 Journalisation avec journald
+      5.7 Supervision et redémarrage automatique
+      5.8 Mission : rendre Sentinel résilient
+</code></pre>
+<h2 id="objectifs-pedagogiques">Objectifs pédagogiques</h2>
+<p>À la fin de ce chapitre, vous serez capable de :</p>
+<ul>
+<li>comprendre ce qu'est le sandboxing proposé par systemd ;</li>
+<li>distinguer le sandboxing systemd d'un conteneur Podman ;</li>
+<li>réduire drastiquement la surface d'attaque d'un service ;</li>
+<li>appliquer le principe du moindre privilège directement au système d'exploitation ;</li>
+<li>construire progressivement une unité Sentinel fortement durcie.</li>
+</ul>
+<h2 id="pourquoi-ce-chapitre-existe">Pourquoi ce chapitre existe</h2>
+<p>Nous avons créé un service. Il fonctionne. Il démarre automatiquement. Il redémarre après un crash. Il produit des journaux. Pour beaucoup d'administrateurs, le travail est terminé. En réalité... nous n'avons encore quasiment rien fait du point de vue de la sécurité. Prenons un scénario. Une vulnérabilité RCE est découverte dans Sentinel. L'attaquant parvient à exécuter :</p>
+<pre><code class="language-python">os.system(...)
+</code></pre>
+<p>Que peut-il faire ? La réponse dépend entièrement des privilèges accordés au processus. Si Sentinel possède accès :</p>
+<ul>
+<li>à tout le système de fichiers ;</li>
+<li>aux répertoires utilisateurs ;</li>
+<li>aux périphériques ;</li>
+<li>aux namespaces ;</li>
+<li>aux appels système sensibles ;</li>
+</ul>
+<p>alors la compromission devient extrêmement grave. Notre objectif est donc simple. Même si Sentinel est compromis, nous voulons limiter au maximum ce que l'attaquant pourra faire. C'est exactement le rôle du sandboxing systemd.</p>
+<h2 id="theorie-detaillee">Théorie détaillée</h2>
+<h3 id="quest-ce-que-le-sandboxing">Qu'est-ce que le sandboxing ?</h3>
+<p>Le mot <em>sandbox</em> signifie littéralement : <code>Bac à sable</code> L'image est particulièrement parlante. Un enfant peut jouer librement. Mais uniquement <strong>à l'intérieur</strong> du bac. Il ne peut pas accéder :</p>
+<ul>
+<li>au jardin ;</li>
+<li>à la route ;</li>
+<li>au garage.</li>
+</ul>
+<p>Le principe est identique en sécurité informatique. L'application peut fonctionner. Mais uniquement dans un environnement volontairement limité.</p>
+<h2 id="une-nouvelle-philosophie">Une nouvelle philosophie</h2>
+<p>Historiquement, la sécurité Linux reposait principalement sur :</p>
+<ul>
+<li>les permissions UNIX ;</li>
+<li>les utilisateurs ;</li>
+<li>les groupes.</li>
+</ul>
+<p>Par exemple.</p>
+<div class="mermaid">flowchart TD
+    N0["Utilisateur sentinel"]
+    N1["Lecture&lt;br/&gt;/var/lib/sentinel"]
+    N2["Refus&lt;br/&gt;/etc/shadow"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+</div>
+<p>Cette approche reste indispensable. Mais elle n'est plus suffisante. Aujourd'hui, le système d'exploitation est capable d'imposer des restrictions beaucoup plus fines. systemd exploite pour cela plusieurs mécanismes du noyau Linux. Par exemple :</p>
+<ul>
+<li>namespaces ;</li>
+<li>cgroups ;</li>
+<li>capabilities ;</li>
+<li>protections du système de fichiers ;</li>
+<li>filtres d'appels système.</li>
+</ul>
+<p>Toutes ces fonctionnalités sont accessibles avec quelques directives extrêmement simples.</p>
+<h2 id="une-defense-supplementaire">Une défense supplémentaire</h2>
+<p>Le sandboxing ne remplace jamais :</p>
+<ul>
+<li>SELinux ;</li>
+<li>Firewalld ;</li>
+<li>les permissions Linux ;</li>
+<li>les capacités.</li>
+</ul>
+<p>Il ajoute une nouvelle couche. Prenons Sentinel. Avant.</p>
+<div class="mermaid">flowchart TD
+    N0["Attaquant"]
+    N1["Exécution de code"]
+    N2["Utilisateur sentinel"]
+    N3["Accès relativement large"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+    N2 --&gt; N3
+</div>
+<p>Après.</p>
+<div class="mermaid">flowchart TD
+    N0["Attaquant"]
+    N1["Exécution de code"]
+    N2["Utilisateur sentinel"]
+    N3["Sandbox systemd"]
+    N4["Restrictions"]
+    N5["SELinux"]
+    N6["Application"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+    N2 --&gt; N3
+    N3 --&gt; N4
+    N4 --&gt; N5
+    N5 --&gt; N6
+</div>
+<p>Chaque couche limite un peu plus les possibilités de l'attaquant.</p>
+<h2 id="pourquoi-systemd">Pourquoi systemd ?</h2>
+<p>Une question revient souvent. Pourquoi utiliser le sandboxing de systemd alors que SELinux existe déjà ? Parce que les deux répondent à des besoins différents. systemd permet d'exprimer très simplement des contraintes comme :</p>
+<pre><code class="language-text">Ce service
+
+n'a jamais besoin
+
+d'écrire dans /usr.
+</code></pre>
+<p>Ou :</p>
+<pre><code class="language-text">Ce service
+
+n'a jamais besoin
+
+d'accéder aux répertoires utilisateurs.
+</code></pre>
+<p>Ou encore :</p>
+<pre><code class="language-text">Ce service
+
+n'a jamais besoin
+
+de créer un namespace.
+</code></pre>
+<p>Ces décisions appartiennent directement au contrat d'exploitation. Il est donc logique qu'elles figurent dans l'unité systemd. SELinux continuera ensuite à appliquer une politique encore plus fine. Les deux mécanismes sont complémentaires.</p>
+<h2 id="le-principe-fondamental">Le principe fondamental</h2>
+<p>Une question doit guider toutes les décisions.</p>
+<blockquote>
+<p><strong>De quoi Sentinel a-t-il réellement besoin pour fonctionner ?</strong></p>
+</blockquote>
+<p>Pas :</p>
+<blockquote>
+<p>Que pourrait-il utiliser un jour ?</p>
+</blockquote>
+<p>Mais bien :</p>
+<blockquote>
+<p>Qu'utilise-t-il aujourd'hui ?</p>
+</blockquote>
+<p>Chaque permission inutile représente une opportunité supplémentaire pour un attaquant. Le sandboxing consiste donc essentiellement à supprimer tout ce qui est superflu.</p>
+<h2 id="une-demarche-progressive">Une démarche progressive</h2>
+<p>Contrairement à une idée reçue, on ne sécurise pas une unité en ajoutant immédiatement toutes les protections possibles. Pourquoi ? Parce que certaines applications ont réellement besoin :</p>
+<ul>
+<li>d'écrire ;</li>
+<li>de créer des sockets ;</li>
+<li>d'accéder au réseau ;</li>
+<li>de charger des bibliothèques ;</li>
+<li>d'utiliser certains appels système.</li>
+</ul>
+<p>La bonne méthode consiste à procéder progressivement.</p>
+<div class="mermaid">flowchart TD
+    N0["Application fonctionnelle"]
+    N1["Observation"]
+    N2["Ajout d'une protection"]
+    N3["Tests"]
+    N4["Nouvelle protection"]
+    N5["Nouveaux tests"]
+    N6["..."]
+    N0 --&gt; N1
+    N1 --&gt; N2
+    N2 --&gt; N3
+    N3 --&gt; N4
+    N4 --&gt; N5
+    N5 --&gt; N6
+</div>
+<p>Cette démarche sera celle suivie tout au long de ce chapitre.</p>
+<h2 id="la-premiere-protection-nonewprivileges">La première protection : NoNewPrivileges</h2>
+<p>Nous commençons par une directive extrêmement simple.</p>
+<pre><code class="language-ini">NoNewPrivileges=yes
+</code></pre>
+<p>Elle est pourtant d'une importance considérable. Que signifie-t-elle ? Elle interdit au processus d'acquérir de nouveaux privilèges pendant son exécution. Autrement dit, même si Sentinel exécute accidentellement un programme disposant d'un bit <strong>setuid</strong>, celui-ci ne pourra pas élever les privilèges du processus. Schématiquement. Sans cette protection.</p>
+<div class="mermaid">flowchart TD
+    N0["Sentinel"]
+    N1["Exécution"]
+    N2["Programme setuid"]
+    N3["Privilèges supplémentaires"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+    N2 --&gt; N3
+</div>
+<p>Avec :</p>
+<pre><code class="language-ini">NoNewPrivileges=yes
+</code></pre>
+<div class="mermaid">flowchart TD
+    N0["Sentinel"]
+    N1["Programme setuid"]
+    N2["Refus"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+</div>
+<p>Cette simple directive neutralise toute une catégorie d'élévations de privilèges. Elle est aujourd'hui considérée comme une excellente pratique pour la majorité des services.</p>
+<h2 id="pourquoi-cette-directive-est-elle-si-efficace">Pourquoi cette directive est-elle si efficace ?</h2>
+<p>Parce qu'elle agit très tôt. Elle ne cherche pas à détecter une attaque. Elle empêche simplement le noyau Linux d'accorder de nouveaux privilèges. Autrement dit, la compromission de Sentinel reste confinée au niveau de privilège initial. Nous retrouvons ici un principe déjà rencontré plusieurs fois dans ce manuel :</p>
+<blockquote>
+<p>empêcher une action est toujours préférable à détecter son exploitation après coup.</p>
+</blockquote>
+<h2 id="protectsystem">ProtectSystem</h2>
+<p>Nous arrivons maintenant à l'une des directives les plus importantes de systemd.</p>
+<pre><code class="language-ini">ProtectSystem=
+</code></pre>
+<p>Cette directive repose sur une idée extrêmement simple. Une application serveur n'a généralement <strong>pas besoin de modifier le système d'exploitation</strong>. Pourquoi autoriser Sentinel à écrire dans : <code>/usr</code> ou <code>/boot</code> ou <code>/etc</code> si cela ne fait absolument pas partie de son métier ? Le meilleur droit est souvent celui qui n'existe pas.</p>
+<h3 id="les-differents-niveaux">Les différents niveaux</h3>
+<h4 id="protectsystemno"><code>ProtectSystem=no</code></h4>
+<p>Aucune protection supplémentaire. Le comportement est celui de Linux classique.</p>
+<h4 id="protectsystemyes"><code>ProtectSystem=yes</code></h4>
+<p><code>/usr</code>, <code>/boot</code> et <code>/efi</code> deviennent accessibles uniquement en lecture. Par exemple :</p>
+<p>Le service continue de fonctionner, mais il ne peut plus modifier ces emplacements.</p>
+<h4 id="protectsystemfull"><code>ProtectSystem=full</code></h4>
+<p>La protection précédente est renforcée en rendant également <code>/etc</code> accessible en lecture seule. Les données applicatives sous <code>/var</code> ne sont pas automatiquement protégées par ce niveau.</p>
+<h4 id="protectsystemstrict"><code>ProtectSystem=strict</code></h4>
+<p>Le niveau le plus exigeant rend l'ensemble de la hiérarchie de fichiers accessible en lecture seule, à l'exception des pseudo-systèmes <code>/dev</code>, <code>/proc</code> et <code>/sys</code>. Les chemins d'écriture nécessaires doivent être rouverts explicitement avec <code>ReadWritePaths=</code>, ou créés et gérés par systemd avec des directives comme <code>StateDirectory=</code> et <code>RuntimeDirectory=</code>. Cette option est particulièrement intéressante pour Sentinel, dont le code est quasiment immuable une fois installé.</p>
+<h3 id="pourquoi-est-ce-si-efficace">Pourquoi est-ce si efficace ?</h3>
+<p>Imaginons qu'une vulnérabilité permette à un attaquant d'exécuter :</p>
+<pre><code class="language-bash">echo "Backdoor" &gt; /usr/bin/ssh
+</code></pre>
+<p>Sans sandbox : l'opération peut réussir si les privilèges le permettent. Avec :</p>
+<pre><code class="language-ini">ProtectSystem=strict
+</code></pre>
+<p>Le noyau refuse simplement l'écriture. L'attaque échoue avant même que SELinux ou l'application n'interviennent. Nous avons supprimé une possibilité entière d'attaque.</p>
+<h2 id="readwritepaths">ReadWritePaths</h2>
+<p>Une question apparaît immédiatement. Si tout devient en lecture seule, comment Sentinel peut-il écrire ses données ? C'est ici qu'intervient :</p>
+<pre><code class="language-ini">ReadWritePaths=
+</code></pre>
+<p>Par exemple :</p>
+<pre><code class="language-ini">ProtectSystem=strict
+
+ReadWritePaths=/var/lib/sentinel
+</code></pre>
+<p>Le résultat est particulièrement élégant.</p>
+<div class="mermaid">flowchart TD
+    Service["Service Sentinel"] --&gt; Privileges["NoNewPrivileges"]
+    Service --&gt; FS["ProtectSystem / ReadWritePaths"]
+    Service --&gt; Home["ProtectHome"]
+    Service --&gt; Kernel["ProtectKernel*"]
+    Service --&gt; Network["RestrictAddressFamilies"]
+    Privileges --&gt; Confined["Processus moins exposé"]
+    FS --&gt; Confined
+    Home --&gt; Confined
+    Kernel --&gt; Confined
+    Network --&gt; Confined
+</div>
+<p>Nous ne raisonnons plus en termes de permissions générales. Nous raisonnons en termes de <strong>besoins réels</strong>.</p>
+<h2 id="protecthome">ProtectHome</h2>
+<p>Deuxième directive essentielle.</p>
+<pre><code class="language-ini">ProtectHome=yes
+</code></pre>
+<p>À quoi sert-elle ? Elle masque les répertoires personnels. Par exemple.</p>
+<p>Posons-nous une question simple. Sentinel a-t-il besoin d'accéder aux documents personnels d'un administrateur ? Évidemment non. Pourquoi laisser cette possibilité ? Cette directive réduit immédiatement la surface d'exposition.</p>
+<h3 id="les-differents-niveaux_1">Les différents niveaux</h3>
+<h4 id="protecthomeyes"><code>ProtectHome=yes</code></h4>
+<p>Les répertoires personnels deviennent inaccessibles.</p>
+<h4 id="protecthomeread-only"><code>ProtectHome=read-only</code></h4>
+<p>Ils restent visibles, mais impossibles à modifier.</p>
+<h4 id="protecthometmpfs"><code>ProtectHome=tmpfs</code></h4>
+<p>Une vue temporaire vide est présentée à l'application. Cette option est plus rare, mais particulièrement intéressante dans certains contextes.</p>
+<h2 id="privatetmp">PrivateTmp</h2>
+<p>Une autre directive très utilisée.</p>
+<pre><code class="language-ini">PrivateTmp=yes
+</code></pre>
+<p>Chaque application Linux utilise souvent : <code>/tmp</code> Le problème est évident. Tous les processus partagent le même espace. Cela favorise :</p>
+<ul>
+<li>certaines collisions ;</li>
+<li>des fuites d'informations ;</li>
+<li>quelques attaques historiques.</li>
+</ul>
+<p>Avec :</p>
+<pre><code class="language-ini">PrivateTmp=yes
+</code></pre>
+<p>systemd crée un espace temporaire privé. Schématiquement. Avant.</p>
+<div class="mermaid">flowchart TD
+    Shared["/tmp partagé"] --&gt; Browser["Firefox"]
+    Shared --&gt; Sentinel["Sentinel"]
+    Shared --&gt; SSH["SSH"]
+    Shared --&gt; User["Processus utilisateur"]
+</div>
+<p>Après.</p>
+<div class="mermaid">flowchart TD
+    N0["/tmp"]
+    N1["Vue privée"]
+    N2["Sentinel uniquement"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+</div>
+<p>Sentinel ne voit plus les fichiers temporaires des autres applications. Les autres applications ne voient plus les siens. Cette isolation est très efficace, tout en restant quasiment transparente.</p>
+<h2 id="privatedevices">PrivateDevices</h2>
+<p>Poursuivons.</p>
+<pre><code class="language-ini">PrivateDevices=yes
+</code></pre>
+<p>Linux représente les périphériques sous forme de fichiers. Par exemple. <code>/dev/sda</code> <code>/dev/random</code> <code>/dev/kvm</code> <code>/dev/input/*</code> Une application classique n'a généralement besoin que de très peu d'entre eux. Avec :</p>
+<pre><code class="language-ini">PrivateDevices=yes
+</code></pre>
+<p>systemd présente une vue extrêmement réduite de <code>/dev</code>. L'application ne voit plus la majorité des périphériques physiques. Pourquoi laisser Sentinel accéder à :</p>
+<ul>
+<li>une carte son ;</li>
+<li>un périphérique USB ;</li>
+<li>un disque brut ;</li>
+</ul>
+<p>alors que son métier consiste uniquement à collecter des événements de sécurité ?</p>
+<h2 id="protectkerneltunables">ProtectKernelTunables</h2>
+<p>Cette directive est beaucoup moins connue.</p>
+<pre><code class="language-ini">ProtectKernelTunables=yes
+</code></pre>
+<p>Elle protège notamment plusieurs éléments situés sous : <code>/proc/sys</code> et <code>/sys</code> Ces emplacements permettent de modifier certains paramètres du noyau. Par exemple :</p>
+<ul>
+<li>IPv4 ;</li>
+<li>IPv6 ;</li>
+<li>mémoire virtuelle ;</li>
+<li>paramètres réseau.</li>
+</ul>
+<p>Sentinel n'a aucune raison de modifier ces informations. Nous pouvons donc interdire complètement cet accès.</p>
+<h2 id="protectkernelmodules">ProtectKernelModules</h2>
+<p>Autre protection particulièrement intéressante.</p>
+<pre><code class="language-ini">ProtectKernelModules=yes
+</code></pre>
+<p>Le chargement ou le déchargement de modules du noyau devient impossible. Pourquoi est-ce important ? Un attaquant cherchant à obtenir un contrôle profond de la machine pourrait tenter :</p>
+<ul>
+<li>de charger un module malveillant ;</li>
+<li>de désactiver un module de sécurité ;</li>
+<li>de manipuler certains pilotes.</li>
+</ul>
+<p>Cette directive élimine cette possibilité pour le service concerné. Encore une fois, nous supprimons une capacité inutile.</p>
+<h2 id="protectcontrolgroups">ProtectControlGroups</h2>
+<p>Nous retrouvons maintenant les cgroups.</p>
+<pre><code class="language-ini">ProtectControlGroups=yes
+</code></pre>
+<p>Le service ne peut plus modifier lui-même les groupes de contrôle. Cette protection évite qu'une application compromise tente de manipuler sa propre supervision ou celle d'autres services. Elle est généralement recommandée pour les applications qui n'ont pas vocation à administrer le système.</p>
+<h2 id="une-premiere-unite-durcie">Une première unité durcie</h2>
+<p>Notre fichier évolue progressivement.</p>
+<pre><code class="language-ini">[Service]
+
+User=sentinel
+
+Group=sentinel
+
+ProtectSystem=strict
+
+ReadWritePaths=/var/lib/sentinel
+
+ProtectHome=yes
+
+PrivateTmp=yes
+
+PrivateDevices=yes
+
+ProtectKernelTunables=yes
+
+ProtectKernelModules=yes
+
+ProtectControlGroups=yes
+
+NoNewPrivileges=yes
+</code></pre>
+<p>Aucune ligne de code Python n'a changé. Pourtant, la surface d'attaque de Sentinel a déjà considérablement diminué. C'est toute la philosophie du sandboxing. Le système d'exploitation protège l'application, sans demander au développeur de réécrire son logiciel.</p>
+<p>Cette configuration doit être évaluée avec <code>systemd-analyze security sentinel.service</code>. L'outil attribue un niveau d'exposition à partir des directives connues et suggère des protections manquantes. Son score est un <strong>indicateur heuristique</strong>, pas une preuve de sécurité ni un contrôle de conformité : il ne connaît ni le code de Sentinel, ni son modèle de menace, ni les protections externes comme SELinux et le pare-feu.</p>
+<h2 id="restrictaddressfamilies">RestrictAddressFamilies</h2>
+<p>Une application ne devrait pouvoir utiliser que les familles de sockets dont elle a réellement besoin. C'est exactement ce que permet :</p>
+<pre><code class="language-ini">RestrictAddressFamilies=
+</code></pre>
+<p>Prenons Sentinel. Son rôle est relativement simple. Il communique essentiellement via :</p>
+<ul>
+<li>IPv4 ;</li>
+<li>IPv6 ;</li>
+<li>éventuellement des sockets Unix locales.</li>
+</ul>
+<p>Pourquoi lui laisser la possibilité d'utiliser d'autres familles de communication ? Par exemple :</p>
+<ul>
+<li>Bluetooth ;</li>
+<li>Netlink ;</li>
+<li>CAN Bus ;</li>
+<li>DECnet ;</li>
+<li>Appletalk.</li>
+</ul>
+<p>Ces protocoles n'ont absolument aucun intérêt pour Sentinel. Ils représentent uniquement de la surface d'attaque supplémentaire.</p>
+<h3 id="exemple">Exemple</h3>
+<pre><code class="language-ini">RestrictAddressFamilies=
+
+AF_INET
+
+AF_INET6
+
+AF_UNIX
+</code></pre>
+<p>L'effet est immédiat. Si un attaquant compromet Sentinel, il ne pourra plus créer des sockets appartenant à d'autres familles. Cette directive est particulièrement pertinente pour des services réseau bien identifiés.</p>
+<h2 id="restrictnamespaces">RestrictNamespaces</h2>
+<p>Nous avons déjà rencontré les namespaces, notamment lors de l'introduction aux conteneurs. Les namespaces permettent de créer de nouveaux espaces isolés. Par exemple :</p>
+<ul>
+<li>PID namespace ;</li>
+<li>Network namespace ;</li>
+<li>Mount namespace ;</li>
+<li>User namespace.</li>
+</ul>
+<p>Ces mécanismes sont extrêmement puissants. Ils constituent d'ailleurs l'un des fondements de Podman. Mais... Sentinel a-t-il réellement besoin de créer de nouveaux namespaces ? La réponse est généralement non. Nous pouvons donc écrire :</p>
+<pre><code class="language-ini">RestrictNamespaces=yes
+</code></pre>
+<p>Le processus perd alors la possibilité de créer de nouveaux namespaces. Pourquoi est-ce intéressant ? Parce que de nombreuses techniques d'évasion ou d'escalade de privilèges utilisent précisément ces mécanismes. Encore une fois, nous supprimons une capacité inutile.</p>
+<h2 id="memorydenywriteexecute">MemoryDenyWriteExecute</h2>
+<p>Voici probablement l'une des directives les plus impressionnantes de systemd.</p>
+<pre><code class="language-ini">MemoryDenyWriteExecute=yes
+</code></pre>
+<p>Pour comprendre son intérêt, revenons quelques instants sur les attaques mémoire. Une technique classique consiste à :</p>
+<ol>
+<li>écrire du code en mémoire ;</li>
+<li>rendre cette mémoire exécutable ;</li>
+<li>exécuter ce code.</li>
+</ol>
+<p>Cette approche est utilisée dans de nombreuses familles d'exploits. La directive :</p>
+<pre><code class="language-ini">MemoryDenyWriteExecute=yes
+</code></pre>
+<p>interdit précisément cette combinaison. Schématiquement. Avant.</p>
+<div class="mermaid">flowchart TD
+    N0["Mémoire"]
+    N1["Écriture"]
+    N2["Exécution"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+</div>
+<p>Après.</p>
+<div class="mermaid">flowchart TD
+    N0["Mémoire"]
+    N1["Écriture"]
+    N2["Impossible&lt;br/&gt;d'exécuter"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+</div>
+<p>L'application continue généralement à fonctionner normalement. En revanche, certaines classes d'exploits deviennent beaucoup plus difficiles à mettre en œuvre.</p>
+<h3 id="attention-aux-applications-utilisant-du-jit">Attention aux applications utilisant du JIT</h3>
+<p>Cette directive possède néanmoins une limite importante. Certaines applications utilisent un compilateur <strong>JIT (Just-In-Time)</strong>. C'est notamment le cas de certaines machines virtuelles ou moteurs JavaScript. Ces applications génèrent du code en mémoire avant de l'exécuter. Avec :</p>
+<pre><code class="language-ini">MemoryDenyWriteExecute=yes
+</code></pre>
+<p>elles peuvent cesser de fonctionner correctement. Il faut donc toujours tester soigneusement une application avant d'activer cette protection. Pour Sentinel, développé en Python sans moteur JIT spécifique, cette restriction est généralement adaptée.</p>
+<h2 id="lockpersonality">LockPersonality</h2>
+<p>Sous Linux, un processus peut modifier certains aspects de sa personnalité d'exécution. Cette fonctionnalité historique est aujourd'hui rarement utilisée. Elle peut néanmoins être détournée dans certains scénarios d'exploitation. systemd propose donc :</p>
+<pre><code class="language-ini">LockPersonality=yes
+</code></pre>
+<p>Une fois cette directive activée, le processus ne peut plus modifier sa personnalité. Le gain paraît modeste. Pourtant, il participe à une logique essentielle. Supprimer toutes les fonctionnalités dont l'application n'a pas besoin.</p>
+<h2 id="restrictsuidsgid">RestrictSUIDSGID</h2>
+<p>Nous avons déjà étudié :</p>
+<ul>
+<li>le bit setuid ;</li>
+<li>le bit setgid.</li>
+</ul>
+<p>Ils permettent à certains programmes d'obtenir temporairement des privilèges supplémentaires. Pour Sentinel, ce comportement n'a aucune utilité. Nous pouvons donc ajouter :</p>
+<pre><code class="language-ini">RestrictSUIDSGID=yes
+</code></pre>
+<p>Cette directive empêche plusieurs scénarios impliquant ces mécanismes historiques. Elle complète parfaitement :</p>
+<pre><code class="language-ini">NoNewPrivileges=yes
+</code></pre>
+<p>Les deux protections sont souvent utilisées ensemble.</p>
+<h2 id="systemcallarchitectures">SystemCallArchitectures</h2>
+<p>Autre directive méconnue.</p>
+<pre><code class="language-ini">SystemCallArchitectures=native
+</code></pre>
+<p>Elle interdit l'utilisation d'appels système destinés à d'autres architectures. Pourquoi ? Prenons un système x86_64. Le noyau peut parfois accepter :</p>
+<ul>
+<li>des appels 32 bits ;</li>
+<li>des appels compatibles.</li>
+</ul>
+<p>Un attaquant pourrait tenter d'exploiter ces mécanismes. Avec :</p>
+<pre><code class="language-ini">SystemCallArchitectures=native
+</code></pre>
+<p>seuls les appels correspondant à l'architecture native sont autorisés. La surface d'attaque diminue encore.</p>
+<h2 id="le-filtrage-des-appels-systeme">Le filtrage des appels système</h2>
+<p>Nous arrivons maintenant à l'un des mécanismes les plus puissants du sandboxing. Les filtres :</p>
+<pre><code class="language-ini">SystemCallFilter=
+</code></pre>
+<p>Chaque opération réalisée par un processus passe finalement par un <strong>appel système</strong> (<em>system call</em>). Par exemple : <code>open()</code> <code>read()</code> <code>write()</code> <code>socket()</code> <code>mount()</code> <code>ptrace()</code> <code>reboot()</code> Le noyau Linux constitue la frontière entre l'espace utilisateur et l'espace noyau. Chaque demande passe donc par ces appels. L'idée est alors simple. Pourquoi autoriser Sentinel à utiliser : <code>mount()</code> alors qu'il ne montera jamais un système de fichiers ? Pourquoi lui permettre : <code>reboot()</code></p>
+<p>alors qu'il n'arrêtera jamais le serveur ? Pourquoi lui laisser : <code>ptrace()</code> alors qu'il n'a aucune raison de déboguer d'autres processus ?</p>
+<h2 id="les-groupes-predefinis">Les groupes prédéfinis</h2>
+<p>Heureusement, il n'est pas nécessaire de connaître plusieurs centaines d'appels système. systemd fournit déjà plusieurs groupes. Par exemple.</p>
+<pre><code class="language-ini">SystemCallFilter=@system-service
+</code></pre>
+<p>Ce profil est conçu spécifiquement pour les services classiques. Il interdit automatiquement un grand nombre d'appels inutiles ou dangereux. Pour beaucoup d'applications, cette seule directive apporte déjà un gain de sécurité considérable.</p>
+<h2 id="une-approche-progressive">Une approche progressive</h2>
+<p>Le filtrage des appels système constitue probablement le mécanisme de sandboxing le plus puissant... mais également le plus délicat. Pourquoi ? Parce qu'un appel système interdit peut empêcher l'application de fonctionner. La bonne pratique consiste toujours à procéder progressivement.</p>
+<div class="mermaid">flowchart TD
+    N0["Application fonctionnelle"]
+    N1["Ajout du filtre"]
+    N2["Tests"]
+    N3["Analyse des journaux"]
+    N4["Corrections éventuelles"]
+    N5["Nouveau filtre"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+    N2 --&gt; N3
+    N3 --&gt; N4
+    N4 --&gt; N5
+</div>
+<p>Il est fortement déconseillé d'activer un profil très restrictif directement en production.</p>
+<h2 id="notre-unite-continue-devoluer">Notre unité continue d'évoluer</h2>
+<p>À ce stade, notre fichier ressemble désormais à ceci.</p>
+<pre><code class="language-ini">[Service]
+
+User=sentinel
+Group=sentinel
+
+ProtectSystem=strict
+ProtectHome=yes
+
+ReadWritePaths=/var/lib/sentinel
+
+PrivateTmp=yes
+PrivateDevices=yes
+
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectControlGroups=yes
+
+NoNewPrivileges=yes
+RestrictSUIDSGID=yes
+
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+RestrictNamespaces=yes
+
+MemoryDenyWriteExecute=yes
+LockPersonality=yes
+
+SystemCallArchitectures=native
+SystemCallFilter=@system-service
+</code></pre>
+<p>Aucune de ces directives n'améliore les fonctionnalités de Sentinel. Elles améliorent exclusivement <strong>sa résistance à une compromission</strong>. C'est une distinction fondamentale. Le sandboxing ne rend pas une application meilleure. Il limite les conséquences lorsqu'elle cesse de l'être.</p>
+<h2 id="approfondissement">Approfondissement</h2>
+<h3 id="le-sandboxing-nest-pas-une-protection-contre-les-vulnerabilites">Le sandboxing n'est pas une protection contre les vulnérabilités</h3>
+<p>C'est probablement l'erreur de compréhension la plus fréquente. Prenons Sentinel. Supposons qu'une vulnérabilité de type Remote Code Execution (RCE) soit découverte. L'attaquant parvient à exécuter :</p>
+<pre><code class="language-python">os.system(...)
+</code></pre>
+<p>Le sandboxing n'empêche absolument pas cette exécution. La vulnérabilité existe toujours. En revanche, il change complètement la question suivante. Avant le sandboxing, l'attaquant se demande :</p>
+<blockquote>
+<p><em>Que puis-je faire maintenant ?</em></p>
+</blockquote>
+<p>Après le sandboxing, il découvre rapidement que la réponse est beaucoup plus limitée. Par exemple :</p>
+<ul>
+<li>impossible d'écrire dans <code>/usr</code> ;</li>
+<li>impossible d'accéder aux répertoires utilisateurs ;</li>
+<li>impossible de charger des modules noyau ;</li>
+<li>impossible de créer certains namespaces ;</li>
+<li>impossible d'utiliser certaines familles réseau ;</li>
+<li>impossible d'obtenir de nouveaux privilèges.</li>
+</ul>
+<p>Autrement dit, le sandboxing ne supprime pas la vulnérabilité. Il réduit considérablement son impact. C'est exactement ce que l'on attend d'une stratégie de <strong>défense en profondeur</strong>.</p>
+<h3 id="le-principe-des-privileges-negatifs">Le principe des privilèges négatifs</h3>
+<p>Pendant longtemps, les systèmes Unix ont été conçus selon une logique d'autorisation.</p>
+<div class="mermaid">flowchart TD
+    N0["Le processus possède"]
+    N1["certaines permissions"]
+    N2["il peut agir."]
+    N0 --&gt; N1
+    N1 --&gt; N2
+</div>
+<p>Le sandboxing introduit une logique différente. Il commence par supposer que l'application n'a besoin de <strong>rien</strong>. Puis il autorise uniquement ce qui est indispensable. Cette inversion de raisonnement est fondamentale. Elle conduit naturellement à des services beaucoup plus robustes.</p>
+<h3 id="une-bonne-politique-est-ennuyeuse">Une bonne politique est ennuyeuse</h3>
+<p>Les meilleures unités systemd sont souvent... décevantes. Pourquoi ? Parce qu'elles n'accordent presque rien. Prenons Sentinel. Une bonne politique ressemble à ceci.</p>
+<pre><code class="language-text">Lecture
+
+Oui.
+
+──────────────
+
+Écriture
+
+Uniquement
+
+dans
+
+/var/lib/sentinel
+
+──────────────
+
+Réseau
+
+IPv4
+
+IPv6
+
+UNIX
+
+──────────────
+
+Namespaces
+
+Non.
+
+──────────────
+
+Modules noyau
+
+Non.
+
+──────────────
+
+Home utilisateurs
+
+Non.
+</code></pre>
+<p>Autrement dit, le service possède juste assez de privilèges pour fonctionner. Pas davantage.</p>
+<h3 id="le-sandboxing-est-une-documentation">Le sandboxing est une documentation</h3>
+<p>Une unité fortement durcie raconte énormément de choses sur l'application. Prenons ces deux lignes.</p>
+<pre><code class="language-ini">ProtectHome=yes
+
+PrivateDevices=yes
+</code></pre>
+<p>Même sans connaître Sentinel, nous savons immédiatement :</p>
+<ul>
+<li>qu'il ne manipule pas les fichiers personnels ;</li>
+<li>qu'il n'a pas besoin des périphériques physiques.</li>
+</ul>
+<p>L'unité devient donc également une documentation technique extrêmement précieuse.</p>
+<h2 id="concevoir-la-politique">Concevoir la politique</h2>
+<p>Un architecte ne cherche jamais à protéger <strong>le serveur</strong>. Il cherche à protéger <strong>chaque service indépendamment</strong>. Cette nuance est essentielle. Prenons un serveur hébergeant :</p>
+<div class="mermaid">flowchart TD
+    N0["FreeIPA"]
+    N1["Sentinel"]
+    N2["Grafana"]
+    N3["Prometheus"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+    N2 --&gt; N3
+</div>
+<p>Tous ces services possèdent des besoins différents. Leurs politiques doivent donc être différentes. Une politique unique serait nécessairement trop permissive.</p>
+<h3 id="chaque-permission-doit-etre-justifiee">Chaque permission doit être justifiée</h3>
+<p>Un excellent exercice consiste à parcourir une unité ligne par ligne. Pour chacune, poser la question suivante.</p>
+<blockquote>
+<p><strong>Pourquoi cette permission existe-t-elle ?</strong></p>
+</blockquote>
+<p>Si personne n'est capable d'y répondre, elle est probablement inutile. Par exemple. Pourquoi Sentinel aurait-il besoin de : <code>Créer des namespaces ?</code> Pourquoi Sentinel aurait-il besoin de : <code>Modifier /usr ?</code> Pourquoi Sentinel aurait-il besoin de : <code>Voir les fichiers temporaires d'OpenSSH ?</code> La plupart du temps, la réponse est :</p>
+<blockquote>
+<p>Il n'en a pas besoin.</p>
+</blockquote>
+<p>L'architecte supprime alors cette possibilité.</p>
+<h3 id="concevoir-pour-lechec">Concevoir pour l'échec</h3>
+<p>Aucune application n'est parfaite. L'architecte le sait. Il part donc du principe que :</p>
+<ul>
+<li>une vulnérabilité existera ;</li>
+<li>un bug apparaîtra ;</li>
+<li>un composant sera compromis.</li>
+</ul>
+<p>La vraie question devient alors :</p>
+<blockquote>
+<p><strong>Quelle sera l'étendue des dégâts ?</strong></p>
+</blockquote>
+<p>Le sandboxing répond précisément à cette question.</p>
+<h2 id="point-de-vue-offensif">Point de vue offensif</h2>
+<p>Un attaquant qui compromet une application cherche immédiatement à sortir de son périmètre. Ses premières actions sont souvent :</p>
+<ul>
+<li>explorer le système de fichiers ;</li>
+<li>rechercher des secrets ;</li>
+<li>inspecter <code>/home</code> ;</li>
+<li>chercher des certificats ;</li>
+<li>ouvrir de nouvelles connexions réseau ;</li>
+<li>manipuler <code>/proc</code> ;</li>
+<li>tenter une élévation de privilèges.</li>
+</ul>
+<p>Le sandboxing vise précisément à rendre ces opérations difficiles, voire impossibles.</p>
+<h3 id="la-reconnaissance-post-exploitation">La reconnaissance post-exploitation</h3>
+<p>Beaucoup d'attaques modernes ne consistent pas immédiatement à détruire le système. Elles commencent par une phase de reconnaissance. Exemple.</p>
+<pre><code class="language-bash">ls /home
+
+cat /etc/shadow
+
+ip a
+
+mount
+
+lsblk
+
+find / -name "*.pem"
+</code></pre>
+<p>Une unité correctement durcie réduit considérablement les informations auxquelles l'attaquant peut accéder. Moins il voit, moins il comprend l'environnement. Moins il comprend l'environnement, plus sa progression devient difficile.</p>
+<h2 id="en-entreprise">En entreprise</h2>
+<p>Les grands groupes disposent rarement d'une seule politique de sandboxing. Ils définissent généralement plusieurs profils. Par exemple. <code>SERVICES WEB</code> ↓ Pas d'accès au matériel. ↓ Accès réseau limité. ↓ Lecture seule du système.</p>
+<div class="mermaid">flowchart TD
+    N0["COLLECTEURS"]
+    N1["Accès réseau important."]
+    N2["Écriture uniquement dans leurs données."]
+    N0 --&gt; N1
+    N1 --&gt; N2
+</div>
+<div class="mermaid">flowchart TD
+    N0["BASES DE DONNÉES"]
+    N1["Accès disque spécifique."]
+    N2["Accès mémoire plus important."]
+    N3["Très peu d'accès système."]
+    N0 --&gt; N1
+    N1 --&gt; N2
+    N2 --&gt; N3
+</div>
+<p>Chaque famille de services possède son propre profil. Les nouvelles applications héritent automatiquement du modèle correspondant. Cette standardisation facilite énormément les audits.</p>
+<h2 id="sentinel-dans-cette-architecture">Sentinel dans cette architecture</h2>
+<p>Sentinel appartiendra à une famille clairement identifiée. Par conséquent, son unité systemd sera construite à partir d'un modèle validé par :</p>
+<ul>
+<li>l'équipe Sécurité ;</li>
+<li>l'équipe Système ;</li>
+<li>l'équipe Exploitation.</li>
+</ul>
+<p>Les développeurs ne repartiront jamais d'une feuille blanche. Ils enrichiront progressivement un profil déjà éprouvé.</p>
+<h2 id="culture-technique">Culture technique</h2>
+<p>Le sandboxing systemd s'appuie principalement sur plusieurs mécanismes du noyau Linux. Parmi eux :</p>
+<ul>
+<li>les <strong>namespaces</strong> ;</li>
+<li>les <strong>cgroups</strong> ;</li>
+<li><strong>seccomp</strong> pour le filtrage des appels système ;</li>
+<li>les montages (<code>mount namespaces</code>) ;</li>
+<li>les permissions classiques du VFS ;</li>
+<li>les capacités Linux.</li>
+</ul>
+<p>Autrement dit, systemd n'invente pas de nouveaux mécanismes de sécurité. Il fournit une interface cohérente et déclarative pour exploiter des fonctionnalités déjà présentes dans le noyau. C'est l'une des grandes forces de son approche. Les administrateurs peuvent bénéficier de protections très avancées sans avoir à manipuler directement les API noyau.</p>
+<p>Une autre directive mérite d'être connue : <code>DynamicUser=yes</code> crée une identité de service transitoire et évite de réserver durablement un UID. Associée à <code>StateDirectory=</code>, <code>CacheDirectory=</code> et <code>RuntimeDirectory=</code>, elle permet à systemd de créer les répertoires avec les bons propriétaires. Sentinel conserve ici un utilisateur système stable, plus simple à intégrer aux fichiers persistants, aux audits et aux campagnes suivantes ; <code>DynamicUser</code> reste néanmoins une option pertinente pour des services autonomes et faiblement intégrés.</p>
+<h2 id="piege-classique">Piège classique</h2>
+<h3 id="activer-toutes-les-protections-dun-seul-coup">Activer toutes les protections d'un seul coup</h3>
+<p>Une erreur fréquente consiste à copier une unité trouvée sur Internet. Par exemple.</p>
+<pre><code class="language-ini">ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+PrivateDevices=yes
+RestrictNamespaces=yes
+SystemCallFilter=@system-service
+...
+</code></pre>
+<p>Puis :</p>
+<pre><code class="language-bash">systemctl restart sentinel
+</code></pre>
+<p>Et... l'application ne démarre plus. Pourquoi ? Parce qu'une protection légitime peut aussi empêcher un comportement indispensable. La bonne démarche est toujours incrémentale.</p>
+<div class="mermaid">flowchart TD
+    N0["Nouvelle protection"]
+    N1["Tests"]
+    N2["Validation"]
+    N3["Nouvelle protection"]
+    N4["Tests"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+    N2 --&gt; N3
+    N3 --&gt; N4
+</div>
+<p>Cette méthode demande davantage de temps. Elle produit en revanche une politique réellement maîtrisée.</p>
+<h2 id="tp-1-mesurer-puis-durcir-progressivement">TP 1 — Mesurer puis durcir progressivement</h2>
+<h3 id="objectif">Objectif</h3>
+<p>Transformer progressivement <code>sentinel.service</code> en un service fortement confiné. Le laboratoire consiste à ajouter les protections <strong>une par une</strong> et à mesurer leur impact. L'objectif n'est pas d'obtenir le plus grand nombre de directives. L'objectif est de comprendre précisément <strong>pourquoi chacune existe</strong>.</p>
+<h3 id="etape-1-etablir-une-reference">Étape 1 — Établir une référence</h3>
+<p>Créer une unité fonctionnelle sans sandboxing. Vérifier :</p>
+<pre><code class="language-bash">systemctl status sentinel
+</code></pre>
+<p>Puis noter :</p>
+<ul>
+<li>les fichiers utilisés ;</li>
+<li>les accès réseau ;</li>
+<li>les répertoires écrits ;</li>
+<li>les journaux.</li>
+</ul>
+<p>Cette photographie servira de point de comparaison.</p>
+<h3 id="etape-2-activer-progressivement-les-protections">Étape 2 — Activer progressivement les protections</h3>
+<p>Ajouter successivement :</p>
+<pre><code class="language-ini">NoNewPrivileges=yes
+</code></pre>
+<p>Puis :</p>
+<pre><code class="language-ini">ProtectHome=yes
+</code></pre>
+<p>Puis :</p>
+<pre><code class="language-ini">PrivateTmp=yes
+</code></pre>
+<p>Après chaque modification :</p>
+<pre><code class="language-bash">systemctl daemon-reload
+systemctl restart sentinel
+</code></pre>
+<p>Vérifier que l'application fonctionne toujours.</p>
+<h2 id="tp-2-tester-les-restrictions-du-bac-a-sable">TP 2 — Tester les restrictions du bac à sable</h2>
+<h3 id="etape-3-activer-protectsystem">Étape 3 — Activer <code>ProtectSystem</code></h3>
+<p>Configurer :</p>
+<pre><code class="language-ini">ProtectSystem=strict
+</code></pre>
+<p>Observer les erreurs éventuelles. Identifier précisément les répertoires devant rester accessibles en écriture. Ajouter uniquement ceux-ci via :</p>
+<pre><code class="language-ini">ReadWritePaths=
+</code></pre>
+<h3 id="etape-4-tester-le-confinement">Étape 4 — Tester le confinement</h3>
+<p>Depuis Sentinel, tenter volontairement :</p>
+<ul>
+<li>d'écrire dans <code>/usr</code>;</li>
+<li>de lire <code>/home</code>;</li>
+<li>de créer un fichier dans <code>/etc</code>.</li>
+</ul>
+<p>Observer les refus. Chercher à comprendre quel mécanisme intervient.</p>
+<h3 id="etape-5-ajouter-le-filtrage-des-appels-systeme">Étape 5 — Ajouter le filtrage des appels système</h3>
+<p>Configurer :</p>
+<pre><code class="language-ini">SystemCallFilter=@system-service
+</code></pre>
+<p>Vérifier que Sentinel continue de fonctionner. Consulter :</p>
+<pre><code class="language-bash">journalctl -u sentinel
+</code></pre>
+<p>en cas d'échec.</p>
+<h2 id="mission-dingenieur">Mission d'ingénieur</h2>
+<p>Votre entreprise héberge plusieurs dizaines de services Python. Un audit conclut :</p>
+<blockquote>
+<p><em>Les applications fonctionnent correctement, mais une compromission d'un seul service permet encore de parcourir une grande partie du système.</em></p>
+</blockquote>
+<p>Vous devez proposer une politique de sandboxing commune. Votre proposition devra notamment définir :</p>
+<ul>
+<li>les protections obligatoires ;</li>
+<li>les protections optionnelles ;</li>
+<li>la procédure de validation avant mise en production ;</li>
+<li>la méthode de diagnostic lorsqu'une protection casse une application ;</li>
+<li>les critères permettant d'accepter une exception.</li>
+</ul>
+<p>Votre objectif est de montrer qu'un sandboxing efficace repose autant sur une méthodologie que sur des directives systemd.</p>
+<h2 id="impact-sur-sentinel">Impact sur Sentinel</h2>
+<p>Sentinel n'est plus seulement un service. Il devient un <strong>service fortement confiné</strong>. Même en cas de compromission, l'attaquant devra désormais franchir plusieurs barrières supplémentaires avant d'atteindre le reste du système. Cette unité servira de fondation aux prochains chapitres. Nous y ajouterons ensuite :</p>
+<ul>
+<li>les capacités Linux ;</li>
+<li>la supervision avancée ;</li>
+<li>le watchdog ;</li>
+<li>la haute disponibilité.</li>
+</ul>
+<h2 id="synthese">Synthèse</h2>
+<ul>
+<li>Le sandboxing limite les conséquences d'une compromission ; il ne corrige pas les vulnérabilités.</li>
+<li>Chaque permission doit être explicitement justifiée.</li>
+<li><code>ProtectSystem</code>, <code>ProtectHome</code> et <code>PrivateTmp</code> constituent souvent les premières protections à activer.</li>
+<li><code>NoNewPrivileges</code> et <code>RestrictSUIDSGID</code> limitent les possibilités d'élévation de privilèges.</li>
+<li><code>SystemCallFilter</code> et <code>RestrictAddressFamilies</code> réduisent fortement la surface d'attaque.</li>
+<li>Les protections doivent être ajoutées progressivement et validées par des tests.</li>
+<li>Une unité fortement durcie documente naturellement les besoins réels de l'application.</li>
+</ul>
+<h2 id="schema-recapitulatif">Schéma récapitulatif</h2>
+<p><img alt="Récapitulatif visuel du chapitre 5.4" src="../media/recap-5.4.png"/></p>
+<h2 id="pour-aller-plus-loin">Pour aller plus loin</h2>
+<p>Le bac à sable retire des accès au service. Le chapitre suivant descend d'un niveau dans le modèle de privilèges Linux : il explique comment accorder une autorisation précise sans redonner l'ensemble des pouvoirs de root.</p>
+<p>← <a href="../5.3-creer-service-sentinel/">5.3 — Créer le service Sentinel</a> · <a href="../5.5-capacites-linux/">5.5 — Les capacités Linux</a> →</p>
+</div>
+</div><footer>
+<div aria-label="Footer Navigation" class="rst-footer-buttons" role="navigation">
+<a class="btn btn-neutral float-left" href="../5.3-creer-service-sentinel/" title="Chapitre 5.3 — Créer le service Sentinel"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+<a class="btn btn-neutral float-right" href="../5.5-capacites-linux/" title="Chapitre 5.5 — Les capacités Linux">Next <span class="icon icon-circle-arrow-right"></span></a>
+</div>
+<hr/>
+<div role="contentinfo">
+<!-- Copyright etc -->
+</div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+</div>
+</div>
+</section>
+</div>
+<div aria-label="Versions" class="rst-versions" role="note">
+<span class="rst-current-version" data-toggle="rst-current-version">
+<span>
+<a class="fa fa-code-fork" href="https://github.com/tdelaclos/formations" style="color: #fcfcfc"> tdelaclos/formations</a>
+</span>
+<span><a href="../5.3-creer-service-sentinel/" style="color: #fcfcfc">« Previous</a></span>
+<span><a href="../5.5-capacites-linux/" style="color: #fcfcfc">Next »</a></span>
+</span>
+</div>
+<script src="../../js/jquery-3.6.0.min.js"></script>
+<script>var base_url = "../..";</script>
+<script src="../../js/theme_extra.js"></script>
+<script src="../../js/theme.js"></script>
+<script src="../../search/main.js"></script>
+<script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+<script type="module">import mermaid from "https://unpkg.com/mermaid@10.4.0/dist/mermaid.esm.min.mjs";
+mermaid.initialize({});</script></body>
+</html>

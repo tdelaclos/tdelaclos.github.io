@@ -1,0 +1,1031 @@
+<!DOCTYPE html>
+
+<html class="writer-html5" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="IE=edge" http-equiv="X-UA-Compatible"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="../../img/favicon.ico" rel="shortcut icon"/>
+<title>Chapitre 8.3 — Installer un serveur FreeIPA de laboratoire - Formation Sentinel — AlmaLinux sécurisé</title>
+<link href="../../css/theme.css" rel="stylesheet"/>
+<link href="../../css/theme_extra.css" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" rel="stylesheet"/>
+<script>
+        // Current page data
+        var mkdocs_page_name = "Chapitre 8.3 \u2014 Installer un serveur FreeIPA de laboratoire";
+        var mkdocs_page_input_path = "campagne_08/8.3-installation-freeipa.md";
+        var mkdocs_page_url = null;
+      </script>
+<!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+<script>hljs.highlightAll();</script>
+</head>
+<body class="wy-body-for-nav" role="document">
+<div class="wy-grid-for-nav">
+<nav class="wy-nav-side stickynav" data-toggle="wy-nav-shift">
+<div class="wy-side-scroll">
+<div class="wy-side-nav-search">
+<a class="icon icon-home" href="../.."> Formation Sentinel — AlmaLinux sécurisé
+        </a><div role="search">
+<form action="../../search.html" class="wy-form" id="rtd-search-form" method="get">
+<input aria-label="Search docs" name="q" placeholder="Search docs" title="Type search term here" type="text"/>
+</form>
+</div>
+</div>
+<div aria-label="Navigation menu" class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../..">Accueil</a>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">A propos</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../GUIDE-REDACTION/">Guide de rédaction</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../PARCOURS-SENTINEL/">Parcours applicatif Sentinel</a>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Campagnes</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal">Campagne 1 - Sécuriser le socle Linux</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.1-pourquoi-securiser-socle-linux/">Chapitre 1.1 — Pourquoi sécuriser un socle Linux ?</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.2-installation-almalinux-minimal/">Chapitre 1.2 — Installer AlmaLinux minimal</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.3-composants-systeme-linux/">Chapitre 1.3 — Comprendre les composants d'un système Linux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.4-premier-demarrage-verifications/">Chapitre 1.4 — Établir la baseline du serveur</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.5-mise-a-jour-gestion-depots/">Chapitre 1.5 — Mettre à jour et gérer les dépôts</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.6-architecture-systemes-fichiers/">Chapitre 1.6 — Organiser les systèmes de fichiers</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.7-utilisateurs-groupes-permissions/">Chapitre 1.7 — Comprendre identités et permissions</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.8-sudo-moindre-privilege/">Chapitre 1.8 — Administrer avec sudo</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.9-premiere-mise-en-securite-serveur/">Chapitre 1.9 — Mission : mettre le serveur en sécurité</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.10-creation-laboratoire-sentinel/">Chapitre 1.10 — Créer le laboratoire Sentinel</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 2 - Gestion des permissions et des identités</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.1-permissions-unix/">Chapitre 2.1 — Les permissions UNIX</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.2-acl/">Chapitre 2.2 — Les ACL</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.3-umask/">Chapitre 2.3 — L'umask</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.4-attributs-etendus/">Chapitre 2.4 — Les attributs étendus</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.5-pam/">Chapitre 2.5 — PAM</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.6-politique-mots-de-passe/">Chapitre 2.6 — Politique de mots de passe</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.7-comptes-systeme/">Chapitre 2.7 — Les comptes système</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.8-sudo-avance/">Chapitre 2.8 — sudo avancé</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.9-fichiers-identites-linux/">Chapitre 2.9 — Comprendre les fichiers d'identités Linux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.10-synthese-securiser-identites/">Chapitre 2.10 — Synthèse : sécuriser les identités</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 3 - TCP/IP et Firewalld</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.1-tcp-ip-administrateur/">Chapitre 3.1 — TCP/IP côté administrateur</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.2-architecture-firewalld/">Chapitre 3.2 — Architecture de Firewalld</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.3-zones-firewalld/">Chapitre 3.3 — Les zones Firewalld</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.4-services-firewalld/">Chapitre 3.4 — Les services Firewalld</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.5-conntrack-filtrage-etats/">Chapitre 3.5 — Conntrack et le filtrage par états</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.6-rich-rules-firewalld/">Chapitre 3.6 — Les Rich Rules Firewalld</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.7-journalisation-firewalld/">Chapitre 3.7 — Journalisation et analyse Firewalld</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.8-ip-sets-firewalld/">Chapitre 3.8 — Les IP Sets Firewalld</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.9-runtime-permanent/">Chapitre 3.9 — Runtime et Permanent</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.10-politique-reseau-sentinel/">Chapitre 3.10 — Concevoir la politique réseau de Sentinel</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 4 - SSH</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_04/4.1-architecture-openssh/">Chapitre 4.1 — Architecture d'OpenSSH</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_04/4.2-authentification-mot-de-passe/">Chapitre 4.2 — Authentification par mot de passe</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_04/4.3-authentification-par-cles/">Chapitre 4.3 — Authentification par clés</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_04/4.4-durcissement-sshd-config/">Chapitre 4.4 — Durcissement de sshd_config</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_04/4.5-bastion-administration/">Chapitre 4.5 — Bastion d'administration</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_04/4.6-journalisation-audit-ssh/">Chapitre 4.6 — Journalisation et audit SSH</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_04/4.7-protection-attaques-ssh/">Chapitre 4.7 — Protection contre les attaques SSH</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_04/4.8-mission-administration-sentinel/">Chapitre 4.8 — Mission : administrer Sentinel en sécurité</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 5 - Systemd</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.1-comprendre-systemd/">Chapitre 5.1 — Comprendre systemd</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.2-unites-systemd/">Chapitre 5.2 — Les unités systemd</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.3-creer-service-sentinel/">Chapitre 5.3 — Créer le service Sentinel</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.4-sandboxing-systemd/">Chapitre 5.4 — Sandboxing systemd</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.5-capacites-linux/">Chapitre 5.5 — Les capacités Linux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.6-journalisation-journald/">Chapitre 5.6 — Journalisation avec journald</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.7-supervision-redemarrage/">Chapitre 5.7 — Supervision et redémarrage automatique</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.8-mission-sentinel-resilient/">Chapitre 5.8 — Mission : rendre Sentinel résilient</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 6 - SELinux</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_06/6.1-pourquoi-selinux-existe/">Chapitre 6.1 — Pourquoi SELinux existe</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_06/6.2-contextes-selinux/">Chapitre 6.2 — Comprendre les contextes SELinux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_06/6.3-politiques-selinux/">Chapitre 6.3 — Les politiques SELinux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_06/6.4-diagnostic-refus-selinux/">Chapitre 6.4 — Diagnostiquer les refus SELinux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_06/6.5-creation-regles-selinux/">Chapitre 6.5 — Créer des règles SELinux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_06/6.6-securiser-sentinel-selinux/">Chapitre 6.6 — Sécuriser Sentinel avec SELinux</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 7 - TLS et PKI</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.1-comprendre-cryptographie-appliquee/">Chapitre 7.1 — Comprendre la cryptographie appliquée</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.2-lire-verifier-certificats-x509/">Chapitre 7.2 — Lire et vérifier les certificats X.509</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.3-construire-autorite-certification/">Chapitre 7.3 — Construire une autorité de certification</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.4-authentification-mutuelle-tls/">Chapitre 7.4 — Authentifier les deux extrémités avec mTLS</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.5-preparer-integration-freeipa/">Chapitre 7.5 — Préparer l'intégration à FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.6-renouveler-revoquer-certificats/">Chapitre 7.6 — Renouveler et révoquer les certificats</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.7-securiser-sentinel-tls/">Chapitre 7.7 — Sécuriser Sentinel avec TLS</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal current">Campagne 8 - FreeIPA</a>
+<ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../8.1-presentation-freeipa/">Chapitre 8.1 — Découvrir FreeIPA et la gestion centralisée des identités</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../8.2-architecture-interne-freeipa/">Chapitre 8.2 — Comprendre l'architecture interne de FreeIPA</a>
+</li>
+<li class="toctree-l2 current"><a class="reference internal current" href="#">Chapitre 8.3 — Installer un serveur FreeIPA de laboratoire</a>
+<ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="#vous-etes-ici">Vous êtes ici</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#objectifs-pedagogiques">Objectifs pédagogiques</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pourquoi-ce-chapitre-existe">Pourquoi ce chapitre existe</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#architecture-du-laboratoire">Architecture du laboratoire</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#les-decisions-irreversibles-ou-couteuses">Les décisions irréversibles ou coûteuses</a>
+<ul>
+<li class="toctree-l4"><a class="reference internal" href="#fqdn">FQDN</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#domaine-et-royaume">Domaine et royaume</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#dns-integre-ou-externe">DNS intégré ou externe</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#comprendre-les-zones-avant-de-creer-des-enregistrements">Comprendre les zones avant de créer des enregistrements</a>
+<ul>
+<li class="toctree-l4"><a class="reference internal" href="#autorite-soa-ns-et-delegation">Autorité, SOA, NS et délégation</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#zone-primaire-zone-inverse-et-zone-de-renvoi">Zone primaire, zone inverse et zone de renvoi</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#les-principaux-enregistrements-dns">Les principaux enregistrements DNS</a>
+<ul>
+<li class="toctree-l4"><a class="reference internal" href="#a-et-aaaa-resolution-directe">A et AAAA : résolution directe</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#srv-decouvrir-un-service-pas-seulement-une-machine">SRV : découvrir un service, pas seulement une machine</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#cname-utile-mais-pas-neutre-pour-les-identites">CNAME : utile, mais pas neutre pour les identités</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#reverse-dns-retrouver-un-nom-depuis-une-adresse">Reverse DNS : retrouver un nom depuis une adresse</a>
+<ul>
+<li class="toctree-l4"><a class="reference internal" href="#creer-la-zone-et-le-ptr-dans-le-laboratoire">Créer la zone et le PTR dans le laboratoire</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#quand-plusieurs-noms-ou-adresses-existent">Quand plusieurs noms ou adresses existent</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#preparer-le-systeme">Préparer le système</a>
+<ul>
+<li class="toctree-l4"><a class="reference internal" href="#ressources-et-reseau">Ressources et réseau</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#heure">Heure</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#mise-a-jour-selinux-et-pare-feu">Mise à jour, SELinux et pare-feu</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#controles-prealables">Contrôles préalables</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#installer-les-paquets">Installer les paquets</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#lancer-linstallation-interactive">Lancer l'installation interactive</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#ouvrir-les-services-necessaires">Ouvrir les services nécessaires</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#verifier-les-services">Vérifier les services</a>
+<ul>
+<li class="toctree-l4"><a class="reference internal" href="#vue-freeipa">Vue FreeIPA</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#dns">DNS</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#mise-en-pratique-dns-publier-sentinel01">Mise en pratique DNS — publier sentinel01</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#kerberos">Kerberos</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#api-et-annuaire">API et annuaire</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#https-et-certificat">HTTPS et certificat</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#ports-et-journaux">Ports et journaux</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#une-validation-de-bout-en-bout">Une validation de bout en bout</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#ce-que-le-laboratoire-ne-fournit-pas">Ce que le laboratoire ne fournit pas</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#desinstaller-dans-un-laboratoire">Désinstaller dans un laboratoire</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#mise-en-pratique-dossier-de-preuve">Mise en pratique — dossier de preuve</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#impact-sur-sentinel">Impact sur Sentinel</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#synthese">Synthèse</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pour-aller-plus-loin">Pour aller plus loin</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../8.4-gestion-utilisateurs/">Chapitre 8.4 — Gérer le cycle de vie des utilisateurs FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../8.5-groupes-roles/">Chapitre 8.5 — Organiser les groupes et les rôles FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../8.6-politiques-sudo/">Chapitre 8.6 — Centraliser les politiques sudo avec FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../8.7-gestion-hotes/">Chapitre 8.7 — Enrôler les hôtes et contrôler les accès avec HBAC</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../8.8-certificats/">Chapitre 8.8 — Gérer les certificats de service avec FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../8.9-integration-sentinel/">Chapitre 8.9 — Intégrer Sentinel à FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../8.10-mission-administration-freeipa/">Chapitre 8.10 — Mission : administrer Sentinel avec FreeIPA</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 9 - Déploiement avec Ansible</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.1-architecture-ansible/">Chapitre 9.1 — Comprendre l'architecture Ansible</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.2-composants-ansible/">Chapitre 9.2 — Comprendre les composants et l'idempotence Ansible</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.3-inventaires/">Chapitre 9.3 — Construire les inventaires Ansible</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.4-premiers-playbooks/">Chapitre 9.4 — Écrire les premiers playbooks</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.5-variables-templates/">Chapitre 9.5 — Piloter la configuration avec variables et templates</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.6-roles-ansible/">Chapitre 9.6 — Concevoir des rôles Ansible réutilisables</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.7-deployer-sentinel-ansible/">Chapitre 9.7 — Déployer Sentinel avec Ansible</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.8-integrer-sentinel-freeipa/">Chapitre 9.8 — Automatiser l'intégration de Sentinel à FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.9-industrialiser-laboratoire/">Chapitre 9.9 — Industrialiser le projet Ansible</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.10-mission-deploiement-sentinel/">Chapitre 9.10 — Mission : reconstruire Sentinel avec Ansible</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 10 - Packaging RPM</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_10/10.1-construire-paquet-rpm/">Chapitre 10.1 — Construire un paquet RPM</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_10/10.2-gerer-dependances-rpm/">Chapitre 10.2 — Gérer les dépendances RPM</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_10/10.3-gerer-fichiers-configuration-rpm/">Chapitre 10.3 — Gérer les fichiers de configuration RPM</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_10/10.4-signer-paquets-rpm/">Chapitre 10.4 — Signer les paquets RPM</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_10/10.5-exploiter-depot-rpm-prive/">Chapitre 10.5 — Exploiter un dépôt RPM privé</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_10/10.6-packager-sentinel/">Chapitre 10.6 — Packager Sentinel</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 11 - Conteneurs Podman</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_11/11.1-decouvrir-podman/">Chapitre 11.1 — Découvrir Podman</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_11/11.2-conteneurs-rootless/">Chapitre 11.2 — Exécuter des conteneurs rootless</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_11/11.3-construire-images-securisees/">Chapitre 11.3 — Construire des images sécurisées</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_11/11.4-reseaux-conteneurs/">Chapitre 11.4 — Concevoir les réseaux de conteneurs</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_11/11.5-gerer-secrets-podman/">Chapitre 11.5 — Gérer les secrets avec Podman</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_11/11.6-executer-sentinel-securite/">Chapitre 11.6 — Exécuter Sentinel en sécurité</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 12 - Supervision et audit</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_12/12.1-centraliser-journaux-rsyslog/">Chapitre 12.1 — Centraliser les journaux avec Rsyslog</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_12/12.2-auditer-systeme-auditd/">Chapitre 12.2 — Auditer le système avec auditd</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_12/12.3-controler-integrite-fichiers-aide/">Chapitre 12.3 — Contrôler l'intégrité des fichiers avec AIDE</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_12/12.4-superviser-sentinel-prometheus/">Chapitre 12.4 — Superviser Sentinel avec Prometheus</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_12/12.5-concevoir-alertes-alertmanager/">Chapitre 12.5 — Concevoir des alertes avec Alertmanager</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_12/12.6-construire-tableau-bord-sentinel/">Chapitre 12.6 — Construire le tableau de bord Sentinel</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 13 - Attaques et défense</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.1-reconnaissance/">Chapitre 13.1 — Reconnaissance</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.2-scan-reseau/">Chapitre 13.2 — Scan réseau</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.3-brute-force-ssh/">Chapitre 13.3 — Brute force SSH</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.4-escalade-privileges/">Chapitre 13.4 — Escalade de privilèges</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.5-mouvements-lateraux/">Chapitre 13.5 — Mouvements latéraux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.6-persistance/">Chapitre 13.6 — Persistance</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.7-exfiltration/">Chapitre 13.7 — Exfiltration</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.8-etude-cas-complete/">Chapitre 13.8 — Étude de cas complète</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 14 - Projet final</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.1-deployer-sentinel-almalinux-minimale/">Chapitre 14.1 — Déployer Sentinel sur une AlmaLinux minimale</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.2-securiser-hote/">Chapitre 14.2 — Sécuriser l'hôte</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.3-integrer-freeipa/">Chapitre 14.3 — Intégrer FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.4-deployer-ansible/">Chapitre 14.4 — Déployer avec Ansible</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.5-packager-rpm/">Chapitre 14.5 — Packager avec RPM</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.6-conteneuriser-podman/">Chapitre 14.6 — Conteneuriser avec Podman</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.7-superviser-auditer/">Chapitre 14.7 — Superviser et auditer</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.8-audit-final-tests-kali/">Chapitre 14.8 — Audit final et tests depuis Kali</a>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</nav>
+<section class="wy-nav-content-wrap" data-toggle="wy-nav-shift">
+<nav aria-label="Mobile navigation menu" class="wy-nav-top" role="navigation">
+<i class="fa fa-bars" data-toggle="wy-nav-top"></i>
+<a href="../..">Formation Sentinel — AlmaLinux sécurisé</a>
+</nav>
+<div class="wy-nav-content">
+<div class="rst-content"><div aria-label="breadcrumbs navigation" role="navigation">
+<ul class="wy-breadcrumbs">
+<li><a aria-label="Docs" class="icon icon-home" href="../.."></a></li>
+<li class="breadcrumb-item">Campagnes</li>
+<li class="breadcrumb-item">Campagne 8 - FreeIPA</li>
+<li class="breadcrumb-item active">Chapitre 8.3 — Installer un serveur FreeIPA de laboratoire</li>
+<li class="wy-breadcrumbs-aside">
+<a href="https://github.com/tdelaclos/formations/edit/master/docs/campagne_08/8.3-installation-freeipa.md">Edit on tdelaclos/formations</a>
+</li>
+</ul>
+<hr/>
+</div>
+<div class="document" itemscope="itemscope" itemtype="http://schema.org/Article" role="main">
+<div class="section" itemprop="articleBody">
+<h1 id="chapitre-83-installer-un-serveur-freeipa-de-laboratoire">Chapitre 8.3 — Installer un serveur FreeIPA de laboratoire</h1>
+<blockquote>
+<p><strong>Campagne 8 — FreeIPA</strong></p>
+<p><em>« Le succès de l'installation dépend surtout des décisions prises avant de lancer l'installateur. »</em></p>
+</blockquote>
+<h2 id="vous-etes-ici">Vous êtes ici</h2>
+<pre><code class="language-text">Partie II — Industrialiser la sécurité
+
+Campagne 8 — FreeIPA
+
+      8.1 Présentation de FreeIPA
+      8.2 Architecture interne
+    ► 8.3 Installation du serveur
+      8.4 Gestion des utilisateurs
+      8.5 Groupes et rôles
+      8.6 Politiques sudo
+      8.7 Hôtes et règles HBAC
+      8.8 Certificats
+      8.9 Intégration de Sentinel
+      8.10 Mission d'administration
+</code></pre>
+<h2 id="objectifs-pedagogiques">Objectifs pédagogiques</h2>
+<p>À la fin de ce chapitre, vous serez capable de :</p>
+<ul>
+<li>préparer nom, DNS, adresse, temps et ressources d'un serveur IdM ;</li>
+<li>distinguer domaine, zone directe, zone inverse et délégation ;</li>
+<li>créer et vérifier les principaux types d'enregistrements DNS d'un domaine IdM ;</li>
+<li>expliquer le reverse DNS et maintenir la cohérence A/AAAA/PTR ;</li>
+<li>installer FreeIPA avec DNS et autorité de certification intégrés ;</li>
+<li>vérifier séparément services, Kerberos, DNS, API et certificats ;</li>
+<li>retrouver les journaux d'installation et d'exécution ;</li>
+<li>distinguer une installation de laboratoire d'une architecture de production.</li>
+</ul>
+<h2 id="pourquoi-ce-chapitre-existe">Pourquoi ce chapitre existe</h2>
+<p>FreeIPA lie durablement le FQDN, le domaine DNS, le royaume Kerberos, les certificats et les objets de l'annuaire. Corriger après coup un nom improvisé est beaucoup plus difficile que préparer correctement la machine.</p>
+<p>Le laboratoire construit un premier serveur autonome. Il sert à apprendre ; il ne constitue pas une topologie hautement disponible.</p>
+<h2 id="architecture-du-laboratoire">Architecture du laboratoire</h2>
+<table>
+<thead>
+<tr>
+<th>Rôle</th>
+<th>FQDN</th>
+<th>Adresse documentaire</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>serveur FreeIPA + DNS + CA</td>
+<td><code>ipa01.sentinel.example.test</code></td>
+<td><code>192.0.2.10</code></td>
+</tr>
+<tr>
+<td>serveur Sentinel, futur client</td>
+<td><code>sentinel01.sentinel.example.test</code></td>
+<td><code>192.0.2.20</code></td>
+</tr>
+<tr>
+<td>agent mTLS, futur client</td>
+<td><code>agent01.sentinel.example.test</code></td>
+<td><code>192.0.2.30</code></td>
+</tr>
+</tbody>
+</table>
+<p>Les adresses <code>192.0.2.0/24</code> et le suffixe <code>.test</code> sont réservés à la documentation. Remplacez-les dans le réseau isolé du laboratoire.</p>
+<div class="mermaid">flowchart LR
+    Client["agent01\nclient IdM"] --&gt; IPA["ipa01\nDNS + KDC + LDAP + CA"]
+    Sentinel["sentinel01\nclient IdM + Sentinel"] --&gt; IPA
+    Admin["poste d'administration"] --&gt; IPA
+</div>
+<p>Prévoyez des instantanés avant l'installation, mais ne les confondez pas avec une sauvegarde cohérente d'un domaine en production.</p>
+<h2 id="les-decisions-irreversibles-ou-couteuses">Les décisions irréversibles ou coûteuses</h2>
+<h3 id="fqdn">FQDN</h3>
+<p>Le nom doit être stable, en minuscules et résolu vers l'adresse de la machine :</p>
+<pre><code class="language-bash">sudo hostnamectl set-hostname ipa01.sentinel.example.test
+hostname --fqdn
+getent ahosts ipa01.sentinel.example.test
+</code></pre>
+<p>Évitez <code>localhost</code>, un nom court, une adresse dynamique ou un alias qui ne correspond pas à l'identité principale.</p>
+<h3 id="domaine-et-royaume">Domaine et royaume</h3>
+<pre><code class="language-text">Domaine DNS : sentinel.example.test
+Royaume     : SENTINEL.EXAMPLE.TEST
+</code></pre>
+<p>Le royaume proposé à partir du domaine convient au laboratoire. En production, le choix doit tenir compte du DNS existant, des relations de confiance et de la pérennité organisationnelle.</p>
+<h3 id="dns-integre-ou-externe">DNS intégré ou externe</h3>
+<p>Le laboratoire utilise le DNS intégré pour observer la découverte de services. Une entreprise peut déléguer le sous-domaine à FreeIPA ou maintenir les enregistrements dans un DNS externe.</p>
+<p>Dans les deux cas, les clients doivent retrouver les enregistrements A/AAAA et SRV. Une ligne <code>/etc/hosts</code> seule ne suffit pas à représenter cette architecture.</p>
+<h2 id="comprendre-les-zones-avant-de-creer-des-enregistrements">Comprendre les zones avant de créer des enregistrements</h2>
+<p>Un <strong>domaine DNS</strong> est un espace de noms. Une <strong>zone DNS</strong> est la portion de cet espace dont un ensemble de serveurs détient les données faisant autorité. Les deux coïncident souvent dans un petit laboratoire, mais ce ne sont pas des synonymes.</p>
+<p>Dans notre cas :</p>
+<pre><code class="language-text">domaine IdM et zone directe : sentinel.example.test.
+réseau IPv4                 : 192.0.2.0/24
+zone inverse correspondante : 2.0.192.in-addr.arpa.
+</code></pre>
+<p>Le point final indique un nom DNS absolu. Les outils l'acceptent parfois sans ce point, mais l'écrire dans les valeurs cibles, par exemple un PTR, évite qu'un suffixe de zone soit ajouté par erreur.</p>
+<h3 id="autorite-soa-ns-et-delegation">Autorité, SOA, NS et délégation</h3>
+<p>Une zone primaire contient notamment :</p>
+<ul>
+<li>un enregistrement <strong>SOA</strong> (<em>Start of Authority</em>), qui décrit l'autorité et les paramètres de la zone ;</li>
+<li>un ou plusieurs enregistrements <strong>NS</strong>, qui nomment ses serveurs faisant autorité ;</li>
+<li>les enregistrements de ressources portant les données utiles.</li>
+</ul>
+<p>Si le DNS parent <code>example.test</code> existe ailleurs, il doit <strong>déléguer</strong> <code>sentinel.example.test</code> vers les serveurs DNS IdM avec des enregistrements NS. Lorsque le nom du serveur délégué appartient lui-même à la sous-zone, le parent peut aussi devoir publier son adresse comme <em>glue record</em>. Sans cette délégation, le serveur IdM connaît sa zone, mais les clients utilisant le DNS parent ne savent pas nécessairement comment l'atteindre.</p>
+<div class="mermaid">flowchart TB
+    Client["Client DNS"] --&gt; Parent["Zone parent : example.test"]
+    Parent --&gt;|"délégation NS"| IdM["Zone IdM : sentinel.example.test"]
+    IdM --&gt; A["A/AAAA : noms vers adresses"]
+    IdM --&gt; SRV["SRV : services vers serveurs"]
+</div>
+<p>IdM crée SOA et NS lors de la création de sa zone. Dans une architecture avec DNS externe, la délégation dans le parent reste une action d'exploitation à préparer avec l'équipe qui contrôle ce parent.</p>
+<h3 id="zone-primaire-zone-inverse-et-zone-de-renvoi">Zone primaire, zone inverse et zone de renvoi</h3>
+<p>Ces trois objets répondent à des besoins différents :</p>
+<table>
+<thead>
+<tr>
+<th>Objet</th>
+<th>Contenu ou fonction</th>
+<th>Exemple</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>zone primaire directe</td>
+<td>données faisant autorité pour des noms</td>
+<td><code>sentinel.example.test.</code></td>
+</tr>
+<tr>
+<td>zone primaire inverse</td>
+<td>données faisant autorité pour des adresses renversées</td>
+<td><code>2.0.192.in-addr.arpa.</code></td>
+</tr>
+<tr>
+<td>zone de renvoi</td>
+<td>transmet certaines requêtes à un autre résolveur</td>
+<td>domaine géré par une autre équipe</td>
+</tr>
+</tbody>
+</table>
+<p>Une zone de renvoi n'est pas un raccourci universel pour éviter une délégation. La délégation DNS standard reste préférable lorsque vous contrôlez le parent et la sous-zone.</p>
+<p>Inventoriez l'existant avant toute création :</p>
+<pre><code class="language-bash">kinit admin
+ipa dnszone-find
+ipa dnszone-show sentinel.example.test.
+ipa dnsrecord-find sentinel.example.test.
+</code></pre>
+<p>Ne recréez pas une zone déjà installée et ne prenez pas autorité sur un réseau inverse que votre équipe ne contrôle pas.</p>
+<h2 id="les-principaux-enregistrements-dns">Les principaux enregistrements DNS</h2>
+<p>Un <strong>enregistrement de ressource</strong> (<em>resource record</em>) associe un nom, un type, une valeur et une durée de cache, le <strong>TTL</strong>. Le type précise le sens de la valeur.</p>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Rôle</th>
+<th>Exemple dans le laboratoire</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>A</code></td>
+<td>nom vers adresse IPv4</td>
+<td><code>sentinel01</code> → <code>192.0.2.20</code></td>
+</tr>
+<tr>
+<td><code>AAAA</code></td>
+<td>nom vers adresse IPv6</td>
+<td><code>sentinel01</code> → <code>2001:db8::20</code></td>
+</tr>
+<tr>
+<td><code>PTR</code></td>
+<td>adresse renversée vers nom</td>
+<td><code>20</code> → <code>sentinel01.sentinel.example.test.</code></td>
+</tr>
+<tr>
+<td><code>SRV</code></td>
+<td>service et protocole vers cible et port</td>
+<td><code>_ldap._tcp</code> → <code>ipa01...:389</code></td>
+</tr>
+<tr>
+<td><code>CNAME</code></td>
+<td>alias vers un nom canonique</td>
+<td><code>status</code> → <code>sentinel01...</code></td>
+</tr>
+<tr>
+<td><code>TXT</code></td>
+<td>texte associé au nom</td>
+<td>preuve ou politique définie par un protocole</td>
+</tr>
+<tr>
+<td><code>MX</code></td>
+<td>serveurs de messagerie d'un domaine</td>
+<td>hors du besoin Sentinel actuel</td>
+</tr>
+<tr>
+<td><code>NS</code></td>
+<td>serveurs faisant autorité pour une zone</td>
+<td><code>ipa01.sentinel.example.test.</code></td>
+</tr>
+<tr>
+<td><code>SOA</code></td>
+<td>origine et paramètres de la zone</td>
+<td>généré et géré avec la zone</td>
+</tr>
+</tbody>
+</table>
+<p><code>A</code> et <code>AAAA</code> ne signifient pas « ce serveur est digne de confiance » : ils fournissent une adresse. <code>PTR</code> ne prouve pas davantage l'identité de la machine. DNSSEC peut protéger l'authenticité des données DNS dans une architecture prévue pour cela, tandis que Kerberos et TLS authentifient leurs propres identités ; ces mécanismes ne doivent pas être confondus.</p>
+<h3 id="a-et-aaaa-resolution-directe">A et AAAA : résolution directe</h3>
+<p>Pour ajouter l'adresse documentaire de Sentinel dans la zone intégrée :</p>
+<pre><code class="language-bash">ipa dnsrecord-add sentinel.example.test. sentinel01 \
+  --a-rec=192.0.2.20
+
+ipa dnsrecord-show sentinel.example.test. sentinel01 --all
+dig +noall +answer sentinel01.sentinel.example.test. A
+</code></pre>
+<p>Si IPv6 est réellement configuré de bout en bout, ajoutez un <code>AAAA</code> cohérent. N'inventez pas un <code>AAAA</code> uniquement pour remplir la zone : un client pourrait préférer IPv6 et joindre une adresse qui ne fonctionne pas.</p>
+<h3 id="srv-decouvrir-un-service-pas-seulement-une-machine">SRV : découvrir un service, pas seulement une machine</h3>
+<p>Un enregistrement SRV contient quatre valeurs :</p>
+<pre><code class="language-text">priorité poids port cible
+</code></pre>
+<p>Exemple conceptuel :</p>
+<pre><code class="language-text">_ldap._tcp.sentinel.example.test. 3600 IN SRV 0 100 389 ipa01.sentinel.example.test.
+</code></pre>
+<ul>
+<li>la priorité la plus basse est essayée en premier ;</li>
+<li>le poids répartit les choix entre cibles de même priorité ;</li>
+<li>le port indique où joindre le service ;</li>
+<li>la cible est un nom DNS disposant de ses propres A ou AAAA.</li>
+</ul>
+<p>L'installation IdM publie et maintient ses enregistrements SRV. Commencez donc par les observer au lieu de les recréer manuellement :</p>
+<pre><code class="language-bash">dig +noall +answer SRV _ldap._tcp.sentinel.example.test.
+dig +noall +answer SRV _kerberos._udp.sentinel.example.test.
+dig +noall +answer SRV _kerberos._tcp.sentinel.example.test.
+</code></pre>
+<p>Le SRV permet au client de demander « où se trouve Kerberos pour ce domaine ? ». Une entrée A répond seulement « quelle est l'adresse de ce nom ? ». C'est pourquoi <code>/etc/hosts</code> ne remplace pas la découverte IdM.</p>
+<h3 id="cname-utile-mais-pas-neutre-pour-les-identites">CNAME : utile, mais pas neutre pour les identités</h3>
+<p>Un CNAME fournit un alias. Il peut être pratique pour présenter <code>status.sentinel.example.test</code> tandis que le nom canonique de l'hôte reste <code>sentinel01...</code>. Cependant, Kerberos et TLS comparent des noms précis : le service peut avoir besoin d'un principal et d'un SAN correspondant au nom réellement utilisé par les clients.</p>
+<p>Avant d'ajouter un alias, répondez donc à trois questions :</p>
+<ol>
+<li>quel nom les clients saisiront-ils ?</li>
+<li>quel principal de service demanderont-ils ?</li>
+<li>quel nom figure dans le SAN du certificat ?</li>
+</ol>
+<p>L'alias DNS ne crée automatiquement ni le principal Kerberos ni le SAN X.509.</p>
+<h2 id="reverse-dns-retrouver-un-nom-depuis-une-adresse">Reverse DNS : retrouver un nom depuis une adresse</h2>
+<p>La résolution directe parcourt <code>nom → adresse</code>. Le <strong>reverse DNS</strong> parcourt <code>adresse → nom</code> avec un enregistrement PTR stocké dans un espace de noms spécial.</p>
+<p>Pour IPv4, les octets du préfixe sont renversés sous <code>in-addr.arpa</code>. Ainsi, l'adresse <code>192.0.2.20</code> du réseau <code>/24</code> se décompose en :</p>
+<pre><code class="language-text">zone inverse : 2.0.192.in-addr.arpa.
+nom relatif  : 20
+valeur PTR   : sentinel01.sentinel.example.test.
+</code></pre>
+<p>Pour IPv6, chaque chiffre hexadécimal est renversé sous <code>ip6.arpa</code>. Le principe est identique mais le nom devient beaucoup plus long ; les outils de gestion évitent de le composer à la main.</p>
+<div class="mermaid">flowchart TB
+    Forward["Zone sentinel.example.test"] --&gt;|"A"| Address["192.0.2.20"]
+    Reverse["Zone 2.0.192.in-addr.arpa"] --&gt;|"PTR de 20"| Name["sentinel01.sentinel.example.test"]
+    Name -. "deux données indépendantes à maintenir" .-&gt; Address
+</div>
+<p>Le PTR n'est pas calculé à la volée à partir du A. Ce sont deux enregistrements indépendants, souvent placés dans deux zones administrées par des équipes différentes. Il est donc possible que le direct fonctionne et que l'inverse soit absent ou obsolète.</p>
+<h3 id="creer-la-zone-et-le-ptr-dans-le-laboratoire">Créer la zone et le PTR dans le laboratoire</h3>
+<p>Vérifiez d'abord que l'installateur n'a pas déjà créé la zone inverse :</p>
+<pre><code class="language-bash">ipa dnszone-find
+ipa dnszone-show 2.0.192.in-addr.arpa.
+</code></pre>
+<p>La deuxième commande échoue si la zone est absente. Créez-la uniquement si le réseau du laboratoire relève bien de votre autorité :</p>
+<pre><code class="language-bash">ipa dnszone-add 2.0.192.in-addr.arpa.
+ipa dnsrecord-add 2.0.192.in-addr.arpa. 20 \
+  --ptr-rec=sentinel01.sentinel.example.test.
+</code></pre>
+<p>Vérifiez ensuite les deux sens depuis un client utilisant réellement le DNS IdM :</p>
+<pre><code class="language-bash">dig +noall +answer sentinel01.sentinel.example.test. A
+dig +noall +answer -x 192.0.2.20
+getent hosts sentinel01.sentinel.example.test
+</code></pre>
+<p>Le résultat cohérent attendu est :</p>
+<pre><code class="language-text">sentinel01.sentinel.example.test. → 192.0.2.20
+192.0.2.20 → sentinel01.sentinel.example.test.
+</code></pre>
+<p>Cette cohérence directe/inverse facilite les journaux, certains contrôles de services et le diagnostic. Elle n'est toutefois pas une preuve cryptographique : toute personne qui contrôle la zone inverse peut publier un PTR. Pour authentifier Sentinel, utilisez le principal Kerberos ou le certificat TLS attendu.</p>
+<h3 id="quand-plusieurs-noms-ou-adresses-existent">Quand plusieurs noms ou adresses existent</h3>
+<p>Une machine peut avoir plusieurs adresses et plusieurs noms. Ne cherchez pas mécaniquement une relation bijective parfaite. Définissez plutôt :</p>
+<ul>
+<li>un FQDN canonique stable pour l'identité de l'hôte ;</li>
+<li>les A/AAAA correspondant aux interfaces réellement joignables ;</li>
+<li>un PTR pertinent pour chaque adresse administrée ;</li>
+<li>les alias nécessaires aux usages applicatifs ;</li>
+<li>les principaux et SAN correspondant aux noms employés par les clients.</li>
+</ul>
+<p>Kerberos peut canonicaliser un nom selon la bibliothèque et l'application. Une incohérence entre alias, nom canonique et reverse DNS peut donc faire demander un ticket pour un autre principal que celui présent dans le <code>keytab</code>. N'utilisez pas cette possibilité pour attribuer toute panne Kerberos au PTR : observez d'abord avec <code>kvno</code>, <code>klist</code>, les journaux du service et <code>klist -k</code>.</p>
+<p>⚠️ <strong>Piège classique</strong> — ajouter le bon A dans la zone directe puis considérer <code>dig -x</code> vide comme un détail. Soit la zone inverse fait partie du plan et le PTR doit être géré, soit elle appartient à un tiers et cette dépendance doit être documentée. Le silence ne constitue pas une décision d'architecture.</p>
+<h2 id="preparer-le-systeme">Préparer le système</h2>
+<h3 id="ressources-et-reseau">Ressources et réseau</h3>
+<p>Allouez une VM persistante avec plusieurs Gio de mémoire, suffisamment d'espace disque et une adresse stable. Les besoins exacts dépendent du nombre d'entrées, des services activés et de la topologie ; consultez la documentation de la version déployée.</p>
+<p>Repérez le profil NetworkManager puis définissez l'adresse et le DNS adaptés à votre laboratoire :</p>
+<pre><code class="language-bash">nmcli connection show
+ip -brief address
+ip route
+</code></pre>
+<p>Exemple à adapter au nom réel de la connexion :</p>
+<pre><code class="language-bash">sudo nmcli connection modify 'System eth0' \
+  ipv4.method manual \
+  ipv4.addresses 192.0.2.10/24 \
+  ipv4.gateway 192.0.2.1 \
+  ipv4.dns '127.0.0.1' \
+  ipv4.dns-search 'sentinel.example.test'
+sudo nmcli connection up 'System eth0'
+</code></pre>
+<p>Configurer <code>127.0.0.1</code> comme DNS n'est pertinent qu'une fois le DNS local disponible. Avant l'installation, assurez la résolution du FQDN par le DNS amont ou une entrée temporaire cohérente ; supprimez les contournements devenus inutiles après installation.</p>
+<h3 id="heure">Heure</h3>
+<pre><code class="language-bash">sudo systemctl enable --now chronyd
+timedatectl
+chronyc tracking
+chronyc sources -v
+</code></pre>
+<p>La présence de <code>chronyd</code> ne prouve pas la synchronisation : contrôlez la source et l'écart.</p>
+<h3 id="mise-a-jour-selinux-et-pare-feu">Mise à jour, SELinux et pare-feu</h3>
+<pre><code class="language-bash">sudo dnf update -y
+sestatus
+sudo firewall-cmd --state
+sudo firewall-cmd --get-active-zones
+</code></pre>
+<p>Conservez SELinux en mode <code>Enforcing</code>. Une installation qui exige sa désactivation révèle un problème de préparation ou une procédure obsolète.</p>
+<h3 id="controles-prealables">Contrôles préalables</h3>
+<pre><code class="language-bash">hostname --fqdn
+getent hosts ipa01.sentinel.example.test
+ip -brief address
+chronyc tracking
+df -h / /var
+free -h
+sestatus
+sudo ss -lntup
+</code></pre>
+<p>Vérifiez qu'aucun service existant n'occupe les ports nécessaires, notamment DNS si vous activez le serveur intégré.</p>
+<div class="mermaid">flowchart TD
+    FQDN["FQDN stable et résolu"] --&gt; Network["IP stable et DNS décidé"]
+    Network --&gt; Time["Heure synchronisée"]
+    Time --&gt; Resources["Ressources et ports disponibles"]
+    Resources --&gt; Security["SELinux enforcing + Firewalld actif"]
+    Security --&gt; Install["Installation"]
+</div>
+<h2 id="installer-les-paquets">Installer les paquets</h2>
+<p>Sur RHEL 9 et distributions compatibles, les paquets IdM ne nécessitent plus l'activation d'un module DNF :</p>
+<pre><code class="language-bash">sudo dnf install -y ipa-server ipa-server-dns
+rpm -q ipa-server ipa-server-dns
+command -v ipa-server-install
+</code></pre>
+<p>Le nom commercial IdM et les commandes <code>ipa-*</code> désignent la même famille de logiciels FreeIPA.</p>
+<h2 id="lancer-linstallation-interactive">Lancer l'installation interactive</h2>
+<p>L'interactivité évite d'inscrire les mots de passe dans l'historique du shell :</p>
+<pre><code class="language-bash">sudo ipa-server-install --setup-dns
+</code></pre>
+<p>Réponses attendues pour le laboratoire :</p>
+<pre><code class="language-text">Server host name : ipa01.sentinel.example.test
+DNS domain name  : sentinel.example.test
+Kerberos realm   : SENTINEL.EXAMPLE.TEST
+Configure DNS    : yes
+Forwarders       : ceux du laboratoire, ou aucun réseau externe
+Reverse zone     : selon le plan d'adressage contrôlé
+</code></pre>
+<p>L'installateur demande deux secrets distincts :</p>
+<ul>
+<li>le mot de passe du <strong>Directory Manager</strong>, compte de récupération de l'annuaire ;</li>
+<li>le mot de passe de l'administrateur <code>admin</code> du domaine.</li>
+</ul>
+<p>Stockez-les dans le gestionnaire de secrets du laboratoire. Ne les mettez ni dans Git, ni dans un script, ni dans la documentation de preuve.</p>
+<p>Une installation non interactive est utile pour l'automatisation, mais passez alors les secrets par un mécanisme protégé. La campagne 9 utilisera les rôles <code>ansible-freeipa</code> plutôt qu'une longue commande enregistrée dans l'historique.</p>
+<p>Le journal principal est :</p>
+<pre><code class="language-bash">sudo less /var/log/ipaserver-install.log
+</code></pre>
+<h2 id="ouvrir-les-services-necessaires">Ouvrir les services nécessaires</h2>
+<p>Identifiez la zone portée par l'interface, puis ajoutez les services à cette zone :</p>
+<pre><code class="language-bash">sudo firewall-cmd --get-active-zones
+sudo firewall-cmd --permanent --add-service=freeipa-4
+sudo firewall-cmd --permanent --add-service=dns
+sudo firewall-cmd --reload
+sudo firewall-cmd --list-services
+</code></pre>
+<p><code>freeipa-4</code> regroupe les ports du serveur IdM courants. Vérifiez sa définition sur la distribution :</p>
+<pre><code class="language-bash">sudo firewall-cmd --info-service=freeipa-4
+</code></pre>
+<p>Dans un environnement filtré par sources, limitez l'accès aux réseaux clients prévus au lieu d'ouvrir le service sur une zone trop large.</p>
+<h2 id="verifier-les-services">Vérifier les services</h2>
+<h3 id="vue-freeipa">Vue FreeIPA</h3>
+<pre><code class="language-bash">sudo ipactl status
+</code></pre>
+<p><code>ipactl</code> orchestre les composants IdM. Utilisez ensuite <code>systemctl</code> et les journaux du composant en faute, plutôt qu'un redémarrage global automatique.</p>
+<h3 id="dns">DNS</h3>
+<pre><code class="language-bash">dig +noall +answer SOA sentinel.example.test.
+dig +noall +answer NS sentinel.example.test.
+dig +noall +answer A ipa01.sentinel.example.test.
+dig +noall +answer -x 192.0.2.10
+dig +noall +answer SRV _ldap._tcp.sentinel.example.test.
+dig +noall +answer SRV _kerberos._udp.sentinel.example.test.
+</code></pre>
+<p>SOA et NS valident l'autorité de la zone, A la résolution directe, PTR la résolution inverse et SRV la découverte de service. La zone inverse peut être absente si vous avez explicitement choisi de ne pas la gérer. Documentez alors qui la contrôle et les conséquences ; ne présentez pas une réponse vide comme une réussite.</p>
+<h3 id="mise-en-pratique-dns-publier-sentinel01">Mise en pratique DNS — publier <code>sentinel01</code></h3>
+<p>Sur le domaine de laboratoire installé, réalisez le parcours suivant :</p>
+<ol>
+<li>inventoriez les zones avec <code>ipa dnszone-find</code> ;</li>
+<li>identifiez SOA et NS de <code>sentinel.example.test</code> avec <code>dig</code> ;</li>
+<li>observez les SRV LDAP et Kerberos créés par IdM ;</li>
+<li>créez ou vérifiez le A de <code>sentinel01</code> ;</li>
+<li>créez ou vérifiez sa zone inverse et son PTR ;</li>
+<li>testez direct et inverse depuis <code>ipa01</code>, puis depuis une VM cliente ;</li>
+<li>expliquez pourquoi chaque résultat valide une propriété différente.</li>
+</ol>
+<p>Commandes de preuve :</p>
+<pre><code class="language-bash">dig +noall +answer SOA sentinel.example.test.
+dig +noall +answer NS sentinel.example.test.
+dig +noall +answer SRV _ldap._tcp.sentinel.example.test.
+dig +noall +answer SRV _kerberos._udp.sentinel.example.test.
+dig +noall +answer A sentinel01.sentinel.example.test.
+dig +noall +answer -x 192.0.2.20
+</code></pre>
+<p>Pour l'incident pédagogique, utilisez une VM témoin ou un enregistrement temporaire dédié : laissez le direct valide mais omettez volontairement le PTR. Constatez précisément ce qui continue de fonctionner et ce qui devient incohérent, puis ajoutez le PTR et répétez les mêmes commandes. Ne cassez pas les enregistrements du serveur IdM dont dépend tout le laboratoire.</p>
+<h3 id="kerberos">Kerberos</h3>
+<pre><code class="language-bash">kinit admin
+klist
+</code></pre>
+<p>Contrôlez le principal, le royaume, les dates et le cache. À la fin de la session administrative :</p>
+<pre><code class="language-bash">kdestroy
+klist
+</code></pre>
+<p>La dernière commande doit indiquer qu'aucun cache de tickets n'est disponible.</p>
+<h3 id="api-et-annuaire">API et annuaire</h3>
+<p>Après un nouveau <code>kinit admin</code> :</p>
+<pre><code class="language-bash">ipa ping
+ipa env | head
+ipa user-show admin
+ipa config-show
+</code></pre>
+<h3 id="https-et-certificat">HTTPS et certificat</h3>
+<pre><code class="language-bash">curl --fail --cacert /etc/ipa/ca.crt \
+  https://ipa01.sentinel.example.test/ipa/ui/
+openssl x509 -in /var/lib/ipa/certs/httpd.crt \
+  -noout -subject -issuer -dates -ext subjectAltName
+</code></pre>
+<p>Le chemin exact du certificat système peut varier selon la version. Utilisez <code>getcert list</code> et la documentation de l'installation pour identifier le fichier réellement suivi.</p>
+<h3 id="ports-et-journaux">Ports et journaux</h3>
+<pre><code class="language-bash">sudo ss -lntup
+sudo journalctl --since '-15 minutes' -p warning
+sudo tail -n 100 /var/log/ipaserver-install.log
+</code></pre>
+<p>Quelques emplacements utiles :</p>
+<table>
+<thead>
+<tr>
+<th>Composant</th>
+<th>Source de diagnostic</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>installation</td>
+<td><code>/var/log/ipaserver-install.log</code></td>
+</tr>
+<tr>
+<td>Apache/API</td>
+<td>journal de <code>httpd</code> et journaux IPA</td>
+</tr>
+<tr>
+<td>389 DS</td>
+<td>journaux de l'instance Directory Server</td>
+</tr>
+<tr>
+<td>Kerberos</td>
+<td>journaux KDC</td>
+</tr>
+<tr>
+<td>Dogtag</td>
+<td>journaux PKI</td>
+</tr>
+<tr>
+<td>DNS</td>
+<td>journal de <code>named</code></td>
+</tr>
+</tbody>
+</table>
+<p>Les noms exacts des unités et répertoires dépendent de l'instance et de la version ; partez de <code>ipactl status</code> et <code>systemctl status</code>.</p>
+<h2 id="une-validation-de-bout-en-bout">Une validation de bout en bout</h2>
+<div class="mermaid">sequenceDiagram
+    participant A as Administrateur
+    participant DNS
+    participant KDC
+    participant API
+    participant LDAP
+    A-&gt;&gt;DNS: découvre ipa01 et les SRV
+    DNS--&gt;&gt;A: noms et services
+    A-&gt;&gt;KDC: kinit admin
+    KDC--&gt;&gt;A: TGT
+    A-&gt;&gt;API: ipa user-show admin
+    API-&gt;&gt;LDAP: lit l'entrée autorisée
+    LDAP--&gt;&gt;API: attributs
+    API--&gt;&gt;A: résultat
+</div>
+<p>Conservez les sorties de chacune de ces étapes. Une interface Web visible ne remplace pas ce test.</p>
+<h2 id="ce-que-le-laboratoire-ne-fournit-pas">Ce que le laboratoire ne fournit pas</h2>
+<p>Un seul serveur reste un point unique de panne. Une architecture de production doit notamment prévoir :</p>
+<ul>
+<li>plusieurs réplicas dans des zones de défaillance pertinentes ;</li>
+<li>plusieurs serveurs DNS et un nombre raisonné de réplicas CA ;</li>
+<li>sauvegardes IdM cohérentes et restaurations testées ;</li>
+<li>supervision de réplication, tickets, certificats, temps et capacité ;</li>
+<li>procédures pour la perte d'un serveur ou d'un secret d'administration ;</li>
+<li>intégration éventuelle avec Active Directory.</li>
+</ul>
+<p>Plus de réplicas n'est pas toujours mieux : la réplication et les services CA ont un coût. Le dimensionnement suit la topologie, pas un nombre arbitraire.</p>
+<h2 id="desinstaller-dans-un-laboratoire">Désinstaller dans un laboratoire</h2>
+<p>Avant de détruire la VM, la commande prévue est :</p>
+<pre><code class="language-bash">sudo ipa-server-install --uninstall
+</code></pre>
+<p>Cette action est destructive pour le serveur IdM. Ne l'exécutez jamais sur le seul serveur contenant un domaine utile. Dans le laboratoire, préférez revenir à un instantané identifié si vous devez recommencer la campagne.</p>
+<h2 id="mise-en-pratique-dossier-de-preuve">Mise en pratique — dossier de preuve</h2>
+<p>Créez un dossier hors du dépôt de code et conservez :</p>
+<ol>
+<li>le plan de nommage et d'adressage ;</li>
+<li>les contrôles préalables ;</li>
+<li>le résumé de l'installateur sans secrets ;</li>
+<li>l'état <code>ipactl</code> ;</li>
+<li>l'inventaire des zones et les réponses DNS SOA/NS/A/PTR/SRV ;</li>
+<li>un TGT valide puis détruit ;</li>
+<li>une requête <code>ipa user-show</code> réussie ;</li>
+<li>le certificat HTTPS lu avec OpenSSL ;</li>
+<li>les règles Firewalld réellement chargées ;</li>
+<li>les limites connues de la topologie à un serveur.</li>
+</ol>
+<h2 id="impact-sur-sentinel">Impact sur Sentinel</h2>
+<p>Sentinel n'est pas encore modifié. Le serveur <code>ipa01</code> devient la racine de confiance du laboratoire qui enrôlera <code>sentinel01</code>, créera ses groupes et délivrera ses certificats. Cette dépendance doit être opérationnelle avant de toucher à l'application.</p>
+<h2 id="synthese">Synthèse</h2>
+<ul>
+<li>le FQDN, le domaine, le royaume, le DNS et l'heure précèdent l'installation ;</li>
+<li>une zone est un périmètre d'autorité ; SOA et NS l'identifient, une délégation la relie à son parent ;</li>
+<li>A/AAAA résolvent un nom, PTR réalise l'inverse et SRV permet la découverte de services ;</li>
+<li>résolution directe et inverse sont deux données indépendantes dont la cohérence doit être conçue et vérifiée ;</li>
+<li>le laboratoire active DNS et CA intégrés pour rendre les dépendances observables ;</li>
+<li>les secrets administratifs ne doivent pas figurer dans les commandes versionnées ;</li>
+<li><code>ipactl</code>, DNS, Kerberos, l'API et les certificats se valident séparément ;</li>
+<li>SELinux reste en application et Firewalld n'ouvre que les services prévus ;</li>
+<li>un serveur unique permet d'apprendre, mais ne fournit pas la haute disponibilité.</li>
+</ul>
+<h2 id="pour-aller-plus-loin">Pour aller plus loin</h2>
+<p>Le domaine est disponible. Le chapitre suivant crée et fait vivre sa première identité humaine sans confondre mot de passe, ticket et état du compte.</p>
+<p><a href="../8.4-gestion-utilisateurs/">Continuer vers le chapitre 8.4 — Gérer les utilisateurs</a></p>
+<p>Références : <a href="https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/9/html/installing_identity_management/">Installing Identity Management</a>, <a href="https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/9/html/planning_identity_management/">Planning Identity Management</a>, <a href="https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/9/html/working_with_dns_in_identity_management/managing-dns-zones-in-idm_working-with-dns-in-identity-management">Managing DNS zones in IdM</a> et <a href="https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/9/html/working_with_dns_in_identity_management/managing-dns-records-in-idm_working-with-dns-in-identity-management">Managing DNS records in IdM</a>.</p>
+</div>
+</div><footer>
+<div aria-label="Footer Navigation" class="rst-footer-buttons" role="navigation">
+<a class="btn btn-neutral float-left" href="../8.2-architecture-interne-freeipa/" title="Chapitre 8.2 — Comprendre l'architecture interne de FreeIPA"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+<a class="btn btn-neutral float-right" href="../8.4-gestion-utilisateurs/" title="Chapitre 8.4 — Gérer le cycle de vie des utilisateurs FreeIPA">Next <span class="icon icon-circle-arrow-right"></span></a>
+</div>
+<hr/>
+<div role="contentinfo">
+<!-- Copyright etc -->
+</div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+</div>
+</div>
+</section>
+</div>
+<div aria-label="Versions" class="rst-versions" role="note">
+<span class="rst-current-version" data-toggle="rst-current-version">
+<span>
+<a class="fa fa-code-fork" href="https://github.com/tdelaclos/formations" style="color: #fcfcfc"> tdelaclos/formations</a>
+</span>
+<span><a href="../8.2-architecture-interne-freeipa/" style="color: #fcfcfc">« Previous</a></span>
+<span><a href="../8.4-gestion-utilisateurs/" style="color: #fcfcfc">Next »</a></span>
+</span>
+</div>
+<script src="../../js/jquery-3.6.0.min.js"></script>
+<script>var base_url = "../..";</script>
+<script src="../../js/theme_extra.js"></script>
+<script src="../../js/theme.js"></script>
+<script src="../../search/main.js"></script>
+<script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+<script type="module">import mermaid from "https://unpkg.com/mermaid@10.4.0/dist/mermaid.esm.min.mjs";
+mermaid.initialize({});</script></body>
+</html>

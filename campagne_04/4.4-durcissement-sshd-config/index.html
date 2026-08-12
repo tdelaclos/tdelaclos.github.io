@@ -1,0 +1,1268 @@
+<!DOCTYPE html>
+
+<html class="writer-html5" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="IE=edge" http-equiv="X-UA-Compatible"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="../../img/favicon.ico" rel="shortcut icon"/>
+<title>Chapitre 4.4 — Durcissement de sshd_config - Formation Sentinel — AlmaLinux sécurisé</title>
+<link href="../../css/theme.css" rel="stylesheet"/>
+<link href="../../css/theme_extra.css" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" rel="stylesheet"/>
+<script>
+        // Current page data
+        var mkdocs_page_name = "Chapitre 4.4 \u2014 Durcissement de sshd_config";
+        var mkdocs_page_input_path = "campagne_04/4.4-durcissement-sshd-config.md";
+        var mkdocs_page_url = null;
+      </script>
+<!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+<script>hljs.highlightAll();</script>
+</head>
+<body class="wy-body-for-nav" role="document">
+<div class="wy-grid-for-nav">
+<nav class="wy-nav-side stickynav" data-toggle="wy-nav-shift">
+<div class="wy-side-scroll">
+<div class="wy-side-nav-search">
+<a class="icon icon-home" href="../.."> Formation Sentinel — AlmaLinux sécurisé
+        </a><div role="search">
+<form action="../../search.html" class="wy-form" id="rtd-search-form" method="get">
+<input aria-label="Search docs" name="q" placeholder="Search docs" title="Type search term here" type="text"/>
+</form>
+</div>
+</div>
+<div aria-label="Navigation menu" class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../..">Accueil</a>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">A propos</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../GUIDE-REDACTION/">Guide de rédaction</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../PARCOURS-SENTINEL/">Parcours applicatif Sentinel</a>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Campagnes</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal">Campagne 1 - Sécuriser le socle Linux</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.1-pourquoi-securiser-socle-linux/">Chapitre 1.1 — Pourquoi sécuriser un socle Linux ?</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.2-installation-almalinux-minimal/">Chapitre 1.2 — Installer AlmaLinux minimal</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.3-composants-systeme-linux/">Chapitre 1.3 — Comprendre les composants d'un système Linux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.4-premier-demarrage-verifications/">Chapitre 1.4 — Établir la baseline du serveur</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.5-mise-a-jour-gestion-depots/">Chapitre 1.5 — Mettre à jour et gérer les dépôts</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.6-architecture-systemes-fichiers/">Chapitre 1.6 — Organiser les systèmes de fichiers</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.7-utilisateurs-groupes-permissions/">Chapitre 1.7 — Comprendre identités et permissions</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.8-sudo-moindre-privilege/">Chapitre 1.8 — Administrer avec sudo</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.9-premiere-mise-en-securite-serveur/">Chapitre 1.9 — Mission : mettre le serveur en sécurité</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.10-creation-laboratoire-sentinel/">Chapitre 1.10 — Créer le laboratoire Sentinel</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 2 - Gestion des permissions et des identités</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.1-permissions-unix/">Chapitre 2.1 — Les permissions UNIX</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.2-acl/">Chapitre 2.2 — Les ACL</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.3-umask/">Chapitre 2.3 — L'umask</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.4-attributs-etendus/">Chapitre 2.4 — Les attributs étendus</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.5-pam/">Chapitre 2.5 — PAM</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.6-politique-mots-de-passe/">Chapitre 2.6 — Politique de mots de passe</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.7-comptes-systeme/">Chapitre 2.7 — Les comptes système</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.8-sudo-avance/">Chapitre 2.8 — sudo avancé</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.9-fichiers-identites-linux/">Chapitre 2.9 — Comprendre les fichiers d'identités Linux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.10-synthese-securiser-identites/">Chapitre 2.10 — Synthèse : sécuriser les identités</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 3 - TCP/IP et Firewalld</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.1-tcp-ip-administrateur/">Chapitre 3.1 — TCP/IP côté administrateur</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.2-architecture-firewalld/">Chapitre 3.2 — Architecture de Firewalld</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.3-zones-firewalld/">Chapitre 3.3 — Les zones Firewalld</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.4-services-firewalld/">Chapitre 3.4 — Les services Firewalld</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.5-conntrack-filtrage-etats/">Chapitre 3.5 — Conntrack et le filtrage par états</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.6-rich-rules-firewalld/">Chapitre 3.6 — Les Rich Rules Firewalld</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.7-journalisation-firewalld/">Chapitre 3.7 — Journalisation et analyse Firewalld</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.8-ip-sets-firewalld/">Chapitre 3.8 — Les IP Sets Firewalld</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.9-runtime-permanent/">Chapitre 3.9 — Runtime et Permanent</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.10-politique-reseau-sentinel/">Chapitre 3.10 — Concevoir la politique réseau de Sentinel</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal current">Campagne 4 - SSH</a>
+<ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../4.1-architecture-openssh/">Chapitre 4.1 — Architecture d'OpenSSH</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../4.2-authentification-mot-de-passe/">Chapitre 4.2 — Authentification par mot de passe</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../4.3-authentification-par-cles/">Chapitre 4.3 — Authentification par clés</a>
+</li>
+<li class="toctree-l2 current"><a class="reference internal current" href="#">Chapitre 4.4 — Durcissement de sshd_config</a>
+<ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="#vous-etes-ici">Vous êtes ici</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#objectifs-pedagogiques">Objectifs pédagogiques</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pourquoi-ce-chapitre-existe">Pourquoi ce chapitre existe</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#theorie-detaillee">Théorie détaillée</a>
+<ul>
+<li class="toctree-l4"><a class="reference internal" href="#ou-se-trouve-la-configuration">Où se trouve la configuration ?</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#une-configuration-declarative">Une configuration déclarative</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#lire-la-configuration-reellement-utilisee">Lire la configuration réellement utilisée</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#verifier-la-syntaxe-avant-de-redemarrer">Vérifier la syntaxe avant de redémarrer</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#les-directives-importantes">Les directives importantes</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#premier-principe-interdire-la-connexion-directe-de-root">Premier principe : interdire la connexion directe de root</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pourquoi-preferer-sudo">Pourquoi préférer sudo ?</a>
+<ul>
+<li class="toctree-l4"><a class="reference internal" href="#premiere">Première</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#deuxieme">Deuxième</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#desactiver-les-mots-de-passe">Désactiver les mots de passe</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#conserver-lauthentification-par-cles">Conserver l'authentification par clés</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#le-role-de-usepam">Le rôle de UsePAM</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#limiter-les-utilisateurs-autorises">Limiter les utilisateurs autorisés</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#limiter-les-tentatives-dauthentification">Limiter les tentatives d'authentification</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#reduire-le-temps-disponible">Réduire le temps disponible</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#interdire-les-connexions-sans-authentification">Interdire les connexions sans authentification</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#controler-les-tentatives-simultanees">Contrôler les tentatives simultanées</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#choisir-le-port-decoute">Choisir le port d'écoute</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#ecouter-sur-une-interface-specifique">Écouter sur une interface spécifique</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#une-premiere-configuration-professionnelle">Une première configuration professionnelle</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#desactiver-les-fonctionnalites-inutiles">Désactiver les fonctionnalités inutiles</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#le-forwarding-x11">Le Forwarding X11</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#le-tcp-forwarding">Le TCP Forwarding</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#le-forwarding-dagent">Le Forwarding d'agent</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#le-forwarding-des-ports">Le Forwarding des ports</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#compression">Compression</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#les-variables-denvironnement">Les variables d'environnement</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#les-bannieres">Les bannières</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#les-delais-dinactivite">Les délais d'inactivité</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#respecter-la-politique-cryptographique-du-systeme">Respecter la politique cryptographique du système</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#une-configuration-encore-plus-robuste">Une configuration encore plus robuste</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#approfondissement">Approfondissement</a>
+<ul>
+<li class="toctree-l4"><a class="reference internal" href="#le-veritable-durcissement-consiste-a-supprimer-les-possibilites-pas-a-ajouter-des-protections">Le véritable durcissement consiste à supprimer les possibilités, pas à ajouter des protections</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#le-principe-du-moindre-service">Le principe du moindre service</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#les-recommandations-evoluent">Les recommandations évoluent</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#une-bonne-configuration-est-documentee">Une bonne configuration est documentée</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#concevoir-la-politique">Concevoir la politique</a>
+<ul>
+<li class="toctree-l4"><a class="reference internal" href="#le-durcissement-doit-rester-exploitable">Le durcissement doit rester exploitable</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#point-de-vue-offensif">Point de vue offensif</a>
+<ul>
+<li class="toctree-l4"><a class="reference internal" href="#le-meilleur-durcissement-est-souvent-invisible">Le meilleur durcissement est souvent invisible</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#en-entreprise">En entreprise</a>
+<ul>
+<li class="toctree-l4"><a class="reference internal" href="#les-profils-de-configuration">Les profils de configuration</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#auditer-regulierement-la-configuration">Auditer régulièrement la configuration</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#culture-technique">Culture technique</a>
+<ul>
+<li class="toctree-l4"><a class="reference internal" href="#pourquoi-sshd_configd-existe-t-il">Pourquoi sshd_config.d existe-t-il ?</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#les-directives-sont-evaluees-dans-lordre">Les directives sont évaluées dans l'ordre</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#les-valeurs-par-defaut-changent-avec-les-versions">Les valeurs par défaut changent avec les versions</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#piege-classique">Piège classique</a>
+<ul>
+<li class="toctree-l4"><a class="reference internal" href="#modifier-ssh-depuis-une-connexion-ssh">Modifier SSH depuis une connexion SSH</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#confondre-reload-et-restart">Confondre "Reload" et "Restart"</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#tp-1-construire-un-fragment-de-durcissement">TP 1 — Construire un fragment de durcissement</a>
+<ul>
+<li class="toctree-l4"><a class="reference internal" href="#objectif">Objectif</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#etape-1-sauvegarder-la-configuration">Étape 1 — Sauvegarder la configuration</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#etape-2-appliquer-un-premier-durcissement">Étape 2 — Appliquer un premier durcissement</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#tp-2-valider-sans-perdre-lacces">TP 2 — Valider sans perdre l'accès</a>
+<ul>
+<li class="toctree-l4"><a class="reference internal" href="#etape-3-verifier-la-configuration-effective">Étape 3 — Vérifier la configuration effective</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#etape-4-tester-sans-se-verrouiller">Étape 4 — Tester sans se verrouiller</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#mission-dingenieur">Mission d'ingénieur</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#impact-sur-sentinel">Impact sur Sentinel</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#synthese">Synthèse</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pour-aller-plus-loin">Pour aller plus loin</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#schema-recapitulatif">Schéma récapitulatif</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../4.5-bastion-administration/">Chapitre 4.5 — Bastion d'administration</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../4.6-journalisation-audit-ssh/">Chapitre 4.6 — Journalisation et audit SSH</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../4.7-protection-attaques-ssh/">Chapitre 4.7 — Protection contre les attaques SSH</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../4.8-mission-administration-sentinel/">Chapitre 4.8 — Mission : administrer Sentinel en sécurité</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 5 - Systemd</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.1-comprendre-systemd/">Chapitre 5.1 — Comprendre systemd</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.2-unites-systemd/">Chapitre 5.2 — Les unités systemd</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.3-creer-service-sentinel/">Chapitre 5.3 — Créer le service Sentinel</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.4-sandboxing-systemd/">Chapitre 5.4 — Sandboxing systemd</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.5-capacites-linux/">Chapitre 5.5 — Les capacités Linux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.6-journalisation-journald/">Chapitre 5.6 — Journalisation avec journald</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.7-supervision-redemarrage/">Chapitre 5.7 — Supervision et redémarrage automatique</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.8-mission-sentinel-resilient/">Chapitre 5.8 — Mission : rendre Sentinel résilient</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 6 - SELinux</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_06/6.1-pourquoi-selinux-existe/">Chapitre 6.1 — Pourquoi SELinux existe</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_06/6.2-contextes-selinux/">Chapitre 6.2 — Comprendre les contextes SELinux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_06/6.3-politiques-selinux/">Chapitre 6.3 — Les politiques SELinux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_06/6.4-diagnostic-refus-selinux/">Chapitre 6.4 — Diagnostiquer les refus SELinux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_06/6.5-creation-regles-selinux/">Chapitre 6.5 — Créer des règles SELinux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_06/6.6-securiser-sentinel-selinux/">Chapitre 6.6 — Sécuriser Sentinel avec SELinux</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 7 - TLS et PKI</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.1-comprendre-cryptographie-appliquee/">Chapitre 7.1 — Comprendre la cryptographie appliquée</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.2-lire-verifier-certificats-x509/">Chapitre 7.2 — Lire et vérifier les certificats X.509</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.3-construire-autorite-certification/">Chapitre 7.3 — Construire une autorité de certification</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.4-authentification-mutuelle-tls/">Chapitre 7.4 — Authentifier les deux extrémités avec mTLS</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.5-preparer-integration-freeipa/">Chapitre 7.5 — Préparer l'intégration à FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.6-renouveler-revoquer-certificats/">Chapitre 7.6 — Renouveler et révoquer les certificats</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.7-securiser-sentinel-tls/">Chapitre 7.7 — Sécuriser Sentinel avec TLS</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 8 - FreeIPA</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.1-presentation-freeipa/">Chapitre 8.1 — Découvrir FreeIPA et la gestion centralisée des identités</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.2-architecture-interne-freeipa/">Chapitre 8.2 — Comprendre l'architecture interne de FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.3-installation-freeipa/">Chapitre 8.3 — Installer un serveur FreeIPA de laboratoire</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.4-gestion-utilisateurs/">Chapitre 8.4 — Gérer le cycle de vie des utilisateurs FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.5-groupes-roles/">Chapitre 8.5 — Organiser les groupes et les rôles FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.6-politiques-sudo/">Chapitre 8.6 — Centraliser les politiques sudo avec FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.7-gestion-hotes/">Chapitre 8.7 — Enrôler les hôtes et contrôler les accès avec HBAC</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.8-certificats/">Chapitre 8.8 — Gérer les certificats de service avec FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.9-integration-sentinel/">Chapitre 8.9 — Intégrer Sentinel à FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.10-mission-administration-freeipa/">Chapitre 8.10 — Mission : administrer Sentinel avec FreeIPA</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 9 - Déploiement avec Ansible</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.1-architecture-ansible/">Chapitre 9.1 — Comprendre l'architecture Ansible</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.2-composants-ansible/">Chapitre 9.2 — Comprendre les composants et l'idempotence Ansible</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.3-inventaires/">Chapitre 9.3 — Construire les inventaires Ansible</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.4-premiers-playbooks/">Chapitre 9.4 — Écrire les premiers playbooks</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.5-variables-templates/">Chapitre 9.5 — Piloter la configuration avec variables et templates</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.6-roles-ansible/">Chapitre 9.6 — Concevoir des rôles Ansible réutilisables</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.7-deployer-sentinel-ansible/">Chapitre 9.7 — Déployer Sentinel avec Ansible</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.8-integrer-sentinel-freeipa/">Chapitre 9.8 — Automatiser l'intégration de Sentinel à FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.9-industrialiser-laboratoire/">Chapitre 9.9 — Industrialiser le projet Ansible</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.10-mission-deploiement-sentinel/">Chapitre 9.10 — Mission : reconstruire Sentinel avec Ansible</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 10 - Packaging RPM</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_10/10.1-construire-paquet-rpm/">Chapitre 10.1 — Construire un paquet RPM</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_10/10.2-gerer-dependances-rpm/">Chapitre 10.2 — Gérer les dépendances RPM</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_10/10.3-gerer-fichiers-configuration-rpm/">Chapitre 10.3 — Gérer les fichiers de configuration RPM</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_10/10.4-signer-paquets-rpm/">Chapitre 10.4 — Signer les paquets RPM</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_10/10.5-exploiter-depot-rpm-prive/">Chapitre 10.5 — Exploiter un dépôt RPM privé</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_10/10.6-packager-sentinel/">Chapitre 10.6 — Packager Sentinel</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 11 - Conteneurs Podman</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_11/11.1-decouvrir-podman/">Chapitre 11.1 — Découvrir Podman</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_11/11.2-conteneurs-rootless/">Chapitre 11.2 — Exécuter des conteneurs rootless</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_11/11.3-construire-images-securisees/">Chapitre 11.3 — Construire des images sécurisées</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_11/11.4-reseaux-conteneurs/">Chapitre 11.4 — Concevoir les réseaux de conteneurs</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_11/11.5-gerer-secrets-podman/">Chapitre 11.5 — Gérer les secrets avec Podman</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_11/11.6-executer-sentinel-securite/">Chapitre 11.6 — Exécuter Sentinel en sécurité</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 12 - Supervision et audit</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_12/12.1-centraliser-journaux-rsyslog/">Chapitre 12.1 — Centraliser les journaux avec Rsyslog</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_12/12.2-auditer-systeme-auditd/">Chapitre 12.2 — Auditer le système avec auditd</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_12/12.3-controler-integrite-fichiers-aide/">Chapitre 12.3 — Contrôler l'intégrité des fichiers avec AIDE</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_12/12.4-superviser-sentinel-prometheus/">Chapitre 12.4 — Superviser Sentinel avec Prometheus</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_12/12.5-concevoir-alertes-alertmanager/">Chapitre 12.5 — Concevoir des alertes avec Alertmanager</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_12/12.6-construire-tableau-bord-sentinel/">Chapitre 12.6 — Construire le tableau de bord Sentinel</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 13 - Attaques et défense</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.1-reconnaissance/">Chapitre 13.1 — Reconnaissance</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.2-scan-reseau/">Chapitre 13.2 — Scan réseau</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.3-brute-force-ssh/">Chapitre 13.3 — Brute force SSH</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.4-escalade-privileges/">Chapitre 13.4 — Escalade de privilèges</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.5-mouvements-lateraux/">Chapitre 13.5 — Mouvements latéraux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.6-persistance/">Chapitre 13.6 — Persistance</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.7-exfiltration/">Chapitre 13.7 — Exfiltration</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.8-etude-cas-complete/">Chapitre 13.8 — Étude de cas complète</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 14 - Projet final</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.1-deployer-sentinel-almalinux-minimale/">Chapitre 14.1 — Déployer Sentinel sur une AlmaLinux minimale</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.2-securiser-hote/">Chapitre 14.2 — Sécuriser l'hôte</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.3-integrer-freeipa/">Chapitre 14.3 — Intégrer FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.4-deployer-ansible/">Chapitre 14.4 — Déployer avec Ansible</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.5-packager-rpm/">Chapitre 14.5 — Packager avec RPM</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.6-conteneuriser-podman/">Chapitre 14.6 — Conteneuriser avec Podman</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.7-superviser-auditer/">Chapitre 14.7 — Superviser et auditer</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.8-audit-final-tests-kali/">Chapitre 14.8 — Audit final et tests depuis Kali</a>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</nav>
+<section class="wy-nav-content-wrap" data-toggle="wy-nav-shift">
+<nav aria-label="Mobile navigation menu" class="wy-nav-top" role="navigation">
+<i class="fa fa-bars" data-toggle="wy-nav-top"></i>
+<a href="../..">Formation Sentinel — AlmaLinux sécurisé</a>
+</nav>
+<div class="wy-nav-content">
+<div class="rst-content"><div aria-label="breadcrumbs navigation" role="navigation">
+<ul class="wy-breadcrumbs">
+<li><a aria-label="Docs" class="icon icon-home" href="../.."></a></li>
+<li class="breadcrumb-item">Campagnes</li>
+<li class="breadcrumb-item">Campagne 4 - SSH</li>
+<li class="breadcrumb-item active">Chapitre 4.4 — Durcissement de sshd_config</li>
+<li class="wy-breadcrumbs-aside">
+<a href="https://github.com/tdelaclos/formations/edit/master/docs/campagne_04/4.4-durcissement-sshd-config.md">Edit on tdelaclos/formations</a>
+</li>
+</ul>
+<hr/>
+</div>
+<div class="document" itemscope="itemscope" itemtype="http://schema.org/Article" role="main">
+<div class="section" itemprop="articleBody">
+<h1 id="chapitre-44-durcissement-de-sshd_config">Chapitre 4.4 — Durcissement de <code>sshd_config</code></h1>
+<blockquote>
+<p><strong>Campagne 4 — SSH et accès distant</strong></p>
+<p><em>« Une authentification forte ne suffit pas si le serveur SSH accepte encore des mécanismes inutiles, des algorithmes obsolètes ou des comportements dangereux. Le véritable niveau de sécurité d'OpenSSH se trouve dans son fichier de configuration. »</em></p>
+</blockquote>
+<h2 id="vous-etes-ici">Vous êtes ici</h2>
+<pre><code class="language-text">Partie I — Construire un socle sécurisé
+
+Campagne 4 — SSH et accès distant
+
+      4.1 Architecture d'OpenSSH
+      4.2 Authentification par mot de passe
+      4.3 Authentification par clés
+    ► 4.4 Durcissement de sshd_config
+      4.5 Bastion d'administration
+      4.6 Journalisation et audit SSH
+      4.7 Protection contre les attaques
+      4.8 Mission : administration sécurisée de Sentinel
+</code></pre>
+<h2 id="objectifs-pedagogiques">Objectifs pédagogiques</h2>
+<p>À la fin de ce chapitre, vous serez capable de :</p>
+<ul>
+<li>comprendre le rôle du fichier <code>sshd_config</code> ;</li>
+<li>identifier les principales directives de sécurité ;</li>
+<li>durcir progressivement un serveur OpenSSH ;</li>
+<li>comprendre l'impact réel de chaque paramètre ;</li>
+<li>construire une configuration adaptée à un environnement professionnel.</li>
+</ul>
+<h2 id="pourquoi-ce-chapitre-existe">Pourquoi ce chapitre existe</h2>
+<p>Depuis le début de cette campagne, nous avons étudié :</p>
+<ul>
+<li>le fonctionnement interne d'OpenSSH ;</li>
+<li>l'authentification par mot de passe ;</li>
+<li>les clés publiques.</li>
+</ul>
+<p>Mais toutes ces fonctionnalités ne sont que des possibilités offertes par OpenSSH. C'est le fichier : <code>/etc/ssh/sshd_config</code> qui décide réellement :</p>
+<ul>
+<li>quelles méthodes d'authentification sont autorisées ;</li>
+<li>quels utilisateurs peuvent se connecter ;</li>
+<li>quels algorithmes sont acceptés ;</li>
+<li>si root peut ouvrir une session ;</li>
+<li>combien de tentatives sont autorisées ;</li>
+<li>quelles fonctionnalités sont activées.</li>
+</ul>
+<p>Autrement dit, <strong>la sécurité d'OpenSSH dépend essentiellement de ce fichier.</strong></p>
+<h2 id="theorie-detaillee">Théorie détaillée</h2>
+<h3 id="ou-se-trouve-la-configuration">Où se trouve la configuration ?</h3>
+<p>Sous AlmaLinux, la configuration principale est généralement située ici. <code>/etc/ssh/sshd_config</code> Le démon lit ce fichier :</p>
+<ul>
+<li>au démarrage ;</li>
+<li>lors d'un rechargement de configuration.</li>
+</ul>
+<p>Après une modification, il est généralement nécessaire d'exécuter.</p>
+<pre><code class="language-bash">sudo systemctl reload sshd
+</code></pre>
+<p>ou</p>
+<pre><code class="language-bash">sudo systemctl restart sshd
+</code></pre>
+<p>Le premier recharge la configuration sans interrompre les sessions existantes. Le second redémarre complètement le service.</p>
+<h2 id="une-configuration-declarative">Une configuration déclarative</h2>
+<p><code>sshd_config</code> est un fichier extrêmement simple. Chaque ligne correspond à une directive. Par exemple. <code>PermitRootLogin no</code> ou <code>PasswordAuthentication no</code> ou encore. <code>Port 22</code> La syntaxe est volontairement minimaliste.</p>
+<pre><code class="language-text">Directive
+
+Espace
+
+Valeur
+</code></pre>
+<p>Les lignes commençant par : <code>#</code> sont des commentaires.</p>
+<h2 id="lire-la-configuration-reellement-utilisee">Lire la configuration réellement utilisée</h2>
+<p>Une erreur fréquente consiste à ouvrir directement le fichier. Pourtant, certaines valeurs peuvent être héritées, ou provenir d'autres fichiers. La commande la plus fiable est :</p>
+<pre><code class="language-bash">sshd -T
+</code></pre>
+<p>Elle affiche : <strong>la configuration réellement utilisée par le démon</strong>. Par exemple.</p>
+<pre><code class="language-text">permitrootlogin no
+
+passwordauthentication yes
+
+usepam yes
+</code></pre>
+<p>C'est généralement cette commande qu'utilisent les ingénieurs lors d'un audit.</p>
+<p>Pour une règle conditionnelle, ajoutez un contexte fictif afin d'évaluer les blocs <code>Match</code> :</p>
+<pre><code class="language-bash">sudo sshd -T -C user=admin,addr=192.168.10.20,host=sentinel
+</code></pre>
+<p>Sur AlmaLinux, inspectez aussi les fragments de <code>/etc/ssh/sshd_config.d/</code>. Pour la plupart des mots-clés, OpenSSH conserve la première valeur obtenue dans le contexte considéré : un fichier chargé tôt peut donc empêcher un fragment ultérieur de produire l'effet intuitivement attendu.</p>
+<h2 id="verifier-la-syntaxe-avant-de-redemarrer">Vérifier la syntaxe avant de redémarrer</h2>
+<p>Une autre commande est indispensable.</p>
+<pre><code class="language-bash">sshd -t
+</code></pre>
+<p>Elle vérifie uniquement :</p>
+<ul>
+<li>la syntaxe ;</li>
+<li>la cohérence de la configuration.</li>
+</ul>
+<p>Aucun redémarrage n'est effectué. Cette habitude évite de nombreux incidents de production. Le workflow recommandé devient donc.</p>
+<div class="mermaid">flowchart TD
+    N0["Modifier"]
+    N1["sshd -t"]
+    N2["OK ?"]
+    N3["Oui"]
+    N4["Reload"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+    N2 --&gt; N3
+    N3 --&gt; N4
+</div>
+<p>Jamais l'inverse.</p>
+<h2 id="les-directives-importantes">Les directives importantes</h2>
+<p>Toutes les options de <code>sshd_config</code> n'ont pas le même impact. Certaines jouent un rôle majeur. Par exemple. <code>PermitRootLogin</code> <code>PasswordAuthentication</code> <code>PubkeyAuthentication</code> <code>UsePAM</code> <code>AllowUsers</code> <code>MaxAuthTries</code> <code>LoginGraceTime</code> <code>X11Forwarding</code> <code>AllowTcpForwarding</code> Au cours de ce chapitre, nous allons étudier chacune d'elles.</p>
+<h2 id="premier-principe-interdire-la-connexion-directe-de-root">Premier principe : interdire la connexion directe de root</h2>
+<p>L'une des recommandations les plus anciennes reste toujours valable. <code>PermitRootLogin no</code> Pourquoi ? Parce que le compte : <code>root</code> est connu de tout le monde. Les robots d'attaque commencent presque toujours par essayer : <code>root</code> En interdisant sa connexion directe, on oblige les administrateurs à :</p>
+<ul>
+<li>se connecter avec leur compte personnel ;</li>
+<li>utiliser ensuite <code>sudo</code>.</li>
+</ul>
+<p>Nous retrouvons ainsi le principe du moindre privilège étudié dans la campagne 2.</p>
+<h2 id="pourquoi-preferer-sudo">Pourquoi préférer sudo ?</h2>
+<p>Imaginons deux approches.</p>
+<h4 id="premiere">Première</h4>
+<h4 id="deuxieme">Deuxième</h4>
+<div class="mermaid">flowchart TD
+    N0["SSH"]
+    N1["tom"]
+    N2["sudo"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+</div>
+<p>La seconde présente plusieurs avantages.</p>
+<ul>
+<li>identité de l'administrateur connue ;</li>
+<li>journalisation plus précise ;</li>
+<li>application des politiques sudo ;</li>
+<li>réduction du risque d'erreur.</li>
+</ul>
+<p>C'est aujourd'hui la méthode recommandée par la plupart des guides de durcissement.</p>
+<h2 id="desactiver-les-mots-de-passe">Désactiver les mots de passe</h2>
+<p>Une fois les clés publiques correctement déployées, la directive devient. <code>PasswordAuthentication no</code> Dès cet instant, OpenSSH refuse toute tentative basée sur un mot de passe. Même si le mot de passe est correct, la connexion sera rejetée. Cette mesure élimine immédiatement :</p>
+<ul>
+<li>les attaques par dictionnaire ;</li>
+<li>le brute force classique ;</li>
+<li>le password spraying.</li>
+</ul>
+<p>C'est probablement l'un des durcissements les plus efficaces d'OpenSSH.</p>
+<p>Attention : <code>PasswordAuthentication no</code> ne désactive pas à lui seul toutes les invites de secret. Si PAM fournit une authentification <em>keyboard-interactive</em>, contrôlez aussi <code>KbdInteractiveAuthentication no</code> dans la configuration effective. Une politique multifactorielle volontaire peut au contraire combiner des méthodes avec <code>AuthenticationMethods</code>; le but est de nommer précisément les méthodes autorisées, pas de supprimer PAM au hasard.</p>
+<h2 id="conserver-lauthentification-par-cles">Conserver l'authentification par clés</h2>
+<p>Lorsque les mots de passe sont désactivés, la directive suivante devient indispensable. <code>PubkeyAuthentication yes</code> Elle indique simplement au serveur.</p>
+<pre><code class="language-text">Accepter
+
+les clés publiques.
+</code></pre>
+<p>Cela peut sembler évident, mais dans une infrastructure très sécurisée, certaines méthodes d'authentification peuvent être volontairement désactivées. Cette directive permet donc de contrôler explicitement le comportement du serveur.</p>
+<h2 id="le-role-de-usepam">Le rôle de UsePAM</h2>
+<p>Une option intrigue souvent les administrateurs. <code>UsePAM yes</code> Beaucoup pensent qu'elle ne sert plus lorsqu'on utilise des clés SSH. C'est faux. PAM intervient bien au-delà de la simple vérification d'un mot de passe. Il gère notamment :</p>
+<ul>
+<li>les restrictions de connexion ;</li>
+<li>les horaires autorisés ;</li>
+<li>les limites de ressources ;</li>
+<li>les montages automatiques ;</li>
+<li>certaines authentifications multiples ;</li>
+<li>les politiques de session.</li>
+</ul>
+<p>Même avec une authentification exclusivement basée sur des clés publiques, PAM reste généralement indispensable. C'est pourquoi la valeur recommandée est presque toujours : <code>UsePAM yes</code></p>
+<h2 id="limiter-les-utilisateurs-autorises">Limiter les utilisateurs autorisés</h2>
+<p>Par défaut, OpenSSH autorise tous les comptes pouvant ouvrir une session. Dans une infrastructure professionnelle, on préfère souvent limiter explicitement les utilisateurs. Par exemple. <code>AllowUsers tom admin</code> Ou encore. <code>AllowGroups admins</code> Le principe devient alors.</p>
+<div class="mermaid">flowchart TD
+    N0["Connexion"]
+    N1["Utilisateur autorisé ?"]
+    N2["Oui"]
+    N3["Authentification"]
+    N4["Connexion"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+    N2 --&gt; N3
+    N3 --&gt; N4
+</div>
+<p>Sinon.</p>
+<div class="mermaid">flowchart TD
+    N0["Connexion"]
+    N1["Utilisateur autorisé ?"]
+    N2["Non"]
+    N3["Refus immédiat"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+    N2 --&gt; N3
+</div>
+<p>Le serveur ne tente même pas l'authentification. Cette mesure réduit légèrement la surface d'attaque.</p>
+<h2 id="limiter-les-tentatives-dauthentification">Limiter les tentatives d'authentification</h2>
+<p>Autre directive importante. <code>MaxAuthTries</code> Exemple. <code>MaxAuthTries 3</code> L'utilisateur dispose alors de trois essais. Au-delà, la connexion est interrompue. Cette limitation ralentit les attaques automatisées. Elle ne remplace pas Fail2ban, mais elle constitue une première ligne de défense.</p>
+<h2 id="reduire-le-temps-disponible">Réduire le temps disponible</h2>
+<p>Une connexion ouverte sans authentification consomme des ressources. OpenSSH limite donc ce délai. <code>LoginGraceTime</code> Par exemple. <code>LoginGraceTime 30</code> Le client dispose de trente secondes pour s'authentifier. Au-delà. <code>Déconnexion automatique.</code> Cette mesure protège notamment contre certaines attaques cherchant à maintenir un grand nombre de connexions ouvertes.</p>
+<h2 id="interdire-les-connexions-sans-authentification">Interdire les connexions sans authentification</h2>
+<p>Une directive mérite une attention particulière. <code>PermitEmptyPasswords no</code> Heureusement, elle est déjà désactivée par défaut sur AlmaLinux. Mais elle illustre une règle importante. Même si PAM autorisait exceptionnellement un mot de passe vide, OpenSSH pourrait encore le refuser. Plusieurs couches de sécurité travaillent ensemble.</p>
+<h2 id="controler-les-tentatives-simultanees">Contrôler les tentatives simultanées</h2>
+<p>Une autre option très intéressante est. <code>MaxStartups</code> Exemple. <code>MaxStartups 10:30:100</code> Cette syntaxe signifie approximativement :</p>
+<ul>
+<li>jusqu'à 10 connexions non authentifiées : tout est accepté ;</li>
+<li>ensuite, OpenSSH commence à rejeter certaines nouvelles connexions de manière probabiliste ;</li>
+<li>au-delà de 100 connexions en attente, toutes les nouvelles demandes sont refusées.</li>
+</ul>
+<p>Schématiquement.</p>
+<div class="mermaid">flowchart TD
+    count{Connexions non authentifiées}
+    count --&gt;|0 à 10| accept[Accepter les nouvelles connexions]
+    count --&gt;|11 à 99| random[Rejet probabiliste croissant]
+    count --&gt;|100 et plus| reject[Refuser les nouvelles connexions]
+</div>
+<p>Cette option protège efficacement contre certaines formes de déni de service ciblant SSH.</p>
+<h2 id="choisir-le-port-decoute">Choisir le port d'écoute</h2>
+<p>Par défaut. <code>Port 22</code> Beaucoup d'administrateurs le remplacent. Par exemple. <code>Port 2222</code> Il est important de comprendre ce que cela apporte réellement. Cela ne renforce pas :</p>
+<ul>
+<li>le chiffrement ;</li>
+<li>l'authentification ;</li>
+<li>les algorithmes cryptographiques.</li>
+</ul>
+<p>Cela réduit simplement le bruit généré par les robots qui balayent Internet en recherchant le port 22. Autrement dit, il s'agit davantage d'une mesure de réduction du bruit que d'une véritable mesure de sécurité. Un attaquant déterminé découvrira rapidement le nouveau port grâce à un simple scan.</p>
+<h2 id="ecouter-sur-une-interface-specifique">Écouter sur une interface spécifique</h2>
+<p>Par défaut, OpenSSH écoute souvent sur toutes les interfaces réseau. Il est possible de restreindre cela. Par exemple. <code>ListenAddress 192.168.10.5</code> ou. <code>ListenAddress 127.0.0.1</code> Cette option est très utile lorsqu'un serveur possède plusieurs interfaces réseau. Par exemple.</p>
+<div class="mermaid">flowchart LR
+    internet[Internet] --&gt; public[Interface publique&lt;br/&gt;sans écoute SSH]
+    admin[Réseau d'administration] --&gt; management[Interface d'administration&lt;br/&gt;écoute SSH]
+    public --&gt; host[Serveur AlmaLinux]
+    management --&gt; host
+</div>
+<p>Cette approche réduit considérablement l'exposition du service.</p>
+<h2 id="une-premiere-configuration-professionnelle">Une première configuration professionnelle</h2>
+<p>En réunissant les premières recommandations, nous obtenons déjà une configuration beaucoup plus robuste.</p>
+<pre><code class="language-text">PermitRootLogin no
+
+PubkeyAuthentication yes
+
+PasswordAuthentication no
+
+KbdInteractiveAuthentication no
+
+UsePAM yes
+
+PermitEmptyPasswords no
+
+MaxAuthTries 3
+
+LoginGraceTime 30
+
+AllowGroups admins
+</code></pre>
+<p>Bien entendu, ce n'est pas encore une configuration complète. Nous continuerons progressivement à la renforcer tout au long de ce chapitre.</p>
+<h2 id="desactiver-les-fonctionnalites-inutiles">Désactiver les fonctionnalités inutiles</h2>
+<p>Un principe de sécurité revient constamment tout au long de cet ouvrage.</p>
+<blockquote>
+<p><strong>Tout ce qui n'est pas nécessaire doit être désactivé.</strong></p>
+</blockquote>
+<p>OpenSSH propose de nombreuses fonctionnalités. Toutes ne sont pas indispensables. Chaque fonctionnalité activée représente :</p>
+<ul>
+<li>du code exécuté ;</li>
+<li>une surface d'attaque supplémentaire ;</li>
+<li>des possibilités offertes à un attaquant.</li>
+</ul>
+<p>L'objectif est donc de ne conserver que ce qui est réellement utilisé.</p>
+<h2 id="le-forwarding-x11">Le Forwarding X11</h2>
+<p>Historiquement, SSH permet de lancer une application graphique distante. Par exemple.</p>
+<pre><code class="language-bash">ssh -X serveur
+</code></pre>
+<p>Cette fonctionnalité repose sur : <code>X11Forwarding yes</code> Sur un serveur de production, elle est rarement utile. Au contraire, elle augmente la surface d'attaque. La recommandation est donc généralement. <code>X11Forwarding no</code> Dans notre projet Sentinel, nous administrons exclusivement un serveur sans interface graphique. Cette fonctionnalité sera donc désactivée.</p>
+<h2 id="le-tcp-forwarding">Le TCP Forwarding</h2>
+<p>SSH est capable de transporter d'autres connexions TCP. Par exemple.</p>
+<pre><code class="language-bash">ssh -L 8080:localhost:80 serveur
+</code></pre>
+<p>Cette fonctionnalité est extrêmement puissante. Elle permet :</p>
+<ul>
+<li>d'accéder à une base de données distante ;</li>
+<li>d'ouvrir un tunnel HTTPS ;</li>
+<li>d'administrer un service interne.</li>
+</ul>
+<p>Mais... Elle peut également être utilisée par un attaquant pour contourner certaines politiques réseau. La directive concernée est. <code>AllowTcpForwarding</code> Si cette fonctionnalité n'est pas utilisée, la recommandation est. <code>AllowTcpForwarding no</code></p>
+<h2 id="le-forwarding-dagent">Le Forwarding d'agent</h2>
+<p>Nous avons découvert précédemment : <code>ssh-agent</code> OpenSSH peut transférer cet agent jusqu'au serveur. Directive. <code>AllowAgentForwarding</code> Cette fonctionnalité facilite certains rebonds administratifs. Mais elle introduit également un risque. Un serveur compromis pourrait demander à l'agent distant de signer de nouvelles connexions. La clé privée ne quitte toujours pas le poste, mais l'attaquant pourrait utiliser temporairement l'agent. Dans un environnement très sécurisé, on préfère donc souvent.</p>
+<p><code>AllowAgentForwarding no</code> Sauf nécessité clairement identifiée.</p>
+<h2 id="le-forwarding-des-ports">Le Forwarding des ports</h2>
+<p>OpenSSH distingue plusieurs types de redirections. <code>Local Forwarding</code> <code>Remote Forwarding</code></p>
+<pre><code class="language-text">Dynamic Forwarding
+
+(SOCKS Proxy)
+</code></pre>
+<p>Toutes ces fonctionnalités sont contrôlées par différentes directives. Avant de les autoriser, l'administrateur doit répondre à une question.</p>
+<blockquote>
+<p><strong>Qui en a réellement besoin ?</strong></p>
+</blockquote>
+<p>Si la réponse est : <code>Personne.</code> La fonctionnalité doit rester désactivée.</p>
+<h2 id="compression">Compression</h2>
+<p>Une autre option souvent rencontrée. <code>Compression yes</code> À première vue, cela semble bénéfique. Pourtant, sur les réseaux modernes, le gain est souvent très faible. En revanche, la compression augmente :</p>
+<ul>
+<li>la consommation CPU ;</li>
+<li>la complexité logicielle ;</li>
+<li>l'exposition à certaines classes d'attaques historiques.</li>
+</ul>
+<p>La recommandation actuelle est généralement. <code>Compression no</code> Sauf besoin particulier (liaisons très lentes par exemple).</p>
+<h2 id="les-variables-denvironnement">Les variables d'environnement</h2>
+<p>SSH permet au client de transmettre certaines variables. Exemple.</p>
+<pre><code class="language-text">LANG
+
+LC_ALL
+
+TERM
+</code></pre>
+<p>La directive concernée. <code>AcceptEnv</code> Accepter trop de variables d'environnement peut parfois modifier le comportement des applications distantes. Une bonne pratique consiste donc à n'autoriser que les variables réellement nécessaires. Par exemple. <code>AcceptEnv LANG LC_*</code> Et rien de plus.</p>
+<h2 id="les-bannieres">Les bannières</h2>
+<p>OpenSSH peut afficher un message avant l'authentification. Directive. <code>Banner /etc/issue.net</code> Deux usages principaux existent. Le premier. Informer l'utilisateur. Par exemple.</p>
+<pre><code class="language-text">Serveur Sentinel
+
+Usage réservé
+
+au personnel autorisé.
+</code></pre>
+<p>Le second. Répondre à certaines exigences légales ou réglementaires. Cette bannière ne renforce pas directement la sécurité technique, mais elle peut avoir une importance juridique.</p>
+<h2 id="les-delais-dinactivite">Les délais d'inactivité</h2>
+<p>Une connexion dont le client a disparu doit être libérée. OpenSSH peut détecter un pair qui ne répond plus avec <code>ClientAliveInterval</code> et <code>ClientAliveCountMax</code>. Exemple.</p>
+<pre><code class="language-text">ClientAliveInterval 300
+
+ClientAliveCountMax 2
+</code></pre>
+<p>Le fonctionnement devient.</p>
+<div class="mermaid">flowchart TD
+    N0["Aucune activité"]
+    N1["300 secondes"]
+    N2["Le serveur envoie&lt;br/&gt;un message de contrôle"]
+    N3["Toujours aucune réponse ?"]
+    N4["Nouvelle tentative"]
+    N5["Toujours rien ?"]
+    N6["Déconnexion"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+    N2 --&gt; N3
+    N3 --&gt; N4
+    N4 --&gt; N5
+    N5 --&gt; N6
+</div>
+<p>Cette configuration coupe un client injoignable ; elle ne mesure pas l'inactivité humaine. Un terminal parfaitement connecté répond aux messages de contrôle même si l'utilisateur ne tape rien. Pour imposer une durée d'inactivité, utilisez un mécanisme explicitement prévu par la version disponible — par exemple <code>ChannelTimeout</code> sur les versions qui le proposent — ou une politique de shell/session, puis testez son interaction avec les commandes longues, SFTP et les tunnels.</p>
+<h2 id="respecter-la-politique-cryptographique-du-systeme">Respecter la politique cryptographique du système</h2>
+<p>Sur AlmaLinux, OpenSSH participe aux politiques cryptographiques globales. Avant d'ajouter manuellement <code>Ciphers</code>, <code>MACs</code> ou <code>KexAlgorithms</code>, affichez la politique avec <code>update-crypto-policies --show</code> et les valeurs effectives avec <code>sshd -T</code>. Une liste figée copiée depuis Internet vieillit rapidement, peut contredire la politique de la distribution et casser des clients légitimes. Si une exception de compatibilité est indispensable, documentez-la, bornez-la et préférez une sous-politique maîtrisée à un passage global en mode <code>LEGACY</code>.</p>
+<h2 id="une-configuration-encore-plus-robuste">Une configuration encore plus robuste</h2>
+<p>Notre configuration Sentinel commence désormais à prendre forme.</p>
+<pre><code class="language-text">PermitRootLogin no
+
+PubkeyAuthentication yes
+
+PasswordAuthentication no
+
+KbdInteractiveAuthentication no
+
+UsePAM yes
+
+PermitEmptyPasswords no
+
+MaxAuthTries 3
+
+LoginGraceTime 30
+
+AllowGroups admins
+
+X11Forwarding no
+
+AllowTcpForwarding no
+
+AllowAgentForwarding no
+
+Compression no
+
+ClientAliveInterval 300
+
+ClientAliveCountMax 2
+</code></pre>
+<p>Nous obtenons déjà un niveau de sécurité très supérieur à celui des paramètres par défaut, tout en conservant une administration confortable.</p>
+<h2 id="approfondissement">Approfondissement</h2>
+<h3 id="le-veritable-durcissement-consiste-a-supprimer-les-possibilites-pas-a-ajouter-des-protections">Le véritable durcissement consiste à supprimer les possibilités, pas à ajouter des protections</h3>
+<p>Lorsque l'on découvre <code>sshd_config</code>, la tentation est souvent d'ajouter toujours plus d'options. En réalité, la philosophie est inverse. Le meilleur durcissement consiste à supprimer tout ce qui n'est pas indispensable. Prenons deux serveurs.</p>
+<h4 id="serveur-a">Serveur A</h4>
+<pre><code class="language-text">✔ Mot de passe
+
+✔ Clés SSH
+
+✔ X11
+
+✔ Agent Forwarding
+
+✔ TCP Forwarding
+
+✔ Compression
+
+✔ Root
+
+✔ SFTP
+
+✔ Tunnel SOCKS
+</code></pre>
+<h4 id="serveur-b">Serveur B</h4>
+<pre><code class="language-text">✔ Clés SSH
+
+✔ PAM
+
+✔ SFTP
+
+Tout le reste désactivé
+</code></pre>
+<p>Le second serveur possède beaucoup moins de fonctionnalités. Il est donc :</p>
+<ul>
+<li>plus simple à comprendre ;</li>
+<li>plus simple à auditer ;</li>
+<li>plus difficile à attaquer.</li>
+</ul>
+<p>En sécurité, <strong>la simplicité est presque toujours une qualité.</strong></p>
+<h3 id="le-principe-du-moindre-service">Le principe du moindre service</h3>
+<p>Depuis le début de cet ouvrage, nous retrouvons toujours la même idée. Nous avons étudié :</p>
+<ul>
+<li>le moindre privilège (<code>sudo</code>) ;</li>
+<li>les permissions minimales ;</li>
+<li>Firewalld ;</li>
+<li>systemd ;</li>
+<li>SELinux.</li>
+</ul>
+<p><code>sshd_config</code> applique exactement la même philosophie. Chaque directive répond à une seule question.</p>
+<blockquote>
+<p><strong>Cette fonctionnalité est-elle réellement nécessaire ?</strong></p>
+</blockquote>
+<p>Si la réponse est non, elle disparaît. Cette logique est bien plus importante que la valeur exacte d'une option.</p>
+<h3 id="les-recommandations-evoluent">Les recommandations évoluent</h3>
+<p>Une erreur fréquente consiste à rechercher sur Internet :</p>
+<blockquote>
+<p>« La configuration SSH parfaite. »</p>
+</blockquote>
+<p>Elle n'existe pas. Pourquoi ? Parce que les recommandations évoluent. Prenons un exemple. Il y a quinze ans, une configuration recommandait souvent. <code>Protocol 2</code> Aujourd'hui, cette directive a disparu. Pourquoi ? Parce que SSHv1 n'existe plus dans OpenSSH. Autre exemple. Les algorithmes. <code>ssh-rsa</code> étaient longtemps la norme. Aujourd'hui, OpenSSH privilégie : <code>Ed25519</code> Le durcissement est donc un processus vivant. Une configuration doit être régulièrement réévaluée.</p>
+<h3 id="une-bonne-configuration-est-documentee">Une bonne configuration est documentée</h3>
+<p>Dans les entreprises les plus matures, chaque directive importante est justifiée. Par exemple. <code>PermitRootLogin no</code> Justification.</p>
+<pre><code class="language-text">Administration réalisée
+
+via comptes nominatifs
+
+et sudo.
+</code></pre>
+<p><code>PasswordAuthentication no</code> Justification.</p>
+<pre><code class="language-text">Infrastructure
+
+100 % clés publiques.
+</code></pre>
+<p><code>AllowTcpForwarding no</code> Justification. <code>Aucun besoin métier identifié.</code> Cette documentation facilite énormément :</p>
+<ul>
+<li>les audits ;</li>
+<li>les revues de sécurité ;</li>
+<li>les investigations après incident.</li>
+</ul>
+<h2 id="concevoir-la-politique">Concevoir la politique</h2>
+<p>Un architecte ne lit jamais <code>sshd_config</code> ligne par ligne. Il réfléchit en couches.</p>
+<div class="mermaid">flowchart TD
+    N0["Internet"]
+    N1["Firewalld"]
+    N2["Port SSH"]
+    N3["Authentification"]
+    N4["Autorisation"]
+    N5["Session"]
+    N6["Journalisation"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+    N2 --&gt; N3
+    N3 --&gt; N4
+    N4 --&gt; N5
+    N5 --&gt; N6
+</div>
+<p>Chaque couche répond à une question différente. Par exemple. Firewalld. <code>Qui peut atteindre SSH ?</code> OpenSSH. <code>Qui peut se connecter ?</code> PAM. <code>Qui est authentifié ?</code> sudo. <code>Qui peut devenir root ?</code> SELinux. <code>Que peut faire le processus ?</code> Cette vision systémique est beaucoup plus pertinente que l'analyse isolée d'un fichier de configuration.</p>
+<h3 id="le-durcissement-doit-rester-exploitable">Le durcissement doit rester exploitable</h3>
+<p>Une erreur fréquente consiste à vouloir interdire absolument tout. Prenons un exemple.</p>
+<pre><code class="language-text">PasswordAuthentication no
+
+PubkeyAuthentication no
+</code></pre>
+<p>Le résultat est parfait... Personne ne peut plus se connecter. Le serveur est effectivement très sécurisé. Mais il est également inutilisable. Un architecte recherche toujours un équilibre entre :</p>
+<pre><code class="language-text">Sécurité
+
++
+
+Disponibilité
+
++
+
+Exploitabilité
+</code></pre>
+<p>Le meilleur durcissement est celui qui protège sans empêcher l'administration normale.</p>
+<h2 id="point-de-vue-offensif">Point de vue offensif</h2>
+<p>Face à un serveur SSH, l'attaquant réalise généralement une phase de reconnaissance. Il cherche notamment à répondre aux questions suivantes.</p>
+<div class="mermaid">flowchart TD
+    N0["Root est-il autorisé ?"]
+    N1["Les mots de passe sont-ils activés ?"]
+    N2["Le serveur accepte-t-il&lt;br/&gt;le forwarding ?"]
+    N3["Quels algorithmes ?"]
+    N4["Quels utilisateurs ?"]
+    N5["Quelle version d'OpenSSH ?"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+    N2 --&gt; N3
+    N3 --&gt; N4
+    N4 --&gt; N5
+</div>
+<p>Chaque fonctionnalité activée représente une possibilité supplémentaire. À l'inverse, chaque fonctionnalité désactivée est une porte définitivement fermée. Un serveur fortement durci offre donc beaucoup moins d'angles d'attaque.</p>
+<h3 id="le-meilleur-durcissement-est-souvent-invisible">Le meilleur durcissement est souvent invisible</h3>
+<p>Lorsqu'un administrateur applique correctement les recommandations étudiées jusqu'ici, l'utilisateur ne remarque pratiquement aucune différence. La connexion continue de fonctionner normalement. En revanche, un attaquant observe immédiatement :</p>
+<ul>
+<li>l'absence de connexion root ;</li>
+<li>l'absence de mots de passe ;</li>
+<li>l'impossibilité de créer des tunnels ;</li>
+<li>la fermeture rapide des connexions anormales ;</li>
+<li>la réduction des fonctionnalités disponibles.</li>
+</ul>
+<p>Le meilleur durcissement est donc souvent transparent pour les utilisateurs légitimes, mais très pénalisant pour un attaquant.</p>
+<h2 id="en-entreprise">En entreprise</h2>
+<p>Dans les grandes infrastructures, <code>sshd_config</code> est rarement modifié manuellement sur chaque serveur. La configuration est généralement :</p>
+<ul>
+<li>versionnée dans Git ;</li>
+<li>déployée par Ansible ;</li>
+<li>validée lors des revues de code ;</li>
+<li>auditée régulièrement.</li>
+</ul>
+<p>Le cycle de vie ressemble à ceci.</p>
+<div class="mermaid">flowchart TD
+    N0["Modification"]
+    N1["Validation&lt;br/&gt;(sshd -t)"]
+    N2["Revue sécurité"]
+    N3["Déploiement Ansible"]
+    N4["Contrôle de conformité"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+    N2 --&gt; N3
+    N3 --&gt; N4
+</div>
+<p>Cette approche garantit que tous les serveurs possèdent exactement la même configuration.</p>
+<h3 id="les-profils-de-configuration">Les profils de configuration</h3>
+<p>Toutes les machines n'ont pas les mêmes besoins. Une entreprise définit souvent plusieurs profils. Par exemple.</p>
+<h4 id="serveur-de-production">Serveur de production</h4>
+<pre><code class="language-text">PasswordAuthentication no
+
+KbdInteractiveAuthentication no
+
+PermitRootLogin no
+
+AllowTcpForwarding no
+
+X11Forwarding no
+
+AllowAgentForwarding no
+</code></pre>
+<p>Configuration extrêmement restrictive.</p>
+<h4 id="bastion-dadministration">Bastion d'administration</h4>
+<pre><code class="language-text">PasswordAuthentication no
+
+KbdInteractiveAuthentication no
+
+PubkeyAuthentication yes
+
+AllowTcpForwarding yes
+
+AllowAgentForwarding yes
+</code></pre>
+<p>Certaines fonctionnalités sont autorisées, car elles répondent à un besoin métier.</p>
+<h4 id="machine-de-developpement">Machine de développement</h4>
+<pre><code class="language-text">PasswordAuthentication yes
+
+PubkeyAuthentication yes
+
+X11Forwarding yes
+</code></pre>
+<p>Configuration plus souple, mais uniquement dans un environnement maîtrisé. L'important est que chaque choix soit justifié.</p>
+<h3 id="auditer-regulierement-la-configuration">Auditer régulièrement la configuration</h3>
+<p>Une bonne configuration aujourd'hui peut devenir insuffisante demain. Les entreprises réalisent donc régulièrement des audits. Par exemple.</p>
+<pre><code class="language-bash">sshd -T
+</code></pre>
+<p>Puis comparaison avec la politique interne. Ou encore.</p>
+<pre><code class="language-bash">ssh-audit serveur
+</code></pre>
+<p>(<code>ssh-audit</code> est un outil open source spécialisé dans l'analyse des configurations SSH.) L'objectif est de détecter :</p>
+<ul>
+<li>les algorithmes devenus obsolètes ;</li>
+<li>les options oubliées ;</li>
+<li>les écarts entre les serveurs ;</li>
+<li>les régressions de sécurité.</li>
+</ul>
+<h2 id="culture-technique">Culture technique</h2>
+<h3 id="pourquoi-sshd_configd-existe-t-il">Pourquoi <code>sshd_config.d</code> existe-t-il ?</h3>
+<p>Les versions récentes d'OpenSSH permettent d'inclure des fichiers supplémentaires. Par exemple. <code>/etc/ssh/sshd_config.d/</code> Le fichier principal contient généralement. <code>Include /etc/ssh/sshd_config.d/*.conf</code> Cette organisation présente plusieurs avantages.</p>
+<div class="mermaid">flowchart TD
+    N0["Configuration principale"]
+    N1["Petits fichiers spécialisés"]
+    N2["Configuration finale"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+</div>
+<p>Par exemple.</p>
+<pre><code class="language-text">10-authentication.conf
+
+20-network.conf
+
+30-hardening.conf
+
+40-sentinel.conf
+</code></pre>
+<p>Cette approche facilite énormément la maintenance. Elle est aujourd'hui privilégiée dans les environnements industriels.</p>
+<h3 id="les-directives-sont-evaluees-dans-lordre">Les directives sont évaluées dans l'ordre</h3>
+<p>Contrairement à certaines idées reçues, OpenSSH ne traite pas toutes les directives simultanément. Les fichiers sont lus dans l'ordre et, pour la plupart des mots-clés, la première valeur obtenue s'applique. Les blocs <code>Match</code> ouvrent un contexte conditionnel pour un utilisateur ou une connexion ; ils ne constituent pas un mécanisme général de « dernière valeur gagnante ». Par exemple. <code>Match User backup</code> ou. <code>Match Address 192.168.10.*</code> Ces blocs permettent d'appliquer une configuration différente selon :</p>
+<ul>
+<li>l'utilisateur ;</li>
+<li>l'adresse IP ;</li>
+<li>le groupe ;</li>
+<li>l'hôte.</li>
+</ul>
+<p>Nous les retrouverons lorsque nous parlerons des bastions.</p>
+<h3 id="les-valeurs-par-defaut-changent-avec-les-versions">Les valeurs par défaut changent avec les versions</h3>
+<p>Un autre piège fréquent. Une directive absente ne signifie pas toujours la même chose. Exemple. <code>PasswordAuthentication</code> Sa valeur par défaut peut évoluer entre deux versions majeures d'OpenSSH. C'est pourquoi les entreprises préfèrent souvent écrire explicitement les directives importantes, même lorsqu'elles correspondent déjà aux valeurs par défaut. Cette pratique rend la configuration :</p>
+<ul>
+<li>plus lisible ;</li>
+<li>plus prévisible ;</li>
+<li>moins dépendante des évolutions futures.</li>
+</ul>
+<h2 id="piege-classique">Piège classique</h2>
+<h3 id="modifier-ssh-depuis-une-connexion-ssh">Modifier SSH depuis une connexion SSH</h3>
+<p>C'est probablement l'erreur la plus célèbre. Un administrateur connecté en SSH modifie : <code>sshd_config</code> Puis.</p>
+<pre><code class="language-bash">systemctl restart sshd
+</code></pre>
+<p>Une erreur de syntaxe s'est glissée dans le fichier. Résultat : le démon peut ne plus accepter de nouvelle connexion. Les sessions déjà établies survivent généralement grâce à leurs processus enfants, mais elles ne constituent pas un accès de secours garanti. La bonne pratique est toujours la même.</p>
+<div class="mermaid">flowchart TD
+    N0["Modifier"]
+    N1["sshd -t"]
+    N2["Ouvrir une deuxième session SSH"]
+    N3["Tester"]
+    N4["Reload"]
+    N5["Fermer l'ancienne session"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+    N2 --&gt; N3
+    N3 --&gt; N4
+    N4 --&gt; N5
+</div>
+<p>Cette méthode réduit quasiment à zéro le risque de verrouillage.</p>
+<h3 id="confondre-reload-et-restart">Confondre "Reload" et "Restart"</h3>
+<p>Deux commandes existent.</p>
+<pre><code class="language-bash">systemctl reload sshd
+</code></pre>
+<p>Recharge uniquement la configuration. Les connexions existantes continuent normalement.</p>
+<pre><code class="language-bash">systemctl restart sshd
+</code></pre>
+<p>Redémarre complètement le démon. Selon le contexte, certaines sessions peuvent être interrompues. En production, on privilégie généralement :</p>
+<pre><code class="language-bash">reload
+</code></pre>
+<p>chaque fois que cela est possible.</p>
+<h2 id="tp-1-construire-un-fragment-de-durcissement">TP 1 — Construire un fragment de durcissement</h2>
+<h3 id="objectif">Objectif</h3>
+<p>Construire progressivement une configuration SSH durcie et apprendre à la valider sans risque.</p>
+<h3 id="etape-1-sauvegarder-la-configuration">Étape 1 — Sauvegarder la configuration</h3>
+<p>Avant toute modification.</p>
+<pre><code class="language-bash">sudo cp /etc/ssh/sshd_config \
+/etc/ssh/sshd_config.bak
+</code></pre>
+<p>Une sauvegarde doit toujours précéder un durcissement.</p>
+<h3 id="etape-2-appliquer-un-premier-durcissement">Étape 2 — Appliquer un premier durcissement</h3>
+<p>Modifier successivement. <code>PermitRootLogin no</code> <code>MaxAuthTries 3</code> <code>LoginGraceTime 30</code> <code>X11Forwarding no</code> Puis vérifier.</p>
+<pre><code class="language-bash">sudo sshd -t
+</code></pre>
+<p>Corriger les éventuelles erreurs.</p>
+<h2 id="tp-2-valider-sans-perdre-lacces">TP 2 — Valider sans perdre l'accès</h2>
+<h3 id="etape-3-verifier-la-configuration-effective">Étape 3 — Vérifier la configuration effective</h3>
+<p>Afficher.</p>
+<pre><code class="language-bash">sudo sshd -T
+</code></pre>
+<p>Comparer :</p>
+<ul>
+<li>le fichier de configuration ;</li>
+<li>la configuration réellement appliquée.</li>
+</ul>
+<p>Identifier les éventuelles différences.</p>
+<h3 id="etape-4-tester-sans-se-verrouiller">Étape 4 — Tester sans se verrouiller</h3>
+<p>Ouvrir une seconde session SSH. Valider que :</p>
+<ul>
+<li>la connexion fonctionne ;</li>
+<li><code>sudo</code> fonctionne ;</li>
+<li>les clés SSH fonctionnent.</li>
+</ul>
+<p>Seulement ensuite, recharger le service.</p>
+<pre><code class="language-bash">sudo systemctl reload sshd
+</code></pre>
+<p>Cette procédure devra devenir un réflexe professionnel.</p>
+<h2 id="mission-dingenieur">Mission d'ingénieur</h2>
+<p>Votre entreprise souhaite définir une configuration SSH de référence qui sera déployée sur plusieurs centaines de serveurs AlmaLinux. Vous devez produire un guide expliquant :</p>
+<ul>
+<li>quelles directives doivent être obligatoires ;</li>
+<li>lesquelles peuvent varier selon le type de serveur ;</li>
+<li>lesquelles sont interdites ;</li>
+<li>comment tester une modification sans interrompre la production ;</li>
+<li>comment contrôler automatiquement la conformité de tous les serveurs.</li>
+</ul>
+<p>Ce document servira de base au futur rôle Ansible consacré au durcissement SSH de Sentinel.</p>
+<h2 id="impact-sur-sentinel">Impact sur Sentinel</h2>
+<p>À l'issue de ce chapitre, le serveur Sentinel possède désormais une configuration OpenSSH conforme aux bonnes pratiques :</p>
+<ul>
+<li>authentification par clés publiques ;</li>
+<li>absence de connexion directe de <code>root</code> ;</li>
+<li>réduction des fonctionnalités inutiles ;</li>
+<li>limitation des tentatives d'authentification ;</li>
+<li>contrôle des utilisateurs autorisés ;</li>
+<li>validation systématique des modifications.</li>
+</ul>
+<p>Nous disposons maintenant d'un point d'administration robuste. Le chapitre suivant montrera comment aller encore plus loin en supprimant totalement l'exposition directe des serveurs grâce à un <strong>bastion d'administration</strong>.</p>
+<h2 id="synthese">Synthèse</h2>
+<ul>
+<li><code>sshd_config</code> définit le véritable niveau de sécurité du serveur SSH.</li>
+<li>Le durcissement consiste principalement à supprimer les fonctionnalités inutiles.</li>
+<li>Toujours tester une configuration avec <code>sshd -t</code> avant tout rechargement.</li>
+<li>Utiliser <code>sshd -T</code> pour afficher la configuration réellement appliquée.</li>
+<li>Préférer <code>reload</code> à <code>restart</code> lorsque cela est possible.</li>
+<li>Une configuration SSH doit être versionnée, documentée et déployée automatiquement.</li>
+<li>La simplicité et le principe du moindre service restent les meilleurs alliés de la sécurité.</li>
+</ul>
+<h2 id="pour-aller-plus-loin">Pour aller plus loin</h2>
+<p>Relisez <code>sshd_config(5)</code>, la sortie de <code>sshd -T</code> et la politique cryptographique AlmaLinux avant de figer un profil. Le prochain chapitre réduit encore l'exposition en plaçant les serveurs derrière un point d'administration dédié.</p>
+<p>← <a href="../4.3-authentification-par-cles/">4.3 — Authentification par clés</a> · <a href="../4.5-bastion-administration/">4.5 — Bastion d'administration</a> →</p>
+<h2 id="schema-recapitulatif">Schéma récapitulatif</h2>
+<p><img alt="Récapitulatif du chapitre 4.4" src="../media/recap-4.4.png"/></p>
+</div>
+</div><footer>
+<div aria-label="Footer Navigation" class="rst-footer-buttons" role="navigation">
+<a class="btn btn-neutral float-left" href="../4.3-authentification-par-cles/" title="Chapitre 4.3 — Authentification par clés"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+<a class="btn btn-neutral float-right" href="../4.5-bastion-administration/" title="Chapitre 4.5 — Bastion d'administration">Next <span class="icon icon-circle-arrow-right"></span></a>
+</div>
+<hr/>
+<div role="contentinfo">
+<!-- Copyright etc -->
+</div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+</div>
+</div>
+</section>
+</div>
+<div aria-label="Versions" class="rst-versions" role="note">
+<span class="rst-current-version" data-toggle="rst-current-version">
+<span>
+<a class="fa fa-code-fork" href="https://github.com/tdelaclos/formations" style="color: #fcfcfc"> tdelaclos/formations</a>
+</span>
+<span><a href="../4.3-authentification-par-cles/" style="color: #fcfcfc">« Previous</a></span>
+<span><a href="../4.5-bastion-administration/" style="color: #fcfcfc">Next »</a></span>
+</span>
+</div>
+<script src="../../js/jquery-3.6.0.min.js"></script>
+<script>var base_url = "../..";</script>
+<script src="../../js/theme_extra.js"></script>
+<script src="../../js/theme.js"></script>
+<script src="../../search/main.js"></script>
+<script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+<script type="module">import mermaid from "https://unpkg.com/mermaid@10.4.0/dist/mermaid.esm.min.mjs";
+mermaid.initialize({});</script></body>
+</html>

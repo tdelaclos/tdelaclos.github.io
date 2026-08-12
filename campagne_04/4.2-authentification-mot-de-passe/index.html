@@ -1,0 +1,1037 @@
+<!DOCTYPE html>
+
+<html class="writer-html5" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="IE=edge" http-equiv="X-UA-Compatible"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="../../img/favicon.ico" rel="shortcut icon"/>
+<title>Chapitre 4.2 — Authentification par mot de passe - Formation Sentinel — AlmaLinux sécurisé</title>
+<link href="../../css/theme.css" rel="stylesheet"/>
+<link href="../../css/theme_extra.css" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" rel="stylesheet"/>
+<script>
+        // Current page data
+        var mkdocs_page_name = "Chapitre 4.2 \u2014 Authentification par mot de passe";
+        var mkdocs_page_input_path = "campagne_04/4.2-authentification-mot-de-passe.md";
+        var mkdocs_page_url = null;
+      </script>
+<!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+<script>hljs.highlightAll();</script>
+</head>
+<body class="wy-body-for-nav" role="document">
+<div class="wy-grid-for-nav">
+<nav class="wy-nav-side stickynav" data-toggle="wy-nav-shift">
+<div class="wy-side-scroll">
+<div class="wy-side-nav-search">
+<a class="icon icon-home" href="../.."> Formation Sentinel — AlmaLinux sécurisé
+        </a><div role="search">
+<form action="../../search.html" class="wy-form" id="rtd-search-form" method="get">
+<input aria-label="Search docs" name="q" placeholder="Search docs" title="Type search term here" type="text"/>
+</form>
+</div>
+</div>
+<div aria-label="Navigation menu" class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../..">Accueil</a>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">A propos</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../GUIDE-REDACTION/">Guide de rédaction</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../PARCOURS-SENTINEL/">Parcours applicatif Sentinel</a>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Campagnes</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal">Campagne 1 - Sécuriser le socle Linux</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.1-pourquoi-securiser-socle-linux/">Chapitre 1.1 — Pourquoi sécuriser un socle Linux ?</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.2-installation-almalinux-minimal/">Chapitre 1.2 — Installer AlmaLinux minimal</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.3-composants-systeme-linux/">Chapitre 1.3 — Comprendre les composants d'un système Linux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.4-premier-demarrage-verifications/">Chapitre 1.4 — Établir la baseline du serveur</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.5-mise-a-jour-gestion-depots/">Chapitre 1.5 — Mettre à jour et gérer les dépôts</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.6-architecture-systemes-fichiers/">Chapitre 1.6 — Organiser les systèmes de fichiers</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.7-utilisateurs-groupes-permissions/">Chapitre 1.7 — Comprendre identités et permissions</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.8-sudo-moindre-privilege/">Chapitre 1.8 — Administrer avec sudo</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.9-premiere-mise-en-securite-serveur/">Chapitre 1.9 — Mission : mettre le serveur en sécurité</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.10-creation-laboratoire-sentinel/">Chapitre 1.10 — Créer le laboratoire Sentinel</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 2 - Gestion des permissions et des identités</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.1-permissions-unix/">Chapitre 2.1 — Les permissions UNIX</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.2-acl/">Chapitre 2.2 — Les ACL</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.3-umask/">Chapitre 2.3 — L'umask</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.4-attributs-etendus/">Chapitre 2.4 — Les attributs étendus</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.5-pam/">Chapitre 2.5 — PAM</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.6-politique-mots-de-passe/">Chapitre 2.6 — Politique de mots de passe</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.7-comptes-systeme/">Chapitre 2.7 — Les comptes système</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.8-sudo-avance/">Chapitre 2.8 — sudo avancé</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.9-fichiers-identites-linux/">Chapitre 2.9 — Comprendre les fichiers d'identités Linux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.10-synthese-securiser-identites/">Chapitre 2.10 — Synthèse : sécuriser les identités</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 3 - TCP/IP et Firewalld</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.1-tcp-ip-administrateur/">Chapitre 3.1 — TCP/IP côté administrateur</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.2-architecture-firewalld/">Chapitre 3.2 — Architecture de Firewalld</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.3-zones-firewalld/">Chapitre 3.3 — Les zones Firewalld</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.4-services-firewalld/">Chapitre 3.4 — Les services Firewalld</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.5-conntrack-filtrage-etats/">Chapitre 3.5 — Conntrack et le filtrage par états</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.6-rich-rules-firewalld/">Chapitre 3.6 — Les Rich Rules Firewalld</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.7-journalisation-firewalld/">Chapitre 3.7 — Journalisation et analyse Firewalld</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.8-ip-sets-firewalld/">Chapitre 3.8 — Les IP Sets Firewalld</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.9-runtime-permanent/">Chapitre 3.9 — Runtime et Permanent</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.10-politique-reseau-sentinel/">Chapitre 3.10 — Concevoir la politique réseau de Sentinel</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal current">Campagne 4 - SSH</a>
+<ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../4.1-architecture-openssh/">Chapitre 4.1 — Architecture d'OpenSSH</a>
+</li>
+<li class="toctree-l2 current"><a class="reference internal current" href="#">Chapitre 4.2 — Authentification par mot de passe</a>
+<ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="#vous-etes-ici">Vous êtes ici</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#objectifs-pedagogiques">Objectifs pédagogiques</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pourquoi-ce-chapitre-existe">Pourquoi ce chapitre existe</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#theorie-detaillee">Théorie détaillée</a>
+<ul>
+<li class="toctree-l4"><a class="reference internal" href="#a-quel-moment-le-mot-de-passe-est-il-demande">À quel moment le mot de passe est-il demandé ?</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#le-mot-de-passe-nest-jamais-visible-sur-le-reseau">Le mot de passe n'est jamais visible sur le réseau</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#qui-verifie-reellement-le-mot-de-passe">Qui vérifie réellement le mot de passe ?</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#le-role-de-pam">Le rôle de PAM</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#ou-est-stocke-le-mot-de-passe">Où est stocké le mot de passe ?</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#une-representation-complete">Une représentation complète</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#le-role-du-hachage">Le rôle du hachage</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#comment-pam-verifie-t-il-un-mot-de-passe">Comment PAM vérifie-t-il un mot de passe ?</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pourquoi-utiliser-un-sel-salt">Pourquoi utiliser un sel (Salt) ?</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pourquoi-les-attaques-par-force-brute-existent-elles-encore">Pourquoi les attaques par force brute existent-elles encore ?</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pourquoi-ssh-reste-vulnerable-aux-attaques-par-mot-de-passe">Pourquoi SSH reste vulnérable aux attaques par mot de passe</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pourquoi-les-administrateurs-abandonnent-progressivement-les-mots-de-passe">Pourquoi les administrateurs abandonnent progressivement les mots de passe</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#une-representation-complete_1">Une représentation complète</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#approfondissement">Approfondissement</a>
+<ul>
+<li class="toctree-l4"><a class="reference internal" href="#le-veritable-probleme-nest-pas-le-mot-de-passe-mais-le-secret-partage">Le véritable problème n'est pas le mot de passe, mais le secret partagé</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#un-secret-partage-finit-toujours-par-etre-partage">Un secret partagé finit toujours par être partagé</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#le-mot-de-passe-devient-la-cible">Le mot de passe devient la cible</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#pourquoi-les-entreprises-abandonnent-progressivement-les-mots-de-passe">Pourquoi les entreprises abandonnent progressivement les mots de passe</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#concevoir-la-politique">Concevoir la politique</a>
+<ul>
+<li class="toctree-l4"><a class="reference internal" href="#le-mot-de-passe-reste-neanmoins-indispensable">Le mot de passe reste néanmoins indispensable</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#point-de-vue-offensif">Point de vue offensif</a>
+<ul>
+<li class="toctree-l4"><a class="reference internal" href="#une-authentification-reussie-nest-pas-toujours-legitime">Une authentification réussie n'est pas toujours légitime</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#en-entreprise">En entreprise</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#culture-technique">Culture technique</a>
+<ul>
+<li class="toctree-l4"><a class="reference internal" href="#pourquoi-ssh-ne-peut-jamais-retrouver-votre-mot-de-passe">Pourquoi SSH ne peut jamais retrouver votre mot de passe</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#pourquoi-linux-utilise-aujourdhui-yescrypt">Pourquoi Linux utilise aujourd'hui yescrypt</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#pam-permet-de-changer-completement-le-mode-dauthentification">PAM permet de changer complètement le mode d'authentification</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#pourquoi-les-robots-continuent-malgre-les-echecs">Pourquoi les robots continuent malgré les échecs</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#piege-classique">Piège classique</a>
+<ul>
+<li class="toctree-l4"><a class="reference internal" href="#desactiver-les-mots-de-passe-trop-tot">Désactiver les mots de passe trop tôt</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#confondre-chiffrement-et-authentification">Confondre chiffrement et authentification</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#tp-1-observer-une-authentification-par-mot-de-passe">TP 1 — Observer une authentification par mot de passe</a>
+<ul>
+<li class="toctree-l4"><a class="reference internal" href="#objectif">Objectif</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#etape-1-verifier-la-configuration-actuelle">Étape 1 — Vérifier la configuration actuelle</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#etape-2-observer-les-journaux">Étape 2 — Observer les journaux</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#tp-2-relier-ssh-pam-et-etcshadow">TP 2 — Relier SSH, PAM et /etc/shadow</a>
+<ul>
+<li class="toctree-l4"><a class="reference internal" href="#etape-3-verifier-pam">Étape 3 — Vérifier PAM</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#etape-4-observer-etcshadow">Étape 4 — Observer /etc/shadow</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#mission-dingenieur">Mission d'ingénieur</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#impact-sur-sentinel">Impact sur Sentinel</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#synthese">Synthèse</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pour-aller-plus-loin">Pour aller plus loin</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../4.3-authentification-par-cles/">Chapitre 4.3 — Authentification par clés</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../4.4-durcissement-sshd-config/">Chapitre 4.4 — Durcissement de sshd_config</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../4.5-bastion-administration/">Chapitre 4.5 — Bastion d'administration</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../4.6-journalisation-audit-ssh/">Chapitre 4.6 — Journalisation et audit SSH</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../4.7-protection-attaques-ssh/">Chapitre 4.7 — Protection contre les attaques SSH</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../4.8-mission-administration-sentinel/">Chapitre 4.8 — Mission : administrer Sentinel en sécurité</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 5 - Systemd</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.1-comprendre-systemd/">Chapitre 5.1 — Comprendre systemd</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.2-unites-systemd/">Chapitre 5.2 — Les unités systemd</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.3-creer-service-sentinel/">Chapitre 5.3 — Créer le service Sentinel</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.4-sandboxing-systemd/">Chapitre 5.4 — Sandboxing systemd</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.5-capacites-linux/">Chapitre 5.5 — Les capacités Linux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.6-journalisation-journald/">Chapitre 5.6 — Journalisation avec journald</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.7-supervision-redemarrage/">Chapitre 5.7 — Supervision et redémarrage automatique</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.8-mission-sentinel-resilient/">Chapitre 5.8 — Mission : rendre Sentinel résilient</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 6 - SELinux</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_06/6.1-pourquoi-selinux-existe/">Chapitre 6.1 — Pourquoi SELinux existe</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_06/6.2-contextes-selinux/">Chapitre 6.2 — Comprendre les contextes SELinux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_06/6.3-politiques-selinux/">Chapitre 6.3 — Les politiques SELinux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_06/6.4-diagnostic-refus-selinux/">Chapitre 6.4 — Diagnostiquer les refus SELinux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_06/6.5-creation-regles-selinux/">Chapitre 6.5 — Créer des règles SELinux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_06/6.6-securiser-sentinel-selinux/">Chapitre 6.6 — Sécuriser Sentinel avec SELinux</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 7 - TLS et PKI</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.1-comprendre-cryptographie-appliquee/">Chapitre 7.1 — Comprendre la cryptographie appliquée</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.2-lire-verifier-certificats-x509/">Chapitre 7.2 — Lire et vérifier les certificats X.509</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.3-construire-autorite-certification/">Chapitre 7.3 — Construire une autorité de certification</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.4-authentification-mutuelle-tls/">Chapitre 7.4 — Authentifier les deux extrémités avec mTLS</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.5-preparer-integration-freeipa/">Chapitre 7.5 — Préparer l'intégration à FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.6-renouveler-revoquer-certificats/">Chapitre 7.6 — Renouveler et révoquer les certificats</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.7-securiser-sentinel-tls/">Chapitre 7.7 — Sécuriser Sentinel avec TLS</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 8 - FreeIPA</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.1-presentation-freeipa/">Chapitre 8.1 — Découvrir FreeIPA et la gestion centralisée des identités</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.2-architecture-interne-freeipa/">Chapitre 8.2 — Comprendre l'architecture interne de FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.3-installation-freeipa/">Chapitre 8.3 — Installer un serveur FreeIPA de laboratoire</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.4-gestion-utilisateurs/">Chapitre 8.4 — Gérer le cycle de vie des utilisateurs FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.5-groupes-roles/">Chapitre 8.5 — Organiser les groupes et les rôles FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.6-politiques-sudo/">Chapitre 8.6 — Centraliser les politiques sudo avec FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.7-gestion-hotes/">Chapitre 8.7 — Enrôler les hôtes et contrôler les accès avec HBAC</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.8-certificats/">Chapitre 8.8 — Gérer les certificats de service avec FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.9-integration-sentinel/">Chapitre 8.9 — Intégrer Sentinel à FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.10-mission-administration-freeipa/">Chapitre 8.10 — Mission : administrer Sentinel avec FreeIPA</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 9 - Déploiement avec Ansible</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.1-architecture-ansible/">Chapitre 9.1 — Comprendre l'architecture Ansible</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.2-composants-ansible/">Chapitre 9.2 — Comprendre les composants et l'idempotence Ansible</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.3-inventaires/">Chapitre 9.3 — Construire les inventaires Ansible</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.4-premiers-playbooks/">Chapitre 9.4 — Écrire les premiers playbooks</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.5-variables-templates/">Chapitre 9.5 — Piloter la configuration avec variables et templates</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.6-roles-ansible/">Chapitre 9.6 — Concevoir des rôles Ansible réutilisables</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.7-deployer-sentinel-ansible/">Chapitre 9.7 — Déployer Sentinel avec Ansible</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.8-integrer-sentinel-freeipa/">Chapitre 9.8 — Automatiser l'intégration de Sentinel à FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.9-industrialiser-laboratoire/">Chapitre 9.9 — Industrialiser le projet Ansible</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.10-mission-deploiement-sentinel/">Chapitre 9.10 — Mission : reconstruire Sentinel avec Ansible</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 10 - Packaging RPM</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_10/10.1-construire-paquet-rpm/">Chapitre 10.1 — Construire un paquet RPM</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_10/10.2-gerer-dependances-rpm/">Chapitre 10.2 — Gérer les dépendances RPM</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_10/10.3-gerer-fichiers-configuration-rpm/">Chapitre 10.3 — Gérer les fichiers de configuration RPM</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_10/10.4-signer-paquets-rpm/">Chapitre 10.4 — Signer les paquets RPM</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_10/10.5-exploiter-depot-rpm-prive/">Chapitre 10.5 — Exploiter un dépôt RPM privé</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_10/10.6-packager-sentinel/">Chapitre 10.6 — Packager Sentinel</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 11 - Conteneurs Podman</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_11/11.1-decouvrir-podman/">Chapitre 11.1 — Découvrir Podman</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_11/11.2-conteneurs-rootless/">Chapitre 11.2 — Exécuter des conteneurs rootless</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_11/11.3-construire-images-securisees/">Chapitre 11.3 — Construire des images sécurisées</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_11/11.4-reseaux-conteneurs/">Chapitre 11.4 — Concevoir les réseaux de conteneurs</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_11/11.5-gerer-secrets-podman/">Chapitre 11.5 — Gérer les secrets avec Podman</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_11/11.6-executer-sentinel-securite/">Chapitre 11.6 — Exécuter Sentinel en sécurité</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 12 - Supervision et audit</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_12/12.1-centraliser-journaux-rsyslog/">Chapitre 12.1 — Centraliser les journaux avec Rsyslog</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_12/12.2-auditer-systeme-auditd/">Chapitre 12.2 — Auditer le système avec auditd</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_12/12.3-controler-integrite-fichiers-aide/">Chapitre 12.3 — Contrôler l'intégrité des fichiers avec AIDE</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_12/12.4-superviser-sentinel-prometheus/">Chapitre 12.4 — Superviser Sentinel avec Prometheus</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_12/12.5-concevoir-alertes-alertmanager/">Chapitre 12.5 — Concevoir des alertes avec Alertmanager</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_12/12.6-construire-tableau-bord-sentinel/">Chapitre 12.6 — Construire le tableau de bord Sentinel</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 13 - Attaques et défense</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.1-reconnaissance/">Chapitre 13.1 — Reconnaissance</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.2-scan-reseau/">Chapitre 13.2 — Scan réseau</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.3-brute-force-ssh/">Chapitre 13.3 — Brute force SSH</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.4-escalade-privileges/">Chapitre 13.4 — Escalade de privilèges</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.5-mouvements-lateraux/">Chapitre 13.5 — Mouvements latéraux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.6-persistance/">Chapitre 13.6 — Persistance</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.7-exfiltration/">Chapitre 13.7 — Exfiltration</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.8-etude-cas-complete/">Chapitre 13.8 — Étude de cas complète</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 14 - Projet final</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.1-deployer-sentinel-almalinux-minimale/">Chapitre 14.1 — Déployer Sentinel sur une AlmaLinux minimale</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.2-securiser-hote/">Chapitre 14.2 — Sécuriser l'hôte</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.3-integrer-freeipa/">Chapitre 14.3 — Intégrer FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.4-deployer-ansible/">Chapitre 14.4 — Déployer avec Ansible</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.5-packager-rpm/">Chapitre 14.5 — Packager avec RPM</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.6-conteneuriser-podman/">Chapitre 14.6 — Conteneuriser avec Podman</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.7-superviser-auditer/">Chapitre 14.7 — Superviser et auditer</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.8-audit-final-tests-kali/">Chapitre 14.8 — Audit final et tests depuis Kali</a>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</nav>
+<section class="wy-nav-content-wrap" data-toggle="wy-nav-shift">
+<nav aria-label="Mobile navigation menu" class="wy-nav-top" role="navigation">
+<i class="fa fa-bars" data-toggle="wy-nav-top"></i>
+<a href="../..">Formation Sentinel — AlmaLinux sécurisé</a>
+</nav>
+<div class="wy-nav-content">
+<div class="rst-content"><div aria-label="breadcrumbs navigation" role="navigation">
+<ul class="wy-breadcrumbs">
+<li><a aria-label="Docs" class="icon icon-home" href="../.."></a></li>
+<li class="breadcrumb-item">Campagnes</li>
+<li class="breadcrumb-item">Campagne 4 - SSH</li>
+<li class="breadcrumb-item active">Chapitre 4.2 — Authentification par mot de passe</li>
+<li class="wy-breadcrumbs-aside">
+<a href="https://github.com/tdelaclos/formations/edit/master/docs/campagne_04/4.2-authentification-mot-de-passe.md">Edit on tdelaclos/formations</a>
+</li>
+</ul>
+<hr/>
+</div>
+<div class="document" itemscope="itemscope" itemtype="http://schema.org/Article" role="main">
+<div class="section" itemprop="articleBody">
+<h1 id="chapitre-42-authentification-par-mot-de-passe">Chapitre 4.2 — Authentification par mot de passe</h1>
+<blockquote>
+<p><strong>Campagne 4 — SSH et accès distant</strong></p>
+<p><em>« Pendant des décennies, le mot de passe a constitué le principal rempart protégeant les serveurs. Aujourd'hui encore, il reste omniprésent... mais il est devenu la cible privilégiée des attaquants. »</em></p>
+</blockquote>
+<h2 id="vous-etes-ici">Vous êtes ici</h2>
+<pre><code class="language-text">Partie I — Construire un socle sécurisé
+
+Campagne 4 — SSH et accès distant
+
+      4.1 Architecture d'OpenSSH
+    ► 4.2 Authentification par mot de passe
+      4.3 Authentification par clés
+      4.4 Durcissement de sshd_config
+      4.5 Bastion d'administration
+      4.6 Journalisation et audit SSH
+      4.7 Protection contre les attaques
+      4.8 Mission : administration sécurisée de Sentinel
+</code></pre>
+<h2 id="objectifs-pedagogiques">Objectifs pédagogiques</h2>
+<p>À la fin de ce chapitre, vous serez capable de :</p>
+<ul>
+<li>comprendre précisément le fonctionnement de l'authentification par mot de passe dans OpenSSH ;</li>
+<li>suivre le chemin parcouru par un mot de passe depuis le clavier jusqu'à PAM ;</li>
+<li>comprendre pourquoi le mot de passe n'est jamais envoyé en clair ;</li>
+<li>identifier les faiblesses de cette méthode d'authentification ;</li>
+<li>préparer la transition vers les clés publiques.</li>
+</ul>
+<h2 id="pourquoi-ce-chapitre-existe">Pourquoi ce chapitre existe</h2>
+<p>Lorsque l'on évoque SSH, la première image qui vient à l'esprit est souvent celle-ci.</p>
+<pre><code class="language-bash">ssh admin@serveur
+</code></pre>
+<p>Puis. <code>admin@serveur's password:</code> Cette scène paraît banale. Pourtant, elle masque un mécanisme extrêmement sophistiqué. Beaucoup d'administrateurs pensent que SSH :</p>
+<ul>
+<li>demande un mot de passe ;</li>
+<li>l'envoie au serveur ;</li>
+<li>compare le résultat ;</li>
+<li>ouvre la session.</li>
+</ul>
+<p>En réalité, aucune de ces étapes n'est aussi simple. Le mot de passe :</p>
+<ul>
+<li>n'est jamais envoyé en clair ;</li>
+<li>n'est jamais comparé directement à celui contenu dans <code>/etc/shadow</code> ;</li>
+<li>n'est même pas vérifié directement par OpenSSH.</li>
+</ul>
+<p>Pour comprendre cela, nous devons suivre le chemin complet de l'authentification.</p>
+<h2 id="theorie-detaillee">Théorie détaillée</h2>
+<h3 id="a-quel-moment-le-mot-de-passe-est-il-demande">À quel moment le mot de passe est-il demandé ?</h3>
+<p>Souvenons-nous du chapitre précédent. Avant même de demander un mot de passe, SSH a déjà :</p>
+<ul>
+<li>négocié les algorithmes ;</li>
+<li>authentifié le serveur ;</li>
+<li>établi un tunnel chiffré ;</li>
+<li>créé une clé de session.</li>
+</ul>
+<p>Le déroulement est donc.</p>
+<div class="mermaid">flowchart TD
+    N0["Connexion TCP"]
+    N1["Tunnel chiffré"]
+    N2["Demande du nom d'utilisateur"]
+    N3["Demande du mot de passe"]
+    N4["Authentification"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+    N2 --&gt; N3
+    N3 --&gt; N4
+</div>
+<p>Cette chronologie est fondamentale. Le mot de passe circule déjà dans un tunnel sécurisé.</p>
+<h2 id="le-mot-de-passe-nest-jamais-visible-sur-le-reseau">Le mot de passe n'est jamais visible sur le réseau</h2>
+<p>Imaginons un attaquant connecté sur le même réseau. Il capture tous les paquets. Que voit-il ? Pas ceci. <code>MotDePasse123</code> Mais quelque chose ressemblant plutôt à cela.</p>
+<pre><code class="language-text">8F 2A 91 64
+
+A3 8C D2
+
+7F 91...
+</code></pre>
+<p>Autrement dit, un flux entièrement chiffré. Même si l'attaquant capture l'intégralité de la session, il ne peut pas retrouver directement le mot de passe. C'est l'une des différences fondamentales avec Telnet.</p>
+<h2 id="qui-verifie-reellement-le-mot-de-passe">Qui vérifie réellement le mot de passe ?</h2>
+<p>Une autre idée reçue consiste à croire que :</p>
+<div class="mermaid">flowchart TD
+    N0["sshd"]
+    N1["lit&lt;br/&gt;/etc/shadow"]
+    N2["compare"]
+    N3["ouvre la session"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+    N2 --&gt; N3
+</div>
+<p>Ce n'est pas exactement ce qui se passe. Sur AlmaLinux, OpenSSH délègue cette opération à PAM. La séquence réelle est la suivante.</p>
+<div class="mermaid">flowchart TD
+    N0["Utilisateur"]
+    N1["sshd"]
+    N2["PAM"]
+    N3["Modules PAM"]
+    N4["/etc/shadow"]
+    N5["Résultat"]
+    N6["sshd"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+    N2 --&gt; N3
+    N3 --&gt; N4
+    N4 --&gt; N5
+    N5 --&gt; N6
+</div>
+<p>Autrement dit, OpenSSH ne connaît pas les règles d'authentification. Il demande simplement à PAM :</p>
+<blockquote>
+<p>« Cet utilisateur est-il autorisé à ouvrir une session ? »</p>
+</blockquote>
+<p>Cette architecture permet à SSH de bénéficier automatiquement de toutes les politiques PAM étudiées dans la campagne 2.</p>
+<h2 id="le-role-de-pam">Le rôle de PAM</h2>
+<p>Grâce à PAM, SSH n'a pas besoin de savoir :</p>
+<ul>
+<li>comment vérifier un mot de passe ;</li>
+<li>si le compte est expiré ;</li>
+<li>si le compte est verrouillé ;</li>
+<li>si une authentification multifactorielle est requise ;</li>
+<li>si FreeIPA ou LDAP doivent être interrogés.</li>
+</ul>
+<p>Toutes ces décisions sont prises par PAM. Visualisons.</p>
+<div class="mermaid">flowchart TD
+    User["Utilisateur"] --&gt; SSH["Client SSH"]
+    SSH --&gt; Channel["Canal SSH chiffré"]
+    Channel --&gt; PAM["Pile PAM"]
+    PAM --&gt; Account["Compte et mot de passe"]
+    Account --&gt; Decision{"Autorisé ?"}
+    Decision --&gt;|Oui| Session["Session ouverte"]
+    Decision --&gt;|Non| Deny["Accès refusé"]
+</div>
+<p>Cette séparation est l'une des grandes forces de Linux.</p>
+<p>Sur AlmaLinux, ce parcours dépend de la configuration effective, notamment de <code>UsePAM</code>, <code>PasswordAuthentication</code> et <code>KbdInteractiveAuthentication</code>. Une invite qui ressemble à un mot de passe peut relever de l'authentification « password » du protocole ou d'un échange <em>keyboard-interactive</em> piloté par PAM. Pour supprimer réellement les secrets saisis à distance, contrôlez les deux méthodes avec <code>sshd -T</code> au lieu de déduire le résultat d'une seule directive.</p>
+<h2 id="ou-est-stocke-le-mot-de-passe">Où est stocké le mot de passe ?</h2>
+<p>Question importante. Le mot de passe n'est jamais stocké. Ce qui est stocké est son <strong>hachage</strong>. Dans : <code>/etc/shadow</code> Par exemple. <code>$y$j9T$...</code> ou <code>$6$...</code> Ces chaînes représentent le résultat d'une fonction de hachage. Le mot de passe d'origine n'est pas conservé. Lorsqu'un utilisateur saisit son mot de passe, PAM calcule un nouveau hachage, puis compare les deux résultats. Si les empreintes correspondent, l'authentification est acceptée.</p>
+<p>Nous retrouvons ici exactement les notions étudiées dans le chapitre consacré à <code>/etc/shadow</code>.</p>
+<h2 id="une-representation-complete">Une représentation complète</h2>
+<p>L'authentification par mot de passe peut maintenant être représentée ainsi.</p>
+<div class="mermaid">flowchart TD
+    admin[Administrateur saisit le mot de passe] --&gt; channel[Canal SSH déjà chiffré]
+    channel --&gt; sshd[sshd]
+    sshd --&gt; pam[Pile PAM]
+    pam --&gt; verify[Module d'authentification&lt;br/&gt;hachage local ou identité distante]
+    verify --&gt; decision{Vérification réussie ?}
+    decision --&gt;|Oui| session[Session autorisée]
+    decision --&gt;|Non| denied[Accès refusé]
+</div>
+<p>Cette architecture est remarquablement modulaire. Chaque composant possède une responsabilité précise.</p>
+<h2 id="le-role-du-hachage">Le rôle du hachage</h2>
+<p>Une question revient très souvent. Pourquoi ne pas stocker directement les mots de passe ? Imaginons une base contenant ceci.</p>
+<p>Si un attaquant vole ce fichier, il connaît immédiatement le mot de passe. À l'inverse, avec un hachage.</p>
+<p>Il devient impossible de retrouver directement le mot de passe d'origine. Le système ne conserve jamais le secret lui-même, uniquement son empreinte cryptographique.</p>
+<h2 id="comment-pam-verifie-t-il-un-mot-de-passe">Comment PAM vérifie-t-il un mot de passe ?</h2>
+<p>Prenons un exemple. Le mot de passe réel est : <code>Sentinel2026!</code> Lors de sa création, PAM calcule son hachage.</p>
+<div class="mermaid">flowchart TD
+    N0["Sentinel2026!"]
+    N1["Fonction de hachage"]
+    N2["$y$j9T$..."]
+    N0 --&gt; N1
+    N1 --&gt; N2
+</div>
+<p>Cette valeur est enregistrée dans : <code>/etc/shadow</code> Plus tard, l'utilisateur tente une connexion. Il saisit de nouveau. <code>Sentinel2026!</code> PAM réalise exactement le même calcul.</p>
+<div class="mermaid">flowchart TD
+    N0["Sentinel2026!"]
+    N1["Même fonction"]
+    N2["$y$j9T$..."]
+    N0 --&gt; N1
+    N1 --&gt; N2
+</div>
+<p>Puis compare les deux résultats.</p>
+<div class="mermaid">flowchart TD
+    N0["Hachage calculé&lt;br/&gt;=&lt;br/&gt;Hachage enregistré ?"]
+    N1["Oui"]
+    N2["Authentification"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+</div>
+<p>Le mot de passe n'est jamais comparé directement.</p>
+<h2 id="pourquoi-utiliser-un-sel-salt">Pourquoi utiliser un sel (<em>Salt</em>) ?</h2>
+<p>Une autre question essentielle. Pourquoi les hachages commencent-ils par une longue chaîne aléatoire ? Par exemple. <code>$y$j9T$...</code> Cette partie contient notamment un <strong>sel</strong> (<em>salt</em>). Le principe est simple. Deux utilisateurs choisissent le même mot de passe. <code>Azerty123</code> Sans sel, ils obtiendraient exactement le même hachage.</p>
+<div class="mermaid">flowchart TD
+    N0["Utilisateur A"]
+    N1["A1B2C3&lt;br/&gt;Utilisateur B"]
+    N2["A1B2C3"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+</div>
+<p>Un attaquant pourrait immédiatement repérer les mots de passe identiques. Grâce au sel, chaque utilisateur obtient un résultat différent.</p>
+<div class="mermaid">flowchart TD
+    N0["Utilisateur A"]
+    N1["$y$j9T$...&lt;br/&gt;Utilisateur B"]
+    N2["$y$QkP$..."]
+    N0 --&gt; N1
+    N1 --&gt; N2
+</div>
+<p>Même mot de passe. Deux empreintes totalement différentes. Cette technique complique considérablement les attaques utilisant des tables pré-calculées (<em>Rainbow Tables</em>).</p>
+<h2 id="pourquoi-les-attaques-par-force-brute-existent-elles-encore">Pourquoi les attaques par force brute existent-elles encore ?</h2>
+<p>À première vue, on pourrait croire qu'un hachage protège totalement les mots de passe. En réalité, un attaquant n'essaie généralement pas de retrouver directement le mot de passe. Il procède autrement.</p>
+<div class="mermaid">flowchart TD
+    N0["Essai"]
+    N1["Calcul du hachage"]
+    N2["Comparaison"]
+    N3["Essai suivant"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+    N2 --&gt; N3
+</div>
+<p>Il répète cette opération des millions de fois. C'est ce que l'on appelle une attaque par : <code>Brute Force</code> ou <code>Dictionnaire</code> La sécurité repose donc fortement sur :</p>
+<ul>
+<li>la longueur du mot de passe ;</li>
+<li>sa complexité ;</li>
+<li>le coût de l'algorithme de hachage ;</li>
+<li>les limitations imposées par le serveur.</li>
+</ul>
+<h2 id="pourquoi-ssh-reste-vulnerable-aux-attaques-par-mot-de-passe">Pourquoi SSH reste vulnérable aux attaques par mot de passe</h2>
+<p>Une idée reçue consiste à croire que le chiffrement SSH protège contre les attaques. Le chiffrement protège :</p>
+<ul>
+<li>la confidentialité ;</li>
+<li>l'intégrité.</li>
+</ul>
+<p>Mais il ne protège pas contre les tentatives répétées d'authentification. Prenons un serveur exposé sur Internet. Un robot peut effectuer.</p>
+<div class="mermaid">flowchart TD
+    N0["Connexion"]
+    N1["Tentative"]
+    N2["Échec"]
+    N3["Déconnexion"]
+    N4["Nouvelle connexion"]
+    N5["Nouvelle tentative"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+    N2 --&gt; N3
+    N3 --&gt; N4
+    N4 --&gt; N5
+</div>
+<p>Des milliers de fois par minute. Le chiffrement fonctionne parfaitement. Pourtant, le serveur continue de recevoir des tentatives de connexion. C'est pourquoi nous étudierons plus loin :</p>
+<ul>
+<li>Fail2ban ;</li>
+<li>le verrouillage des comptes ;</li>
+<li>les limitations PAM ;</li>
+<li>les listes d'autorisation ;</li>
+<li>les clés publiques.</li>
+</ul>
+<h2 id="pourquoi-les-administrateurs-abandonnent-progressivement-les-mots-de-passe">Pourquoi les administrateurs abandonnent progressivement les mots de passe</h2>
+<p>Le problème du mot de passe n'est pas son transport. SSH le protège très efficacement. Le véritable problème est humain. Les utilisateurs choisissent souvent :</p>
+<ul>
+<li>des mots de passe trop courts ;</li>
+<li>des mots de passe réutilisés ;</li>
+<li>des mots de passe prédictibles ;</li>
+<li>des variantes faciles à deviner.</li>
+</ul>
+<p>Par exemple.</p>
+<pre><code class="language-text">Password123
+
+Admin2026
+
+Bienvenue1
+
+Azerty123
+</code></pre>
+<p>Ces mots de passe sont testés automatiquement par les attaquants. La robustesse de SSH ne peut pas compenser une mauvaise hygiène de mots de passe. C'est précisément pour cette raison que les infrastructures modernes privilégient désormais :</p>
+<ul>
+<li>les clés publiques ;</li>
+<li>les certificats ;</li>
+<li>l'authentification multifactorielle.</li>
+</ul>
+<p>Nous commencerons cette transition dans le chapitre suivant.</p>
+<h2 id="une-representation-complete_1">Une représentation complète</h2>
+<div class="mermaid">sequenceDiagram
+    participant U as Utilisateur
+    participant S as sshd
+    participant P as PAM
+    participant I as Source d'identité
+    Note over U,S: Canal SSH chiffré établi
+    U-&gt;&gt;S: Réponse d'authentification
+    S-&gt;&gt;P: Vérifier le compte et la méthode
+    P-&gt;&gt;I: Vérifier le secret ou la politique
+    I--&gt;&gt;P: Résultat
+    P--&gt;&gt;S: Autoriser ou refuser
+    S--&gt;&gt;U: Session ou échec
+</div>
+<p>Cette représentation montre clairement que le mot de passe n'est jamais transmis en clair et qu'il n'est jamais stocké sous sa forme originale.</p>
+<h2 id="approfondissement">Approfondissement</h2>
+<h3 id="le-veritable-probleme-nest-pas-le-mot-de-passe-mais-le-secret-partage">Le véritable problème n'est pas le mot de passe, mais le secret partagé</h3>
+<p>Le mot de passe appartient à une famille de mécanismes que l'on appelle :</p>
+<pre><code class="language-text">Shared Secret
+
+(Secret partagé)
+</code></pre>
+<p>Le principe est extrêmement simple. Le client connaît le secret. Le serveur connaît également le secret. L'authentification consiste à démontrer que les deux possèdent exactement la même information. Visualisons.</p>
+<div class="mermaid">flowchart TD
+    N0["Client"]
+    N1["Mot de passe"]
+    N2["──────── Secret partagé ────────"]
+    N3["Mot de passe"]
+    N4["Serveur"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+    N2 --&gt; N3
+    N3 --&gt; N4
+</div>
+<p>Cette approche fonctionne. Mais elle présente plusieurs limites.</p>
+<h3 id="un-secret-partage-finit-toujours-par-etre-partage">Un secret partagé finit toujours par être partagé</h3>
+<p>C'est probablement le plus grand défaut des mots de passe. Plus une infrastructure grandit, plus le nombre de secrets augmente. Prenons une entreprise.</p>
+<div class="mermaid">flowchart TD
+    N0["Administrateur"]
+    N1["SSH"]
+    N2["Serveur A"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+</div>
+<div class="mermaid">flowchart TD
+    N0["Administrateur"]
+    N1["SSH"]
+    N2["Serveur B"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+</div>
+<div class="mermaid">flowchart TD
+    N0["Administrateur"]
+    N1["SSH"]
+    N2["Serveur C"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+</div>
+<p>Chaque serveur attend généralement le même secret. En pratique, les administrateurs réutilisent très souvent les mêmes mots de passe. Une compromission sur une seule machine peut alors mettre en danger toute l'infrastructure.</p>
+<h3 id="le-mot-de-passe-devient-la-cible">Le mot de passe devient la cible</h3>
+<p>Lorsqu'un attaquant attaque SSH, il ne cherche généralement pas à casser le chiffrement. Ce serait pratiquement impossible. Il préfère attaquer le secret lui-même. Par exemple. <code>Brute Force</code> <code>Password Spraying</code> <code>Credential Stuffing</code> <code>Phishing</code> <code>Vol d'un gestionnaire de mots de passe</code> Toutes ces attaques ciblent le même élément. Le mot de passe. Le protocole SSH n'est donc pas la faiblesse. Le facteur humain l'est beaucoup plus.</p>
+<h3 id="pourquoi-les-entreprises-abandonnent-progressivement-les-mots-de-passe">Pourquoi les entreprises abandonnent progressivement les mots de passe</h3>
+<p>Dans les environnements critiques, l'objectif est simple. Supprimer complètement les secrets partagés. À la place, on utilise : <code>Clés publiques</code> ou <code>Certificats</code> Le serveur ne possède plus votre secret. Il ne possède que votre <strong>clé publique</strong>. Même si le serveur est compromis, votre clé privée reste sur votre poste. Cette différence est fondamentale. Elle explique pourquoi les clés SSH sont aujourd'hui la méthode privilégiée dans pratiquement toutes les infrastructures Linux professionnelles.</p>
+<h2 id="concevoir-la-politique">Concevoir la politique</h2>
+<p>Pour un architecte, les mots de passe représentent un coût opérationnel. Pourquoi ? Parce qu'il faut :</p>
+<ul>
+<li>les créer ;</li>
+<li>les renouveler ;</li>
+<li>les oublier ;</li>
+<li>les réinitialiser ;</li>
+<li>les transmettre ;</li>
+<li>les protéger.</li>
+</ul>
+<p>Plus une infrastructure grandit, plus cette gestion devient complexe. Imaginons mille serveurs. Avec des mots de passe, chaque administrateur doit gérer :</p>
+<ul>
+<li>des rotations ;</li>
+<li>des politiques PAM ;</li>
+<li>des expirations ;</li>
+<li>des demandes de réinitialisation.</li>
+</ul>
+<p>Avec des clés publiques, la gestion devient beaucoup plus simple. On distribue une clé publique. On conserve la clé privée. Le secret ne quitte jamais son propriétaire. C'est précisément cette philosophie qui sera adoptée pour Sentinel.</p>
+<h3 id="le-mot-de-passe-reste-neanmoins-indispensable">Le mot de passe reste néanmoins indispensable</h3>
+<p>Attention. Il serait faux de conclure que les mots de passe sont devenus inutiles. Ils restent omniprésents. Par exemple.</p>
+<ul>
+<li>ouverture de session locale ;</li>
+<li>récupération d'urgence ;</li>
+<li>authentification PAM ;</li>
+<li>sudo ;</li>
+<li>chiffrement de certaines clés privées.</li>
+</ul>
+<p>L'objectif n'est donc pas de supprimer totalement les mots de passe, mais de réduire leur utilisation lorsque cela est possible.</p>
+<h2 id="point-de-vue-offensif">Point de vue offensif</h2>
+<p>Lorsqu'un serveur SSH est découvert, l'attaquant commence rarement par rechercher une vulnérabilité. Il effectue plutôt un calcul très simple.</p>
+<div class="mermaid">flowchart TD
+    N0["Le serveur accepte-t-il&lt;br/&gt;les mots de passe ?"]
+    N1["Oui"]
+    N2["Tentatives automatiques"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+</div>
+<p>Pourquoi ? Parce qu'une attaque automatisée coûte extrêmement peu. Quelques milliers de robots répartis sur Internet peuvent tester quotidiennement plusieurs millions de combinaisons. Même si un très faible pourcentage réussit, cela reste rentable. Cette réalité explique pourquoi les administrateurs professionnels désactivent souvent complètement l'authentification par mot de passe sur les serveurs exposés.</p>
+<h3 id="une-authentification-reussie-nest-pas-toujours-legitime">Une authentification réussie n'est pas toujours légitime</h3>
+<p>Autre point important. Supposons qu'un attaquant connaisse réellement le bon mot de passe. SSH ne peut pas faire la différence entre :</p>
+<p>et</p>
+<p>Le protocole fonctionne exactement comme prévu. Le problème n'est plus technique. Il est lié à la compromission du secret. C'est une limite fondamentale de toute authentification basée sur un secret partagé.</p>
+<h2 id="en-entreprise">En entreprise</h2>
+<p>Les politiques de sécurité imposent généralement plusieurs mesures lorsque les mots de passe restent autorisés. Par exemple.</p>
+<ul>
+<li>longueur minimale ;</li>
+<li>complexité ;</li>
+<li>expiration périodique ;</li>
+<li>historique des anciens mots de passe ;</li>
+<li>verrouillage après plusieurs échecs ;</li>
+<li>authentification multifactorielle.</li>
+</ul>
+<p>Toutes ces mesures cherchent à compenser les faiblesses intrinsèques des mots de passe. Cependant, la tendance actuelle est claire. Les nouvelles infrastructures privilégient :</p>
+<ul>
+<li>les clés SSH ;</li>
+<li>les certificats ;</li>
+<li>les jetons matériels ;</li>
+<li>les solutions d'identité centralisée comme FreeIPA.</li>
+</ul>
+<p>Les mots de passe deviennent progressivement un mécanisme de secours plutôt qu'un mécanisme principal.</p>
+<h2 id="culture-technique">Culture technique</h2>
+<h3 id="pourquoi-ssh-ne-peut-jamais-retrouver-votre-mot-de-passe">Pourquoi SSH ne peut jamais retrouver votre mot de passe</h3>
+<p>Une question revient très souvent.</p>
+<blockquote>
+<p>Si j'oublie mon mot de passe, pourquoi Linux ne peut-il pas simplement me le redonner ?</p>
+</blockquote>
+<p>La réponse est simple. Parce qu'il ne le connaît pas. Souvenons-nous. Le système ne stocke jamais : <code>MonSuperMotDePasse</code> Il stocke uniquement une empreinte. Par exemple. <code>$y$j9T$...</code> Cette empreinte est obtenue grâce à une fonction dite <strong>à sens unique</strong>.</p>
+<div class="mermaid">flowchart TD
+    N0["Mot de passe"]
+    N1["Fonction de hachage"]
+    N2["Empreinte"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+</div>
+<p>En revanche, l'opération inverse n'existe pas.</p>
+<div class="mermaid">flowchart TD
+    N0["Empreinte"]
+    N1["???"]
+    N2["Mot de passe"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+</div>
+<p>Impossible. Même l'administrateur système ne peut pas récupérer votre mot de passe. Il peut uniquement le remplacer. Cette propriété constitue l'un des fondements de la sécurité moderne.</p>
+<h3 id="pourquoi-linux-utilise-aujourdhui-yescrypt">Pourquoi Linux utilise aujourd'hui yescrypt</h3>
+<p>Si vous ouvrez <code>/etc/shadow</code> sur une AlmaLinux récente, vous verrez souvent des hachages commençant par : <code>$y$</code> Cela indique l'utilisation de : <code>yescrypt</code> Avant cela, les distributions utilisaient principalement : <code>$6$</code> correspondant à SHA-512-crypt. Pourquoi ce changement ? Parce que les processeurs et les cartes graphiques parallélisent toujours mieux les essais hors ligne. Yescrypt introduit volontairement :</p>
+<ul>
+<li>davantage de calculs ;</li>
+<li>davantage d'utilisation mémoire ;</li>
+<li>un coût plus élevé pour chaque tentative.</li>
+</ul>
+<p>Résultat : les attaques par force brute deviennent beaucoup plus coûteuses.</p>
+<h3 id="pam-permet-de-changer-completement-le-mode-dauthentification">PAM permet de changer complètement le mode d'authentification</h3>
+<p>SSH ne sait pratiquement rien de l'identité des utilisateurs. Il délègue cette responsabilité. Grâce à PAM, le même démon SSH peut fonctionner avec : <code>Mot de passe local</code> <code>FreeIPA</code> <code>LDAP</code> <code>Kerberos</code> <code>Smart Card</code> <code>Authentification multifactorielle</code> Sans qu'OpenSSH ait besoin d'être modifié. C'est l'une des grandes forces de l'architecture Linux.</p>
+<h3 id="pourquoi-les-robots-continuent-malgre-les-echecs">Pourquoi les robots continuent malgré les échecs</h3>
+<p>Un serveur SSH exposé sur Internet reçoit parfois plusieurs milliers de tentatives quotidiennes. Pourtant, les attaquants savent qu'elles échoueront presque toujours. Pourquoi persistent-ils ? Parce que leur coût est extrêmement faible. Leur logique ressemble à ceci.</p>
+<div class="mermaid">flowchart TD
+    N0["Scanner Internet"]
+    N1["Port 22 ouvert ?"]
+    N2["Oui"]
+    N3["Tester&lt;br/&gt;admin"]
+    N4["Tester&lt;br/&gt;root"]
+    N5["Tester&lt;br/&gt;ubuntu"]
+    N6["Tester&lt;br/&gt;ec2-user"]
+    N7["Serveur suivant"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+    N2 --&gt; N3
+    N3 --&gt; N4
+    N4 --&gt; N5
+    N5 --&gt; N6
+    N6 --&gt; N7
+</div>
+<p>L'ensemble est entièrement automatisé. Quelques machines suffisent à tester des millions de serveurs.</p>
+<h2 id="piege-classique">Piège classique</h2>
+<h3 id="desactiver-les-mots-de-passe-trop-tot">Désactiver les mots de passe trop tôt</h3>
+<p>Une erreur fréquente consiste à suivre un tutoriel. On exécute. <code>PasswordAuthentication no</code> Puis. <code>systemctl restart sshd</code> Et... plus personne ne peut se connecter. Pourquoi ? Parce qu'aucune clé publique n'avait encore été déployée. Le serveur devient alors pratiquement inaccessible. Une règle simple.</p>
+<blockquote>
+<p><strong>On ne désactive jamais l'authentification par mot de passe avant d'avoir vérifié qu'une authentification par clé fonctionne réellement.</strong></p>
+</blockquote>
+<p>Cette vérification doit être effectuée depuis une seconde session SSH. Ainsi, si la nouvelle configuration est incorrecte, la première session reste ouverte et permet de revenir en arrière.</p>
+<h3 id="confondre-chiffrement-et-authentification">Confondre chiffrement et authentification</h3>
+<p>Autre erreur classique. Certains administrateurs pensent :</p>
+<blockquote>
+<p>« SSH est chiffré, donc je peux utiliser n'importe quel mot de passe. »</p>
+</blockquote>
+<p>Le chiffrement protège le transport. Il ne protège pas contre :</p>
+<ul>
+<li>un mot de passe faible ;</li>
+<li>un mot de passe réutilisé ;</li>
+<li>un mot de passe volé ;</li>
+<li>un mot de passe divulgué.</li>
+</ul>
+<p>Ces deux notions sont indépendantes.</p>
+<h2 id="tp-1-observer-une-authentification-par-mot-de-passe">TP 1 — Observer une authentification par mot de passe</h2>
+<h3 id="objectif">Objectif</h3>
+<p>Observer le fonctionnement réel de l'authentification par mot de passe dans OpenSSH.</p>
+<h3 id="etape-1-verifier-la-configuration-actuelle">Étape 1 — Vérifier la configuration actuelle</h3>
+<p>Afficher les options effectives liées à l'authentification, y compris les fragments inclus.</p>
+<pre><code class="language-bash">sudo sshd -T | grep -E \
+'^(passwordauthentication|kbdinteractiveauthentication|permitrootlogin|usepam) '
+</code></pre>
+<p>Comparer les résultats avec la documentation officielle.</p>
+<h3 id="etape-2-observer-les-journaux">Étape 2 — Observer les journaux</h3>
+<p>Depuis une autre machine, effectuer :</p>
+<ul>
+<li>une connexion réussie ;</li>
+<li>une connexion avec un mauvais mot de passe.</li>
+</ul>
+<p>Puis afficher.</p>
+<pre><code class="language-bash">sudo journalctl -u sshd
+</code></pre>
+<p>Identifier :</p>
+<ul>
+<li>la tentative ;</li>
+<li>l'utilisateur ;</li>
+<li>l'adresse IP ;</li>
+<li>le résultat.</li>
+</ul>
+<h2 id="tp-2-relier-ssh-pam-et-etcshadow">TP 2 — Relier SSH, PAM et <code>/etc/shadow</code></h2>
+<h3 id="etape-3-verifier-pam">Étape 3 — Vérifier PAM</h3>
+<p>Afficher les fichiers utilisés par SSH.</p>
+<pre><code class="language-bash">cat /etc/pam.d/sshd
+</code></pre>
+<p>Repérer les différents modules PAM. Essayer d'identifier leur rôle.</p>
+<h3 id="etape-4-observer-etcshadow">Étape 4 — Observer <code>/etc/shadow</code></h3>
+<p>Afficher uniquement votre utilisateur.</p>
+<pre><code class="language-bash">sudo grep "^votre_utilisateur:" /etc/shadow
+</code></pre>
+<p>Identifier :</p>
+<ul>
+<li>l'algorithme utilisé ;</li>
+<li>la présence du sel ;</li>
+<li>les champs liés à l'expiration.</li>
+</ul>
+<p>Faire le lien avec les chapitres de la campagne 2.</p>
+<h2 id="mission-dingenieur">Mission d'ingénieur</h2>
+<p>Votre entreprise vous demande de conserver temporairement l'authentification par mot de passe sur les serveurs Sentinel, mais uniquement pendant la phase de migration vers les clés publiques. Vous devez rédiger une politique d'exploitation répondant aux questions suivantes.</p>
+<ul>
+<li>Quelles contraintes imposer aux mots de passe ?</li>
+<li>Quels mécanismes PAM utiliser ?</li>
+<li>Quels journaux surveiller ?</li>
+<li>Comment détecter une attaque par force brute ?</li>
+<li>À quel moment pourra-t-on désactiver définitivement <code>PasswordAuthentication</code> ?</li>
+</ul>
+<p>Cette politique devra permettre une transition progressive sans interrompre l'administration des serveurs.</p>
+<h2 id="impact-sur-sentinel">Impact sur Sentinel</h2>
+<p>Au début du projet, Sentinel sera probablement administré grâce à des mots de passe. Cette méthode reste simple, universelle et facile à déployer. Cependant, au fur et à mesure de l'industrialisation de la plateforme, nous abandonnerons progressivement cette méthode au profit de l'authentification par <strong>clés publiques</strong>. Cette évolution réduira considérablement les risques liés :</p>
+<ul>
+<li>aux attaques par dictionnaire ;</li>
+<li>aux fuites de secrets ;</li>
+<li>aux réutilisations de mots de passe.</li>
+</ul>
+<p>Le prochain chapitre expliquera précisément pourquoi les clés publiques représentent aujourd'hui la méthode de référence pour administrer des serveurs Linux.</p>
+<h2 id="synthese">Synthèse</h2>
+<ul>
+<li>Le mot de passe circule toujours dans un tunnel SSH déjà chiffré.</li>
+<li>OpenSSH délègue l'authentification à PAM.</li>
+<li>Linux ne stocke jamais le mot de passe mais uniquement son hachage.</li>
+<li>Les attaques ciblent principalement le secret partagé, pas le protocole SSH.</li>
+<li>Les mots de passe restent compatibles avec une infrastructure sécurisée, mais ils ne constituent plus la méthode privilégiée.</li>
+<li>Avant de désactiver <code>PasswordAuthentication</code>, il faut toujours valider une méthode d'authentification alternative.</li>
+<li>Les clés publiques permettront de supprimer le principal point faible : le secret partagé.</li>
+</ul>
+<h2 id="pour-aller-plus-loin">Pour aller plus loin</h2>
+<p>Consultez <code>pam(8)</code>, <code>pam_unix(8)</code> et la configuration effective de <code>sshd</code> pour distinguer méthode SSH, pile PAM et source d'identité. Le chapitre suivant supprime le secret partagé du serveur grâce à la cryptographie asymétrique.</p>
+<p>← <a href="../4.1-architecture-openssh/">4.1 — Architecture d'OpenSSH</a> · <a href="../4.3-authentification-par-cles/">4.3 — Authentification par clés</a> →</p>
+</div>
+</div><footer>
+<div aria-label="Footer Navigation" class="rst-footer-buttons" role="navigation">
+<a class="btn btn-neutral float-left" href="../4.1-architecture-openssh/" title="Chapitre 4.1 — Architecture d'OpenSSH"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+<a class="btn btn-neutral float-right" href="../4.3-authentification-par-cles/" title="Chapitre 4.3 — Authentification par clés">Next <span class="icon icon-circle-arrow-right"></span></a>
+</div>
+<hr/>
+<div role="contentinfo">
+<!-- Copyright etc -->
+</div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+</div>
+</div>
+</section>
+</div>
+<div aria-label="Versions" class="rst-versions" role="note">
+<span class="rst-current-version" data-toggle="rst-current-version">
+<span>
+<a class="fa fa-code-fork" href="https://github.com/tdelaclos/formations" style="color: #fcfcfc"> tdelaclos/formations</a>
+</span>
+<span><a href="../4.1-architecture-openssh/" style="color: #fcfcfc">« Previous</a></span>
+<span><a href="../4.3-authentification-par-cles/" style="color: #fcfcfc">Next »</a></span>
+</span>
+</div>
+<script src="../../js/jquery-3.6.0.min.js"></script>
+<script>var base_url = "../..";</script>
+<script src="../../js/theme_extra.js"></script>
+<script src="../../js/theme.js"></script>
+<script src="../../search/main.js"></script>
+<script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+<script type="module">import mermaid from "https://unpkg.com/mermaid@10.4.0/dist/mermaid.esm.min.mjs";
+mermaid.initialize({});</script></body>
+</html>

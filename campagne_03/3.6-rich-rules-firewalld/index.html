@@ -1,0 +1,1288 @@
+<!DOCTYPE html>
+
+<html class="writer-html5" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="IE=edge" http-equiv="X-UA-Compatible"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="../../img/favicon.ico" rel="shortcut icon"/>
+<title>Chapitre 3.6 — Les Rich Rules Firewalld - Formation Sentinel — AlmaLinux sécurisé</title>
+<link href="../../css/theme.css" rel="stylesheet"/>
+<link href="../../css/theme_extra.css" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" rel="stylesheet"/>
+<script>
+        // Current page data
+        var mkdocs_page_name = "Chapitre 3.6 \u2014 Les Rich Rules Firewalld";
+        var mkdocs_page_input_path = "campagne_03/3.6-rich-rules-firewalld.md";
+        var mkdocs_page_url = null;
+      </script>
+<!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+<script>hljs.highlightAll();</script>
+</head>
+<body class="wy-body-for-nav" role="document">
+<div class="wy-grid-for-nav">
+<nav class="wy-nav-side stickynav" data-toggle="wy-nav-shift">
+<div class="wy-side-scroll">
+<div class="wy-side-nav-search">
+<a class="icon icon-home" href="../.."> Formation Sentinel — AlmaLinux sécurisé
+        </a><div role="search">
+<form action="../../search.html" class="wy-form" id="rtd-search-form" method="get">
+<input aria-label="Search docs" name="q" placeholder="Search docs" title="Type search term here" type="text"/>
+</form>
+</div>
+</div>
+<div aria-label="Navigation menu" class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../..">Accueil</a>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">A propos</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../GUIDE-REDACTION/">Guide de rédaction</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../PARCOURS-SENTINEL/">Parcours applicatif Sentinel</a>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Campagnes</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal">Campagne 1 - Sécuriser le socle Linux</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.1-pourquoi-securiser-socle-linux/">Chapitre 1.1 — Pourquoi sécuriser un socle Linux ?</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.2-installation-almalinux-minimal/">Chapitre 1.2 — Installer AlmaLinux minimal</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.3-composants-systeme-linux/">Chapitre 1.3 — Comprendre les composants d'un système Linux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.4-premier-demarrage-verifications/">Chapitre 1.4 — Établir la baseline du serveur</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.5-mise-a-jour-gestion-depots/">Chapitre 1.5 — Mettre à jour et gérer les dépôts</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.6-architecture-systemes-fichiers/">Chapitre 1.6 — Organiser les systèmes de fichiers</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.7-utilisateurs-groupes-permissions/">Chapitre 1.7 — Comprendre identités et permissions</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.8-sudo-moindre-privilege/">Chapitre 1.8 — Administrer avec sudo</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.9-premiere-mise-en-securite-serveur/">Chapitre 1.9 — Mission : mettre le serveur en sécurité</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.10-creation-laboratoire-sentinel/">Chapitre 1.10 — Créer le laboratoire Sentinel</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 2 - Gestion des permissions et des identités</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.1-permissions-unix/">Chapitre 2.1 — Les permissions UNIX</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.2-acl/">Chapitre 2.2 — Les ACL</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.3-umask/">Chapitre 2.3 — L'umask</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.4-attributs-etendus/">Chapitre 2.4 — Les attributs étendus</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.5-pam/">Chapitre 2.5 — PAM</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.6-politique-mots-de-passe/">Chapitre 2.6 — Politique de mots de passe</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.7-comptes-systeme/">Chapitre 2.7 — Les comptes système</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.8-sudo-avance/">Chapitre 2.8 — sudo avancé</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.9-fichiers-identites-linux/">Chapitre 2.9 — Comprendre les fichiers d'identités Linux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.10-synthese-securiser-identites/">Chapitre 2.10 — Synthèse : sécuriser les identités</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal current">Campagne 3 - TCP/IP et Firewalld</a>
+<ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../3.1-tcp-ip-administrateur/">Chapitre 3.1 — TCP/IP côté administrateur</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../3.2-architecture-firewalld/">Chapitre 3.2 — Architecture de Firewalld</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../3.3-zones-firewalld/">Chapitre 3.3 — Les zones Firewalld</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../3.4-services-firewalld/">Chapitre 3.4 — Les services Firewalld</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../3.5-conntrack-filtrage-etats/">Chapitre 3.5 — Conntrack et le filtrage par états</a>
+</li>
+<li class="toctree-l2 current"><a class="reference internal current" href="#">Chapitre 3.6 — Les Rich Rules Firewalld</a>
+<ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="#vous-etes-ici">Vous êtes ici</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#objectifs-pedagogiques">Objectifs pédagogiques</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pourquoi-ce-chapitre-existe">Pourquoi ce chapitre existe</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#theorie-detaillee">Théorie détaillée</a>
+<ul>
+<li class="toctree-l4"><a class="reference internal" href="#une-regle-simple-atteint-rapidement-ses-limites">Une règle simple atteint rapidement ses limites</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#une-rich-rule-est-une-phrase">Une Rich Rule est une phrase</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#premier-exemple">Premier exemple</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#une-regle-decrit-un-contexte">Une règle décrit un contexte</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#les-elements-dune-rich-rule">Les éléments d'une Rich Rule</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#family">family</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#source">source</a>
+<ul>
+<li class="toctree-l4"><a class="reference internal" href="#exemple-sentinel">Exemple Sentinel</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#destination">destination</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#service">service</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#port">port</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#protocol">protocol</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#accept-reject-et-drop">accept, reject et drop</a>
+<ul>
+<li class="toctree-l4"><a class="reference internal" href="#accept">ACCEPT</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#reject">REJECT</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#drop">DROP</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#lequel-choisir">Lequel choisir ?</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#une-bonne-pratique-dentreprise">Une bonne pratique d'entreprise</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#la-journalisation-log">La journalisation (log)</a>
+<ul>
+<li class="toctree-l4"><a class="reference internal" href="#attention-a-la-volumetrie">Attention à la volumétrie</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#le-controle-du-debit-limit">Le contrôle du débit (limit)</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#combiner-plusieurs-criteres">Combiner plusieurs critères</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#les-rich-rules-ne-remplacent-pas-les-zones">Les Rich Rules ne remplacent pas les zones</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#exemple-darchitecture">Exemple d'architecture</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#les-rich-rules-et-ansible">Les Rich Rules et Ansible</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#partir-de-la-matrice-de-flux">Partir de la matrice de flux</a>
+<ul>
+<li class="toctree-l4"><a class="reference internal" href="#la-politique-doit-survivre-au-temps">La politique doit survivre au temps</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#anticiper-les-evolutions">Anticiper les évolutions</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#en-entreprise">En entreprise</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#culture-technique">Culture technique</a>
+<ul>
+<li class="toctree-l4"><a class="reference internal" href="#pourquoi-les-rich-rules-existent-elles">Pourquoi les Rich Rules existent-elles ?</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#une-couche-dabstraction">Une couche d'abstraction</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#une-politique-de-securite-est-un-document-vivant">Une politique de sécurité est un document vivant</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#piege-classique">Piège classique</a>
+<ul>
+<li class="toctree-l4"><a class="reference internal" href="#confondre-securite-reseau-et-authentification">Confondre sécurité réseau et authentification</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#les-rich-rules-ne-remplacent-pas-une-bonne-architecture-reseau">Les Rich Rules ne remplacent pas une bonne architecture réseau</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#priorite-famille-et-validation">Priorité, famille et validation</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#tp-1-restreindre-un-acces-avec-une-rich-rule">TP 1 — Restreindre un accès avec une Rich Rule</a>
+<ul>
+<li class="toctree-l4"><a class="reference internal" href="#objectif">Objectif</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#architecture">Architecture</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#etape-1-creer-une-regle-dacces-ssh">Étape 1 — Créer une règle d'accès SSH</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#etape-2-tester-depuis-une-autre-machine">Étape 2 — Tester depuis une autre machine</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#tp-2-composer-la-politique-sentinel">TP 2 — Composer la politique Sentinel</a>
+<ul>
+<li class="toctree-l4"><a class="reference internal" href="#etape-4-ajouter-une-journalisation">Étape 4 — Ajouter une journalisation</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#etape-5-ajouter-une-limitation">Étape 5 — Ajouter une limitation</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#mission-dingenieur">Mission d'ingénieur</a>
+<ul>
+<li class="toctree-l4"><a class="reference internal" href="#contexte">Contexte</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#votre-mission">Votre mission</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#impact-sur-sentinel">Impact sur Sentinel</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#synthese">Synthèse</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pour-aller-plus-loin">Pour aller plus loin</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../3.7-journalisation-firewalld/">Chapitre 3.7 — Journalisation et analyse Firewalld</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../3.8-ip-sets-firewalld/">Chapitre 3.8 — Les IP Sets Firewalld</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../3.9-runtime-permanent/">Chapitre 3.9 — Runtime et Permanent</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../3.10-politique-reseau-sentinel/">Chapitre 3.10 — Concevoir la politique réseau de Sentinel</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 4 - SSH</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_04/4.1-architecture-openssh/">Chapitre 4.1 — Architecture d'OpenSSH</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_04/4.2-authentification-mot-de-passe/">Chapitre 4.2 — Authentification par mot de passe</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_04/4.3-authentification-par-cles/">Chapitre 4.3 — Authentification par clés</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_04/4.4-durcissement-sshd-config/">Chapitre 4.4 — Durcissement de sshd_config</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_04/4.5-bastion-administration/">Chapitre 4.5 — Bastion d'administration</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_04/4.6-journalisation-audit-ssh/">Chapitre 4.6 — Journalisation et audit SSH</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_04/4.7-protection-attaques-ssh/">Chapitre 4.7 — Protection contre les attaques SSH</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_04/4.8-mission-administration-sentinel/">Chapitre 4.8 — Mission : administrer Sentinel en sécurité</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 5 - Systemd</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.1-comprendre-systemd/">Chapitre 5.1 — Comprendre systemd</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.2-unites-systemd/">Chapitre 5.2 — Les unités systemd</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.3-creer-service-sentinel/">Chapitre 5.3 — Créer le service Sentinel</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.4-sandboxing-systemd/">Chapitre 5.4 — Sandboxing systemd</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.5-capacites-linux/">Chapitre 5.5 — Les capacités Linux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.6-journalisation-journald/">Chapitre 5.6 — Journalisation avec journald</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.7-supervision-redemarrage/">Chapitre 5.7 — Supervision et redémarrage automatique</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.8-mission-sentinel-resilient/">Chapitre 5.8 — Mission : rendre Sentinel résilient</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 6 - SELinux</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_06/6.1-pourquoi-selinux-existe/">Chapitre 6.1 — Pourquoi SELinux existe</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_06/6.2-contextes-selinux/">Chapitre 6.2 — Comprendre les contextes SELinux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_06/6.3-politiques-selinux/">Chapitre 6.3 — Les politiques SELinux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_06/6.4-diagnostic-refus-selinux/">Chapitre 6.4 — Diagnostiquer les refus SELinux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_06/6.5-creation-regles-selinux/">Chapitre 6.5 — Créer des règles SELinux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_06/6.6-securiser-sentinel-selinux/">Chapitre 6.6 — Sécuriser Sentinel avec SELinux</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 7 - TLS et PKI</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.1-comprendre-cryptographie-appliquee/">Chapitre 7.1 — Comprendre la cryptographie appliquée</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.2-lire-verifier-certificats-x509/">Chapitre 7.2 — Lire et vérifier les certificats X.509</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.3-construire-autorite-certification/">Chapitre 7.3 — Construire une autorité de certification</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.4-authentification-mutuelle-tls/">Chapitre 7.4 — Authentifier les deux extrémités avec mTLS</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.5-preparer-integration-freeipa/">Chapitre 7.5 — Préparer l'intégration à FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.6-renouveler-revoquer-certificats/">Chapitre 7.6 — Renouveler et révoquer les certificats</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.7-securiser-sentinel-tls/">Chapitre 7.7 — Sécuriser Sentinel avec TLS</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 8 - FreeIPA</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.1-presentation-freeipa/">Chapitre 8.1 — Découvrir FreeIPA et la gestion centralisée des identités</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.2-architecture-interne-freeipa/">Chapitre 8.2 — Comprendre l'architecture interne de FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.3-installation-freeipa/">Chapitre 8.3 — Installer un serveur FreeIPA de laboratoire</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.4-gestion-utilisateurs/">Chapitre 8.4 — Gérer le cycle de vie des utilisateurs FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.5-groupes-roles/">Chapitre 8.5 — Organiser les groupes et les rôles FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.6-politiques-sudo/">Chapitre 8.6 — Centraliser les politiques sudo avec FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.7-gestion-hotes/">Chapitre 8.7 — Enrôler les hôtes et contrôler les accès avec HBAC</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.8-certificats/">Chapitre 8.8 — Gérer les certificats de service avec FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.9-integration-sentinel/">Chapitre 8.9 — Intégrer Sentinel à FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_08/8.10-mission-administration-freeipa/">Chapitre 8.10 — Mission : administrer Sentinel avec FreeIPA</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 9 - Déploiement avec Ansible</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.1-architecture-ansible/">Chapitre 9.1 — Comprendre l'architecture Ansible</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.2-composants-ansible/">Chapitre 9.2 — Comprendre les composants et l'idempotence Ansible</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.3-inventaires/">Chapitre 9.3 — Construire les inventaires Ansible</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.4-premiers-playbooks/">Chapitre 9.4 — Écrire les premiers playbooks</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.5-variables-templates/">Chapitre 9.5 — Piloter la configuration avec variables et templates</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.6-roles-ansible/">Chapitre 9.6 — Concevoir des rôles Ansible réutilisables</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.7-deployer-sentinel-ansible/">Chapitre 9.7 — Déployer Sentinel avec Ansible</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.8-integrer-sentinel-freeipa/">Chapitre 9.8 — Automatiser l'intégration de Sentinel à FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.9-industrialiser-laboratoire/">Chapitre 9.9 — Industrialiser le projet Ansible</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.10-mission-deploiement-sentinel/">Chapitre 9.10 — Mission : reconstruire Sentinel avec Ansible</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 10 - Packaging RPM</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_10/10.1-construire-paquet-rpm/">Chapitre 10.1 — Construire un paquet RPM</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_10/10.2-gerer-dependances-rpm/">Chapitre 10.2 — Gérer les dépendances RPM</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_10/10.3-gerer-fichiers-configuration-rpm/">Chapitre 10.3 — Gérer les fichiers de configuration RPM</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_10/10.4-signer-paquets-rpm/">Chapitre 10.4 — Signer les paquets RPM</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_10/10.5-exploiter-depot-rpm-prive/">Chapitre 10.5 — Exploiter un dépôt RPM privé</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_10/10.6-packager-sentinel/">Chapitre 10.6 — Packager Sentinel</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 11 - Conteneurs Podman</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_11/11.1-decouvrir-podman/">Chapitre 11.1 — Découvrir Podman</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_11/11.2-conteneurs-rootless/">Chapitre 11.2 — Exécuter des conteneurs rootless</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_11/11.3-construire-images-securisees/">Chapitre 11.3 — Construire des images sécurisées</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_11/11.4-reseaux-conteneurs/">Chapitre 11.4 — Concevoir les réseaux de conteneurs</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_11/11.5-gerer-secrets-podman/">Chapitre 11.5 — Gérer les secrets avec Podman</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_11/11.6-executer-sentinel-securite/">Chapitre 11.6 — Exécuter Sentinel en sécurité</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 12 - Supervision et audit</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_12/12.1-centraliser-journaux-rsyslog/">Chapitre 12.1 — Centraliser les journaux avec Rsyslog</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_12/12.2-auditer-systeme-auditd/">Chapitre 12.2 — Auditer le système avec auditd</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_12/12.3-controler-integrite-fichiers-aide/">Chapitre 12.3 — Contrôler l'intégrité des fichiers avec AIDE</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_12/12.4-superviser-sentinel-prometheus/">Chapitre 12.4 — Superviser Sentinel avec Prometheus</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_12/12.5-concevoir-alertes-alertmanager/">Chapitre 12.5 — Concevoir des alertes avec Alertmanager</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_12/12.6-construire-tableau-bord-sentinel/">Chapitre 12.6 — Construire le tableau de bord Sentinel</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 13 - Attaques et défense</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.1-reconnaissance/">Chapitre 13.1 — Reconnaissance</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.2-scan-reseau/">Chapitre 13.2 — Scan réseau</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.3-brute-force-ssh/">Chapitre 13.3 — Brute force SSH</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.4-escalade-privileges/">Chapitre 13.4 — Escalade de privilèges</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.5-mouvements-lateraux/">Chapitre 13.5 — Mouvements latéraux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.6-persistance/">Chapitre 13.6 — Persistance</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.7-exfiltration/">Chapitre 13.7 — Exfiltration</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.8-etude-cas-complete/">Chapitre 13.8 — Étude de cas complète</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 14 - Projet final</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.1-deployer-sentinel-almalinux-minimale/">Chapitre 14.1 — Déployer Sentinel sur une AlmaLinux minimale</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.2-securiser-hote/">Chapitre 14.2 — Sécuriser l'hôte</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.3-integrer-freeipa/">Chapitre 14.3 — Intégrer FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.4-deployer-ansible/">Chapitre 14.4 — Déployer avec Ansible</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.5-packager-rpm/">Chapitre 14.5 — Packager avec RPM</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.6-conteneuriser-podman/">Chapitre 14.6 — Conteneuriser avec Podman</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.7-superviser-auditer/">Chapitre 14.7 — Superviser et auditer</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.8-audit-final-tests-kali/">Chapitre 14.8 — Audit final et tests depuis Kali</a>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</nav>
+<section class="wy-nav-content-wrap" data-toggle="wy-nav-shift">
+<nav aria-label="Mobile navigation menu" class="wy-nav-top" role="navigation">
+<i class="fa fa-bars" data-toggle="wy-nav-top"></i>
+<a href="../..">Formation Sentinel — AlmaLinux sécurisé</a>
+</nav>
+<div class="wy-nav-content">
+<div class="rst-content"><div aria-label="breadcrumbs navigation" role="navigation">
+<ul class="wy-breadcrumbs">
+<li><a aria-label="Docs" class="icon icon-home" href="../.."></a></li>
+<li class="breadcrumb-item">Campagnes</li>
+<li class="breadcrumb-item">Campagne 3 - TCP/IP et Firewalld</li>
+<li class="breadcrumb-item active">Chapitre 3.6 — Les Rich Rules Firewalld</li>
+<li class="wy-breadcrumbs-aside">
+<a href="https://github.com/tdelaclos/formations/edit/master/docs/campagne_03/3.6-rich-rules-firewalld.md">Edit on tdelaclos/formations</a>
+</li>
+</ul>
+<hr/>
+</div>
+<div class="document" itemscope="itemscope" itemtype="http://schema.org/Article" role="main">
+<div class="section" itemprop="articleBody">
+<h1 id="chapitre-36-les-rich-rules-firewalld">Chapitre 3.6 — Les Rich Rules Firewalld</h1>
+<blockquote>
+<p><strong>Campagne 3 — Réseau et exposition</strong></p>
+<p><em>« Une bonne politique de sécurité ne consiste pas à tout autoriser ou tout interdire. Elle consiste à autoriser précisément ce qui est légitime. »</em></p>
+</blockquote>
+<h2 id="vous-etes-ici">Vous êtes ici</h2>
+<pre><code class="language-text">Partie I ─ Construire un socle sécurisé
+        │
+        ├── Campagne 1 ─ Installation
+        ├── Campagne 2 ─ Comptes et privilèges
+        │
+        └── Campagne 3 ─ Sécurisation réseau
+                 │
+                 ├── 3.1 TCP/IP côté administrateur
+                 ├── 3.2 Firewalld
+                 ├── 3.3 Les zones
+                 ├── 3.4 Les services
+                 ├── 3.5 Conntrack
+                 │
+                 ├──► 3.6 Les Rich Rules
+                 ├── 3.7 Journalisation
+                 ├── 3.8 IP Sets
+                 ├── 3.9 Runtime vs Permanent
+                 └── 3.10 Architecture Firewalld
+</code></pre>
+<h2 id="objectifs-pedagogiques">Objectifs pédagogiques</h2>
+<p>À la fin de ce chapitre, vous serez capable de :</p>
+<ul>
+<li>comprendre pourquoi les services et les ports ne suffisent plus dans une infrastructure moderne ;</li>
+<li>maîtriser la syntaxe des Rich Rules de Firewalld ;</li>
+<li>construire des politiques réseau exprimant plusieurs critères simultanément ;</li>
+<li>comprendre comment Firewalld traduit ces règles vers <code>nftables</code> ;</li>
+<li>mettre en œuvre des règles lisibles, maintenables et industrialisables avec Ansible ;</li>
+<li>intégrer ces mécanismes dans la sécurisation de Sentinel.</li>
+</ul>
+<h2 id="pourquoi-ce-chapitre-existe">Pourquoi ce chapitre existe</h2>
+<p>Au début d'un projet, les besoins semblent simples. On ouvre :</p>
+<ul>
+<li>SSH ;</li>
+<li>HTTPS ;</li>
+<li>DNS.</li>
+</ul>
+<p>Puis l'infrastructure grandit. Rapidement apparaissent des demandes comme :</p>
+<blockquote>
+<p>Seul le réseau d'administration peut accéder à SSH.</p>
+</blockquote>
+<p>Puis :</p>
+<blockquote>
+<p>Le réseau industriel peut accéder à Sentinel mais uniquement en TLS.</p>
+</blockquote>
+<p>Puis :</p>
+<blockquote>
+<p>Les administrateurs externes peuvent utiliser SSH uniquement depuis le bastion.</p>
+</blockquote>
+<p>Puis :</p>
+<blockquote>
+<p>Les développeurs peuvent accéder à l'API de test mais jamais à la production.</p>
+</blockquote>
+<p>Puis :</p>
+<blockquote>
+<p>Les sauvegardes sont autorisées uniquement la nuit.</p>
+</blockquote>
+<p>À partir de ce moment-là, raisonner uniquement en termes de ports devient insuffisant. Le pare-feu doit exprimer une véritable <strong>politique de sécurité</strong>. C'est exactement le rôle des Rich Rules.</p>
+<h2 id="theorie-detaillee">Théorie détaillée</h2>
+<h3 id="une-regle-simple-atteint-rapidement-ses-limites">Une règle simple atteint rapidement ses limites</h3>
+<p>Jusqu'à présent, nous avons utilisé des commandes comme :</p>
+<pre><code class="language-bash">firewall-cmd --add-service=https
+</code></pre>
+<p>ou</p>
+<pre><code class="language-bash">firewall-cmd --add-port=8443/tcp
+</code></pre>
+<p>Ces commandes répondent à une seule question :</p>
+<blockquote>
+<p>Quel port est autorisé ?</p>
+</blockquote>
+<p>Mais elles ne répondent pas à d'autres questions essentielles :</p>
+<ul>
+<li>qui ?</li>
+<li>depuis où ?</li>
+<li>vers quelle interface ?</li>
+<li>avec quelle famille d'adresses ?</li>
+<li>avec quelle action ?</li>
+<li>faut-il journaliser ?</li>
+<li>faut-il rejeter ou simplement ignorer ?</li>
+</ul>
+<p>Autrement dit, elles décrivent <strong>une ouverture</strong>. Elles ne décrivent pas une <strong>politique</strong>.</p>
+<h3 id="une-rich-rule-est-une-phrase">Une Rich Rule est une phrase</h3>
+<p>L'erreur classique consiste à vouloir apprendre la syntaxe par cœur. En réalité, une Rich Rule est presque une phrase en anglais. Par exemple :</p>
+<pre><code class="language-text">rule
+
+source address="192.168.10.0/24"
+
+service name="ssh"
+
+accept
+</code></pre>
+<p>Si on la lit naturellement :</p>
+<pre><code>Rule
+
+si la source appartient au réseau
+
+192.168.10.0/24
+
+et demande le service SSH
+
+alors accepter.
+</code></pre>
+<p>Une Rich Rule n'est donc pas une formule magique. C'est une description.</p>
+<h3 id="premier-exemple">Premier exemple</h3>
+<p>Autoriser SSH uniquement depuis le réseau d'administration.</p>
+<pre><code class="language-bash">firewall-cmd \
+--add-rich-rule='
+rule
+family="ipv4"
+source address="192.168.10.0/24"
+service name="ssh"
+accept'
+</code></pre>
+<p>Décomposons-la.</p>
+<pre><code>rule
+</code></pre>
+<p>Début de la règle.</p>
+<pre><code>family="ipv4"
+</code></pre>
+<p>Ne concerne que IPv4. Nous pourrions également utiliser :</p>
+<pre><code>ipv6
+</code></pre>
+<p>ou omettre complètement ce critère. Puis :</p>
+<pre><code>source address
+</code></pre>
+<p>définit l'origine.</p>
+<pre><code>192.168.10.0/24
+</code></pre>
+<p>Le réseau d'administration. Puis :</p>
+<pre><code>service ssh
+</code></pre>
+<p>Le service déclaré dans Firewalld. Enfin :</p>
+<pre><code>accept
+</code></pre>
+<p>Action à réaliser.</p>
+<h3 id="une-regle-decrit-un-contexte">Une règle décrit un contexte</h3>
+<p>Visualisons la même politique.</p>
+<div class="mermaid">flowchart TD
+    Packet["Paquet entrant"] --&gt; Family["Famille IPv4 ou IPv6"]
+    Family --&gt; Source["Source ou IP Set"]
+    Source --&gt; Target["Service ou port"]
+    Target --&gt; Action{"Action"}
+    Action --&gt; Accept["accept"]
+    Action --&gt; Reject["reject"]
+    Action --&gt; Drop["drop"]
+    Action --&gt; Log["log / limit"]
+</div>
+<p>La règle ne dit pas simplement :</p>
+<pre><code>ouvrir SSH
+</code></pre>
+<p>Elle dit :</p>
+<pre><code>ouvrir SSH
+
+SI
+
+la source est autorisée.
+</code></pre>
+<p>Cette nuance est capitale.</p>
+<h2 id="les-elements-dune-rich-rule">Les éléments d'une Rich Rule</h2>
+<p>Une Rich Rule est composée d'éléments. Les plus utilisés sont :</p>
+<pre><code>family
+
+source
+
+destination
+
+service
+
+port
+
+protocol
+
+icmp-type
+
+log
+
+audit
+
+limit
+
+accept
+
+reject
+
+drop
+
+mark
+
+forward-port
+</code></pre>
+<p>Nous allons étudier ceux réellement utilisés dans une infrastructure professionnelle.</p>
+<h2 id="family">family</h2>
+<p>Spécifie la famille IP. Exemple : <code>family="ipv4"</code> ou <code>family="ipv6"</code> Pourquoi est-ce important ? Parce que beaucoup d'administrateurs sécurisent parfaitement IPv4… …et oublient complètement IPv6. Le résultat est parfois catastrophique. Une machine inaccessible en IPv4 reste parfaitement joignable en IPv6. L'ingénieur sécurité pense toujours aux deux piles réseau.</p>
+<h2 id="source">source</h2>
+<p>Le critère le plus courant. Exemple : <code>source address="10.20.30.0/24"</code> On peut également utiliser une adresse unique. <code>source address="192.168.50.15"</code> Ou encore une plage. Le filtrage devient alors extrêmement précis.</p>
+<h3 id="exemple-sentinel">Exemple Sentinel</h3>
+<p>Seuls les agents industriels peuvent envoyer leurs rapports.</p>
+<p>Tous les autres réseaux sont refusés. La politique réseau devient alors une première ligne de défense avant même que TLS ou l'authentification FreeIPA n'interviennent.</p>
+<h2 id="destination">destination</h2>
+<p>Beaucoup moins utilisé. Il permet de filtrer selon l'adresse de destination. Cela devient utile sur :</p>
+<ul>
+<li>un routeur ;</li>
+<li>une passerelle ;</li>
+<li>un serveur multi-hébergé.</li>
+</ul>
+<p>Exemple : <code>destination address="192.168.100.10"</code> La règle ne s'applique que si cette adresse est la destination.</p>
+<h2 id="service">service</h2>
+<p>Le plus lisible. <code>service name="https"</code> Il est généralement préférable d'utiliser :</p>
+<pre><code>service
+</code></pre>
+<p>plutôt que</p>
+<pre><code>port
+</code></pre>
+<p>Pourquoi ? Parce que le service possède une signification fonctionnelle.</p>
+<pre><code>HTTPS
+</code></pre>
+<p>est plus explicite que</p>
+<pre><code>443/tcp
+</code></pre>
+<p>Cette lisibilité devient précieuse plusieurs années après le déploiement.</p>
+<h2 id="port">port</h2>
+<p>Parfois aucun service Firewalld n'existe. On utilise alors :</p>
+<pre><code class="language-text">port port="8443"
+
+protocol="tcp"
+</code></pre>
+<p>C'est précisément le cas de Sentinel. L'application écoute :</p>
+<pre><code>8443/TCP
+</code></pre>
+<p>Il est donc logique d'écrire : <code>port="8443"</code> En revanche, si plus tard Sentinel est empaqueté en RPM avec son propre service Firewalld, nous pourrons remplacer cette notion de port par :</p>
+<pre><code>service="sentinel"
+</code></pre>
+<p>La politique deviendra beaucoup plus expressive.</p>
+<h2 id="protocol">protocol</h2>
+<p>Tous les protocoles ne possèdent pas de ports. Par exemple :</p>
+<pre><code>ICMP
+</code></pre>
+<p>Il est parfois nécessaire de raisonner directement sur le protocole. Exemple : <code>protocol value="icmp"</code> Ou encore : <code>protocol value="esp"</code> pour certains VPN IPsec.</p>
+<h2 id="accept-reject-et-drop">accept, reject et drop</h2>
+<p>Ces trois actions semblent proches. Elles ne le sont pas. C'est probablement l'un des choix les plus importants lors de la conception d'une politique de sécurité. Prenons un client qui tente d'accéder à Sentinel. Trois comportements sont possibles.</p>
+<p>Puis...</p>
+<h3 id="accept">ACCEPT</h3>
+<p>Le pare-feu accepte explicitement la communication.</p>
+<div class="mermaid">sequenceDiagram
+    participant Client
+    participant Filtrage as Netfilter — règle Firewalld
+    participant Sentinel
+    Client-&gt;&gt;Filtrage: SYN
+    Filtrage-&gt;&gt;Sentinel: ACCEPT — paquet transmis
+</div>
+<p>Le paquet poursuit son chemin vers l'application. Pour le client, tout semble normal.</p>
+<h3 id="reject">REJECT</h3>
+<p>Le pare-feu refuse la communication… ...mais il l'indique explicitement.</p>
+<div class="mermaid">sequenceDiagram
+    participant Client
+    participant Filtrage as Netfilter — règle Firewalld
+    Client-&gt;&gt;Filtrage: SYN
+    Filtrage--&gt;&gt;Client: REJECT — ICMP ou TCP RST
+</div>
+<p>Le client reçoit immédiatement une réponse. Selon le protocole, il peut recevoir :</p>
+<ul>
+<li>un message ICMP ;</li>
+<li>un paquet TCP RST.</li>
+</ul>
+<p>Conséquences :</p>
+<ul>
+<li>l'échec est immédiat ;</li>
+<li>les applications détectent rapidement que le service est indisponible ;</li>
+<li>le temps d'attente est très faible.</li>
+</ul>
+<h3 id="drop">DROP</h3>
+<p>Avec <code>DROP</code>, le pare-feu ne répond absolument rien.</p>
+<div class="mermaid">sequenceDiagram
+    participant Client
+    participant Filtrage as Netfilter — règle Firewalld
+    Client-&gt;&gt;Filtrage: SYN
+    Note over Filtrage: DROP — aucune réponse
+    Note over Client: Attente puis timeout
+</div>
+<p>Le client attend. Puis attend encore. Enfin :</p>
+<pre><code>Timeout
+</code></pre>
+<p>Le pare-feu se comporte comme si la machine n'existait pas.</p>
+<h3 id="lequel-choisir">Lequel choisir ?</h3>
+<p>Il n'existe pas de réponse universelle. Tout dépend de la politique de sécurité.</p>
+<h4 id="cas-n1-reseau-interne-maitrise">Cas n°1 : réseau interne maîtrisé</h4>
+<p>Dans un réseau d'entreprise :</p>
+<pre><code>REJECT
+</code></pre>
+<p>est souvent préférable. Pourquoi ? Parce qu'il facilite énormément le diagnostic. Un administrateur comprend immédiatement :</p>
+<blockquote>
+<p>« Le pare-feu refuse cette connexion. »</p>
+</blockquote>
+<p>Les outils de supervision réagissent également plus vite.</p>
+<h4 id="cas-n2-exposition-internet">Cas n°2 : exposition Internet</h4>
+<p>Pour un service exposé publiquement :</p>
+<pre><code>DROP
+</code></pre>
+<p>est souvent retenu. L'objectif est différent. On souhaite fournir le moins d'informations possible à un attaquant. Celui-ci ne sait pas immédiatement si :</p>
+<ul>
+<li>la machine est éteinte ;</li>
+<li>un routeur bloque le trafic ;</li>
+<li>un pare-feu filtre les paquets ;</li>
+<li>l'hôte existe réellement.</li>
+</ul>
+<p>Cette absence d'information ralentit certains outils d'exploration automatisés. Il faut toutefois relativiser cet avantage. Des outils modernes comme Nmap sont capables d'interpréter de nombreux comportements réseau. Le choix entre <code>DROP</code> et <code>REJECT</code> relève donc davantage de la stratégie opérationnelle que d'une supposée invisibilité absolue.</p>
+<h3 id="une-bonne-pratique-dentreprise">Une bonne pratique d'entreprise</h3>
+<p>Une politique fréquemment rencontrée est la suivante :</p>
+<table>
+<thead>
+<tr>
+<th>Contexte</th>
+<th>Action privilégiée</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Réseau d'administration</td>
+<td>REJECT</td>
+</tr>
+<tr>
+<td>Réseau interne</td>
+<td>REJECT</td>
+</tr>
+<tr>
+<td>Production interne</td>
+<td>REJECT</td>
+</tr>
+<tr>
+<td>Internet</td>
+<td>DROP</td>
+</tr>
+<tr>
+<td>Flux suspects</td>
+<td>DROP</td>
+</tr>
+</tbody>
+</table>
+<p>Cette approche offre un bon compromis entre :</p>
+<ul>
+<li>facilité d'exploitation ;</li>
+<li>discrétion vis-à-vis d'Internet.</li>
+</ul>
+<h2 id="la-journalisation-log">La journalisation (<code>log</code>)</h2>
+<p>Une Rich Rule peut également générer un journal. Exemple :</p>
+<pre><code class="language-text">rule
+
+source address="203.0.113.0/24"
+
+service name="ssh"
+
+log prefix="SSH_DENIED "
+
+drop
+</code></pre>
+<p>À chaque tentative :</p>
+<div class="mermaid">flowchart TD
+    N0["Journal"]
+    N1["Préfixe"]
+    N2["Décision"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+</div>
+<p>Le préfixe facilite énormément les recherches. Par exemple :</p>
+<pre><code class="language-bash">journalctl | grep SSH_DENIED
+</code></pre>
+<p>En environnement SOC, cette simple convention de nommage peut faire gagner plusieurs heures lors d'une investigation.</p>
+<h3 id="attention-a-la-volumetrie">Attention à la volumétrie</h3>
+<p>Une erreur fréquente consiste à journaliser chaque paquet refusé. Imaginons :</p>
+<p>Chaque paquet génère une ligne. Résultat :</p>
+<p>Les effets sont nombreux :</p>
+<ul>
+<li>consommation disque ;</li>
+<li>charge CPU supplémentaire ;</li>
+<li>bruit dans la supervision ;</li>
+<li>difficulté à identifier les événements réellement importants.</li>
+</ul>
+<p>Une journalisation doit toujours être réfléchie.</p>
+<h2 id="le-controle-du-debit-limit">Le contrôle du débit (<code>limit</code>)</h2>
+<p>Pour éviter ce problème, Firewalld permet de limiter certaines actions. Exemple : <code>limit value="5/m"</code> La règle sera exécutée :</p>
+<pre><code>5 fois
+
+par minute
+</code></pre>
+<p>Les événements supplémentaires seront ignorés par cette partie de la règle. Cela est particulièrement utile avec <code>log</code>. Exemple :</p>
+<div class="mermaid">flowchart TD
+    N0["10000 scans"]
+    N1["5 journaux"]
+    N2["Journal exploitable"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+</div>
+<h2 id="combiner-plusieurs-criteres">Combiner plusieurs critères</h2>
+<p>Toute la puissance des Rich Rules réside dans leur composition. Prenons une politique réaliste.</p>
+<pre><code>Autoriser SSH
+
+uniquement
+
+depuis
+
+192.168.10.0/24
+
+journaliser
+
+limiter
+
+puis accepter.
+</code></pre>
+<p>Une seule règle permet d'exprimer cette politique. On passe progressivement d'une logique :</p>
+<pre><code>Port
+</code></pre>
+<p>à une logique :</p>
+<pre><code>Contexte
+</code></pre>
+<p>C'est précisément ce que recherche un architecte sécurité.</p>
+<h2 id="les-rich-rules-ne-remplacent-pas-les-zones">Les Rich Rules ne remplacent pas les zones</h2>
+<p>Une erreur de conception apparaît souvent lors des premiers projets. L'administrateur découvre les Rich Rules. Puis il commence à tout écrire sous forme de Rich Rules. Très rapidement, la configuration devient illisible. Par exemple :</p>
+<p>Quelques mois plus tard, plus personne ne comprend la politique appliquée. Les zones et les Rich Rules répondent pourtant à deux besoins différents. Les zones définissent :</p>
+<blockquote>
+<p><strong>le niveau de confiance d'une interface réseau.</strong></p>
+</blockquote>
+<p>Les Rich Rules définissent :</p>
+<blockquote>
+<p><strong>les exceptions et les raffinements de cette politique.</strong></p>
+</blockquote>
+<p>Autrement dit :</p>
+<div class="mermaid">flowchart TD
+    N0["Zone"]
+    N1["Politique générale"]
+    N2["Rich Rules"]
+    N3["Cas particuliers"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+    N2 --&gt; N3
+</div>
+<p>Cette séparation rend une architecture beaucoup plus maintenable.</p>
+<h2 id="exemple-darchitecture">Exemple d'architecture</h2>
+<p>Imaginons un serveur Sentinel possédant deux interfaces.</p>
+<pre><code>eth0
+
+Production
+
+10.20.0.10
+</code></pre>
+<pre><code>eth1
+
+Administration
+
+192.168.10.10
+</code></pre>
+<p>Une bonne architecture pourrait être :</p>
+<p>Puis seulement quelques Rich Rules. Par exemple :</p>
+<p>Ou encore :</p>
+<p>La politique reste immédiatement compréhensible.</p>
+<h2 id="les-rich-rules-et-ansible">Les Rich Rules et Ansible</h2>
+<p>Dans une entreprise, les règles ne sont presque jamais créées manuellement. Elles sont généralement déployées par Ansible. Pourquoi ? Parce que :</p>
+<ul>
+<li>elles doivent être identiques sur plusieurs dizaines de serveurs ;</li>
+<li>elles doivent être versionnées ;</li>
+<li>elles doivent être auditables ;</li>
+<li>elles doivent être reproductibles.</li>
+</ul>
+<p>Un playbook Ansible pourra par exemple :</p>
+<ul>
+<li>créer les zones ;</li>
+<li>associer les interfaces ;</li>
+<li>installer les services ;</li>
+<li>ajouter les Rich Rules ;</li>
+<li>vérifier leur présence.</li>
+</ul>
+<p>Nous reviendrons en détail sur cette industrialisation dans la campagne consacrée à Ansible. Retenez toutefois une idée essentielle :</p>
+<blockquote>
+<p>Une Rich Rule n'est pas seulement une règle de pare-feu. C'est un élément de votre politique de sécurité, qui mérite le même niveau de rigueur qu'un fichier de configuration applicatif ou qu'une politique SELinux.</p>
+</blockquote>
+<h2 id="partir-de-la-matrice-de-flux">Partir de la matrice de flux</h2>
+<p>Le premier réflexe n'est pas « quelle règle vais-je écrire ? », mais « qui doit parler à qui ? ». Pour Sentinel, on commence par nommer les zones et les flux légitimes :</p>
+<div class="mermaid">flowchart LR
+    Admin["Administration"] --&gt;|"HTTPS 8443"| Sentinel["Sentinel — réseau serveurs"]
+    Agents["Agents autorisés"] --&gt;|"API 8443"| Sentinel
+    Users["Utilisateurs"] -. "refus" .-&gt; Sentinel
+    Internet["Internet"] -. "refus direct" .-&gt; Sentinel
+</div>
+<p>Les Rich Rules deviennent presque une traduction mécanique de cette politique. C'est une différence fondamentale. Un administrateur configure. Un architecte modélise.</p>
+<h3 id="la-politique-doit-survivre-au-temps">La politique doit survivre au temps</h3>
+<p>Une Rich Rule ne doit pas seulement fonctionner aujourd'hui. Elle doit encore être compréhensible :</p>
+<ul>
+<li>dans six mois ;</li>
+<li>après une migration ;</li>
+<li>par une autre équipe ;</li>
+<li>lors d'un audit de sécurité.</li>
+</ul>
+<p>Prenons deux formulations. Première approche :</p>
+<pre><code class="language-text">Autoriser
+
+192.168.10.15
+</code></pre>
+<p>Pourquoi ? Personne ne le sait. Deuxième approche :</p>
+<pre><code class="language-text">Autoriser
+
+le bastion d'administration
+
+192.168.10.15
+</code></pre>
+<p>Même si la règle technique reste identique, la documentation associée raconte une intention. L'intention est souvent plus importante que la syntaxe.</p>
+<h3 id="anticiper-les-evolutions">Anticiper les évolutions</h3>
+<p>Un architecte sait que Sentinel va évoluer. Aujourd'hui :</p>
+<pre><code>8443
+</code></pre>
+<p>Demain peut-être :</p>
+<pre><code>8443
+
+9443
+
+10443
+</code></pre>
+<p>Ou encore plusieurs instances. Si toutes les Rich Rules manipulent directement les ports, chaque évolution nécessitera une réécriture. En revanche, si Sentinel est distribué sous forme de RPM avec son propre service Firewalld : <code>service sentinel</code> les règles évolueront beaucoup plus facilement. On retrouve ici un principe fondamental de l'ingénierie :</p>
+<blockquote>
+<p>Éviter de faire dépendre une politique de sécurité de détails techniques susceptibles de changer.</p>
+</blockquote>
+<h2 id="en-entreprise">En entreprise</h2>
+<p>Une entreprise possède rarement un seul serveur. Imaginons un parc composé de :</p>
+<ul>
+<li>180 serveurs AlmaLinux ;</li>
+<li>deux centres de données ;</li>
+<li>une DMZ ;</li>
+<li>un réseau bureautique ;</li>
+<li>plusieurs réseaux industriels ;</li>
+<li>un bastion d'administration ;</li>
+<li>une infrastructure FreeIPA.</li>
+</ul>
+<p>Sans Rich Rules, il faudrait souvent créer de très nombreuses zones pour représenter tous les cas particuliers. À l'inverse, si tout est exprimé uniquement avec des Rich Rules, la politique devient illisible. La bonne approche consiste à répartir les responsabilités. Les zones expriment le <strong>contexte général</strong>. Les Rich Rules expriment les <strong>exceptions métier</strong>. Cette distinction est essentielle. Elle facilite :</p>
+<ul>
+<li>les audits ;</li>
+<li>les revues de sécurité ;</li>
+<li>les déploiements Ansible ;</li>
+<li>les analyses d'incident.</li>
+</ul>
+<p>Dans beaucoup d'organisations, une revue annuelle consiste précisément à répondre à cette question :</p>
+<blockquote>
+<p>« Cette Rich Rule est-elle encore justifiée ? »</p>
+</blockquote>
+<p>Une règle dont personne ne connaît la raison d'être est une dette technique… et souvent une dette de sécurité.</p>
+<h2 id="culture-technique">Culture technique</h2>
+<h3 id="pourquoi-les-rich-rules-existent-elles">Pourquoi les Rich Rules existent-elles ?</h3>
+<p>Lorsque Firewalld est apparu, un constat s'est rapidement imposé. Deux profils d'utilisateurs coexistaient. Le premier souhaitait simplement effectuer des opérations courantes. Par exemple :</p>
+<pre><code class="language-bash">firewall-cmd --add-service=https
+</code></pre>
+<p>ou</p>
+<pre><code class="language-bash">firewall-cmd --add-service=ssh
+</code></pre>
+<p>Pour ces besoins, les zones et les services suffisaient largement. Le second profil était très différent. Il devait exprimer des politiques telles que :</p>
+<ul>
+<li>autoriser un service uniquement depuis certains réseaux ;</li>
+<li>limiter un protocole particulier ;</li>
+<li>ajouter une journalisation spécifique ;</li>
+<li>rediriger certains flux ;</li>
+<li>définir des exceptions très ciblées.</li>
+</ul>
+<p>Avant Firewalld, cela nécessitait souvent l'écriture directe de règles <code>iptables</code>. Ces règles étaient puissantes… …mais difficiles à lire, à maintenir et à auditer. Les Rich Rules ont été créées pour combler cet écart. Elles offrent une expressivité proche d'<code>iptables</code> ou de <code>nftables</code>, tout en conservant une syntaxe cohérente avec l'approche de Firewalld.</p>
+<h3 id="une-couche-dabstraction">Une couche d'abstraction</h3>
+<p>Il est tentant de considérer Firewalld comme un pare-feu indépendant. Ce n'est pas le cas. Il s'agit d'une couche d'abstraction.</p>
+<div class="mermaid">flowchart TD
+    N0["Politique de sécurité"]
+    N1["Firewalld"]
+    N2["Traduction automatique"]
+    N3["nftables"]
+    N4["Netfilter"]
+    N5["Noyau Linux"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+    N2 --&gt; N3
+    N3 --&gt; N4
+    N4 --&gt; N5
+</div>
+<p>Les Rich Rules participent à cette philosophie. Elles permettent à l'administrateur d'exprimer une intention plutôt qu'une implémentation technique. Prenons deux formulations. Approche bas niveau :</p>
+<pre><code>Comparer un champ d'en-tête IP.
+
+Comparer un protocole.
+
+Comparer un port.
+
+Comparer une interface.
+
+Produire un verdict.
+</code></pre>
+<p>Approche Firewalld :</p>
+<pre><code>Autoriser HTTPS
+
+depuis
+
+le réseau d'administration.
+</code></pre>
+<p>La seconde formulation est beaucoup plus proche du langage de l'architecte.</p>
+<h3 id="une-politique-de-securite-est-un-document-vivant">Une politique de sécurité est un document vivant</h3>
+<p>Une Rich Rule ne devrait jamais être considérée comme un simple objet technique. Elle représente une décision. Par exemple :</p>
+<blockquote>
+<p>Les agents Sentinel sont autorisés à communiquer avec le serveur central depuis le réseau industriel.</p>
+</blockquote>
+<p>Cette phrase possède une valeur documentaire. Lorsqu'elle est traduite en Rich Rule, elle devient exécutable. Autrement dit :</p>
+<div class="mermaid">flowchart TD
+    N0["Politique"]
+    N1["Configuration"]
+    N2["Application"]
+    N3["Audit"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+    N2 --&gt; N3
+</div>
+<p>Les meilleures équipes cherchent à réduire au maximum l'écart entre ces quatre niveaux.</p>
+<h2 id="piege-classique">Piège classique</h2>
+<h3 id="confondre-securite-reseau-et-authentification">Confondre sécurité réseau et authentification</h3>
+<p>Une Rich Rule peut autoriser :</p>
+<pre><code>192.168.10.0/24
+</code></pre>
+<p>Cela ne signifie absolument pas que les utilisateurs de ce réseau sont autorisés à utiliser Sentinel. Elle ne fait qu'autoriser les paquets à atteindre l'application. Ensuite seulement interviennent :</p>
+<ul>
+<li>TLS ;</li>
+<li>l'authentification FreeIPA ;</li>
+<li>les certificats ;</li>
+<li>les autorisations applicatives.</li>
+</ul>
+<p>Une politique de sécurité robuste ressemble davantage à ceci :</p>
+<div class="mermaid">flowchart TD
+    packet[Paquet réseau] --&gt; filter[Netfilter&lt;br/&gt;politique gérée par firewalld]
+    conntrack[(Conntrack)] -. état de connexion .-&gt; filter
+    filter --&gt; selinux[SELinux]
+    selinux --&gt; systemd[Service géré par systemd]
+    systemd --&gt; sentinel[Sentinel]
+    sentinel --&gt; tls[TLS mutuel]
+    tls --&gt; freeipa[FreeIPA]
+    freeipa --&gt; acl[Contrôle applicatif]
+</div>
+<p>Chaque couche élimine une partie des attaques. Aucune ne remplace les autres.</p>
+<h3 id="les-rich-rules-ne-remplacent-pas-une-bonne-architecture-reseau">Les Rich Rules ne remplacent pas une bonne architecture réseau</h3>
+<p>Une erreur fréquente consiste à corriger une mauvaise segmentation à l'aide du pare-feu. Imaginons un réseau unique : <code>10.0.0.0/8</code> Tous les serveurs, les postes utilisateurs, les imprimantes et les équipements industriels y cohabitent. Pour retrouver un niveau de sécurité acceptable, l'administrateur ajoute progressivement :</p>
+<ul>
+<li>20 Rich Rules ;</li>
+<li>puis 50 ;</li>
+<li>puis 120.</li>
+</ul>
+<p>Le problème n'est plus Firewalld. Le problème est l'architecture réseau. Les Rich Rules doivent <strong>compléter</strong> une bonne segmentation, jamais la remplacer.</p>
+<h2 id="priorite-famille-et-validation">Priorité, famille et validation</h2>
+<p>Lorsque plusieurs Rich Rules peuvent correspondre, compter sur leur ordre d'affichage est fragile. Firewalld permet d'associer une <code>priority</code> numérique à une règle ; les valeurs plus faibles sont évaluées avant les valeurs plus élevées, tandis que la valeur par défaut <code>0</code> suit l'organisation standard des actions. Une priorité ne corrige pas une politique contradictoire : elle rend seulement l'intention d'ordre explicite.</p>
+<p>Les règles ne sont pas évaluées « en parallèle ». Le paquet est d'abord associé à un trajet et à une zone, puis les règles installées dans le noyau sont parcourues selon leur organisation. Conntrack accélère le traitement des échanges déjà connus, mais une politique de 500 exceptions reste plus coûteuse et surtout plus difficile à prouver qu'une politique de 5 règles. Si le nombre de Rich Rules explose, recherchez d'abord une meilleure segmentation, un service nommé ou un IP Set.</p>
+<p>Une Rich Rule n'est pas la copie d'une longue ACL de routeur. Elle doit exprimer une exception lisible dans le modèle Firewalld. Les règles temporaires, projets terminés et anciennes adresses constituent une dette de sécurité : prévoyez un propriétaire, une justification et une date de revue, faute de quoi leur accumulation devient exploitable lors d'un mouvement latéral.</p>
+<pre><code class="language-bash">sudo firewall-cmd --add-rich-rule='rule priority="-100" family="ipv4" source address="192.168.10.20" service name="ssh" accept'
+</code></pre>
+<p>Une règle contenant une adresse source ou destination doit utiliser une famille cohérente. Si l'hôte possède IPv4 et IPv6, écrivez et testez les deux politiques ou désactivez explicitement la pile qui n'est pas utilisée ; protéger seulement IPv4 laisse une autre surface d'exposition.</p>
+<p>Avant un rechargement, contrôlez la syntaxe permanente puis relisez la traduction métier :</p>
+<pre><code class="language-bash">sudo firewall-cmd --check-config
+firewall-cmd --list-rich-rules
+</code></pre>
+<p>Un parseur confirme une syntaxe valide, pas une intention correcte. Pour chaque règle, prévoyez un test autorisé, un test refusé, la suppression exacte et un accès de secours. Les règles temporaires peuvent utiliser <code>--timeout</code> en runtime pour un besoin borné ; elles ne doivent pas devenir une maintenance permanente cachée.</p>
+<h2 id="tp-1-restreindre-un-acces-avec-une-rich-rule">TP 1 — Restreindre un accès avec une Rich Rule</h2>
+<h3 id="objectif">Objectif</h3>
+<p>Construire progressivement une politique de sécurité réaliste pour Sentinel en utilisant les Rich Rules.</p>
+<h3 id="architecture">Architecture</h3>
+<h3 id="etape-1-creer-une-regle-dacces-ssh">Étape 1 — Créer une règle d'accès SSH</h3>
+<p>Autoriser SSH uniquement depuis Kali.</p>
+<pre><code class="language-bash">sudo firewall-cmd \
+--permanent \
+--add-rich-rule='rule family="ipv4" source address="192.168.10.20" service name="ssh" accept'
+</code></pre>
+<p>Rechargez ensuite la configuration.</p>
+<pre><code class="language-bash">sudo firewall-cmd --reload
+</code></pre>
+<p>Vérifiez la présence de la règle.</p>
+<pre><code class="language-bash">firewall-cmd --list-rich-rules
+</code></pre>
+<h3 id="etape-2-tester-depuis-une-autre-machine">Étape 2 — Tester depuis une autre machine</h3>
+<p>Depuis une machine différente de Kali, tentez une connexion SSH. Le comportement doit être cohérent avec la politique définie. Analysez :</p>
+<ul>
+<li>le délai de réponse ;</li>
+<li>les journaux ;</li>
+<li>le comportement du client.</li>
+</ul>
+<h2 id="tp-2-composer-la-politique-sentinel">TP 2 — Composer la politique Sentinel</h2>
+<p>Ajoutez une Rich Rule autorisant le port 8443 uniquement depuis le réseau industriel fictif. Par exemple : <code>10.50.0.0/16</code> Interrogez-vous : Pourquoi cette règle constitue-t-elle une défense supplémentaire alors que Sentinel possède déjà une authentification TLS ?</p>
+<h3 id="etape-4-ajouter-une-journalisation">Étape 4 — Ajouter une journalisation</h3>
+<p>Ajoutez une Rich Rule journalisant les tentatives de connexion SSH refusées. Choisissez un préfixe explicite. Par exemple : <code>SSH_POLICY</code> Effectuez plusieurs tentatives depuis Kali. Analysez ensuite :</p>
+<pre><code class="language-bash">journalctl
+</code></pre>
+<p>Le volume de messages est-il acceptable ? Comment amélioreriez-vous cette politique sur un serveur exposé à Internet ?</p>
+<h3 id="etape-5-ajouter-une-limitation">Étape 5 — Ajouter une limitation</h3>
+<p>Complétez la règle précédente avec un mécanisme de limitation (<code>limit</code>). Comparez :</p>
+<ul>
+<li>le nombre réel de tentatives ;</li>
+<li>le nombre d'événements effectivement consignés.</li>
+</ul>
+<p>Réfléchissez à l'impact de cette limitation sur un centre opérationnel de sécurité (SOC).</p>
+<h2 id="mission-dingenieur">Mission d'ingénieur</h2>
+<h3 id="contexte">Contexte</h3>
+<p>Votre entreprise exploite Sentinel sur plusieurs sites industriels. Les agents de collecte sont répartis sur des réseaux OT. Les administrateurs interviennent depuis un bastion sécurisé. Les développeurs disposent d'une plateforme de qualification. La direction impose les exigences suivantes :</p>
+<ul>
+<li>aucun accès SSH direct depuis les postes utilisateurs ;</li>
+<li>Sentinel ne doit accepter que les agents industriels ;</li>
+<li>les sauvegardes doivent pouvoir accéder au serveur pendant une plage horaire définie ;</li>
+<li>toute tentative d'accès non autorisée au port SSH doit être journalisée ;</li>
+<li>les journaux ne doivent pas être saturés lors d'un scan Internet massif.</li>
+</ul>
+<p>En complément :</p>
+<ul>
+<li>les règles devront être déployées automatiquement par Ansible ;</li>
+<li>elles devront être compréhensibles lors d'un audit ISO 27001 ;</li>
+<li>elles devront pouvoir évoluer sans interruption de service.</li>
+</ul>
+<h3 id="votre-mission">Votre mission</h3>
+<p>Produisez une proposition de politique réseau. Votre réponse devra notamment justifier :</p>
+<ul>
+<li>le choix des zones ;</li>
+<li>les Rich Rules nécessaires ;</li>
+<li>les cas où un simple service Firewalld suffit ;</li>
+<li>les cas où une Rich Rule est indispensable ;</li>
+<li>les éléments devant être documentés pour les futurs administrateurs.</li>
+</ul>
+<p>La qualité de la justification sera considérée comme plus importante que la quantité de règles.</p>
+<h2 id="impact-sur-sentinel">Impact sur Sentinel</h2>
+<p>Grâce aux Rich Rules, Sentinel commence à s'intégrer pleinement dans la politique de sécurité globale. Au lieu d'être simplement exposé sur un port TCP : <code>8443</code> l'application bénéficie désormais d'un contexte d'accès. Par exemple :</p>
+<div class="mermaid">flowchart TD
+    N0["Réseau industriel"]
+    N1["Firewalld"]
+    N2["TLS mutuel"]
+    N3["Authentification FreeIPA"]
+    N4["Sentinel"]
+    N0 --&gt; N1
+    N1 --&gt; N2
+    N2 --&gt; N3
+    N3 --&gt; N4
+</div>
+<p>Chaque couche élimine une catégorie différente de menaces. Cette philosophie sera reprise dans les chapitres consacrés :</p>
+<ul>
+<li>à SELinux ;</li>
+<li>aux certificats ;</li>
+<li>à Systemd ;</li>
+<li>au durcissement des services ;</li>
+<li>aux conteneurs Podman.</li>
+</ul>
+<p>L'objectif n'est jamais de faire confiance à un seul mécanisme. L'objectif est que plusieurs mécanismes indépendants protègent le même service.</p>
+<h2 id="synthese">Synthèse</h2>
+<ul>
+<li>Les Rich Rules permettent d'exprimer des politiques de sécurité beaucoup plus fines que les simples ouvertures de ports.</li>
+<li>Elles complètent les zones ; elles ne les remplacent pas.</li>
+<li>Une Rich Rule décrit un <strong>contexte d'autorisation</strong>, pas seulement un port.</li>
+<li><code>ACCEPT</code>, <code>REJECT</code> et <code>DROP</code> répondent à des besoins opérationnels différents.</li>
+<li>La journalisation doit être pensée avec soin afin d'éviter le bruit.</li>
+<li>Les Rich Rules sont particulièrement adaptées à une gestion industrialisée avec Ansible.</li>
+<li>Une politique lisible et documentée est plus pérenne qu'une accumulation de règles techniques.</li>
+<li>Les Rich Rules constituent une couche parmi d'autres dans une stratégie de défense en profondeur.</li>
+</ul>
+<h2 id="pour-aller-plus-loin">Pour aller plus loin</h2>
+<p>Jusqu'à présent, nous avons appris à <strong>autoriser</strong>, <strong>refuser</strong> ou <strong>restreindre</strong> des flux. Mais une question reste entière :</p>
+<blockquote>
+<p><strong>Comment savoir ce que le pare-feu fait réellement en production ?</strong></p>
+</blockquote>
+<p>Un pare-feu qui ne laisse aucune trace est difficile à administrer, impossible à auditer et presque impossible à investiguer après un incident. Le prochain chapitre abordera donc un aspect souvent négligé mais essentiel de l'exploitation : <strong>la journalisation et l'analyse des événements Firewalld</strong>. Nous verrons comment produire des journaux utiles, exploitables par un SOC, tout en évitant les pièges liés à une journalisation excessive.</p>
+<p>← <a href="../3.5-conntrack-filtrage-etats/">3.5 — Conntrack et le filtrage par états</a> · <a href="../3.7-journalisation-firewalld/">3.7 — Journalisation et analyse Firewalld</a> →</p>
+</div>
+</div><footer>
+<div aria-label="Footer Navigation" class="rst-footer-buttons" role="navigation">
+<a class="btn btn-neutral float-left" href="../3.5-conntrack-filtrage-etats/" title="Chapitre 3.5 — Conntrack et le filtrage par états"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+<a class="btn btn-neutral float-right" href="../3.7-journalisation-firewalld/" title="Chapitre 3.7 — Journalisation et analyse Firewalld">Next <span class="icon icon-circle-arrow-right"></span></a>
+</div>
+<hr/>
+<div role="contentinfo">
+<!-- Copyright etc -->
+</div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+</div>
+</div>
+</section>
+</div>
+<div aria-label="Versions" class="rst-versions" role="note">
+<span class="rst-current-version" data-toggle="rst-current-version">
+<span>
+<a class="fa fa-code-fork" href="https://github.com/tdelaclos/formations" style="color: #fcfcfc"> tdelaclos/formations</a>
+</span>
+<span><a href="../3.5-conntrack-filtrage-etats/" style="color: #fcfcfc">« Previous</a></span>
+<span><a href="../3.7-journalisation-firewalld/" style="color: #fcfcfc">Next »</a></span>
+</span>
+</div>
+<script src="../../js/jquery-3.6.0.min.js"></script>
+<script>var base_url = "../..";</script>
+<script src="../../js/theme_extra.js"></script>
+<script src="../../js/theme.js"></script>
+<script src="../../search/main.js"></script>
+<script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+<script type="module">import mermaid from "https://unpkg.com/mermaid@10.4.0/dist/mermaid.esm.min.mjs";
+mermaid.initialize({});</script></body>
+</html>

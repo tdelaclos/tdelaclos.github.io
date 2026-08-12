@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+
+<html class="writer-html5" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="IE=edge" http-equiv="X-UA-Compatible"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="../../img/favicon.ico" rel="shortcut icon"/>
+<title>Chapitre 8.8 — Gérer les certificats de service avec FreeIPA - Formation Sentinel — AlmaLinux sécurisé</title>
+<link href="../../css/theme.css" rel="stylesheet"/>
+<link href="../../css/theme_extra.css" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" rel="stylesheet"/>
+<script>
+        // Current page data
+        var mkdocs_page_name = "Chapitre 8.8 \u2014 G\u00e9rer les certificats de service avec FreeIPA";
+        var mkdocs_page_input_path = "campagne_08/8.8-certificats.md";
+        var mkdocs_page_url = null;
+      </script>
+<!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+<script>hljs.highlightAll();</script>
+</head>
+<body class="wy-body-for-nav" role="document">
+<div class="wy-grid-for-nav">
+<nav class="wy-nav-side stickynav" data-toggle="wy-nav-shift">
+<div class="wy-side-scroll">
+<div class="wy-side-nav-search">
+<a class="icon icon-home" href="../.."> Formation Sentinel — AlmaLinux sécurisé
+        </a><div role="search">
+<form action="../../search.html" class="wy-form" id="rtd-search-form" method="get">
+<input aria-label="Search docs" name="q" placeholder="Search docs" title="Type search term here" type="text"/>
+</form>
+</div>
+</div>
+<div aria-label="Navigation menu" class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../..">Accueil</a>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">A propos</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../GUIDE-REDACTION/">Guide de rédaction</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../PARCOURS-SENTINEL/">Parcours applicatif Sentinel</a>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Campagnes</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal">Campagne 1 - Sécuriser le socle Linux</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.1-pourquoi-securiser-socle-linux/">Chapitre 1.1 — Pourquoi sécuriser un socle Linux ?</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.2-installation-almalinux-minimal/">Chapitre 1.2 — Installer AlmaLinux minimal</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.3-composants-systeme-linux/">Chapitre 1.3 — Comprendre les composants d'un système Linux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.4-premier-demarrage-verifications/">Chapitre 1.4 — Établir la baseline du serveur</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.5-mise-a-jour-gestion-depots/">Chapitre 1.5 — Mettre à jour et gérer les dépôts</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.6-architecture-systemes-fichiers/">Chapitre 1.6 — Organiser les systèmes de fichiers</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.7-utilisateurs-groupes-permissions/">Chapitre 1.7 — Comprendre identités et permissions</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.8-sudo-moindre-privilege/">Chapitre 1.8 — Administrer avec sudo</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.9-premiere-mise-en-securite-serveur/">Chapitre 1.9 — Mission : mettre le serveur en sécurité</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_01/1.10-creation-laboratoire-sentinel/">Chapitre 1.10 — Créer le laboratoire Sentinel</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 2 - Gestion des permissions et des identités</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.1-permissions-unix/">Chapitre 2.1 — Les permissions UNIX</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.2-acl/">Chapitre 2.2 — Les ACL</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.3-umask/">Chapitre 2.3 — L'umask</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.4-attributs-etendus/">Chapitre 2.4 — Les attributs étendus</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.5-pam/">Chapitre 2.5 — PAM</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.6-politique-mots-de-passe/">Chapitre 2.6 — Politique de mots de passe</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.7-comptes-systeme/">Chapitre 2.7 — Les comptes système</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.8-sudo-avance/">Chapitre 2.8 — sudo avancé</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.9-fichiers-identites-linux/">Chapitre 2.9 — Comprendre les fichiers d'identités Linux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_02/2.10-synthese-securiser-identites/">Chapitre 2.10 — Synthèse : sécuriser les identités</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 3 - TCP/IP et Firewalld</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.1-tcp-ip-administrateur/">Chapitre 3.1 — TCP/IP côté administrateur</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.2-architecture-firewalld/">Chapitre 3.2 — Architecture de Firewalld</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.3-zones-firewalld/">Chapitre 3.3 — Les zones Firewalld</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.4-services-firewalld/">Chapitre 3.4 — Les services Firewalld</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.5-conntrack-filtrage-etats/">Chapitre 3.5 — Conntrack et le filtrage par états</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.6-rich-rules-firewalld/">Chapitre 3.6 — Les Rich Rules Firewalld</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.7-journalisation-firewalld/">Chapitre 3.7 — Journalisation et analyse Firewalld</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.8-ip-sets-firewalld/">Chapitre 3.8 — Les IP Sets Firewalld</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.9-runtime-permanent/">Chapitre 3.9 — Runtime et Permanent</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_03/3.10-politique-reseau-sentinel/">Chapitre 3.10 — Concevoir la politique réseau de Sentinel</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 4 - SSH</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_04/4.1-architecture-openssh/">Chapitre 4.1 — Architecture d'OpenSSH</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_04/4.2-authentification-mot-de-passe/">Chapitre 4.2 — Authentification par mot de passe</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_04/4.3-authentification-par-cles/">Chapitre 4.3 — Authentification par clés</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_04/4.4-durcissement-sshd-config/">Chapitre 4.4 — Durcissement de sshd_config</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_04/4.5-bastion-administration/">Chapitre 4.5 — Bastion d'administration</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_04/4.6-journalisation-audit-ssh/">Chapitre 4.6 — Journalisation et audit SSH</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_04/4.7-protection-attaques-ssh/">Chapitre 4.7 — Protection contre les attaques SSH</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_04/4.8-mission-administration-sentinel/">Chapitre 4.8 — Mission : administrer Sentinel en sécurité</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 5 - Systemd</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.1-comprendre-systemd/">Chapitre 5.1 — Comprendre systemd</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.2-unites-systemd/">Chapitre 5.2 — Les unités systemd</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.3-creer-service-sentinel/">Chapitre 5.3 — Créer le service Sentinel</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.4-sandboxing-systemd/">Chapitre 5.4 — Sandboxing systemd</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.5-capacites-linux/">Chapitre 5.5 — Les capacités Linux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.6-journalisation-journald/">Chapitre 5.6 — Journalisation avec journald</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.7-supervision-redemarrage/">Chapitre 5.7 — Supervision et redémarrage automatique</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_05/5.8-mission-sentinel-resilient/">Chapitre 5.8 — Mission : rendre Sentinel résilient</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 6 - SELinux</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_06/6.1-pourquoi-selinux-existe/">Chapitre 6.1 — Pourquoi SELinux existe</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_06/6.2-contextes-selinux/">Chapitre 6.2 — Comprendre les contextes SELinux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_06/6.3-politiques-selinux/">Chapitre 6.3 — Les politiques SELinux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_06/6.4-diagnostic-refus-selinux/">Chapitre 6.4 — Diagnostiquer les refus SELinux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_06/6.5-creation-regles-selinux/">Chapitre 6.5 — Créer des règles SELinux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_06/6.6-securiser-sentinel-selinux/">Chapitre 6.6 — Sécuriser Sentinel avec SELinux</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 7 - TLS et PKI</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.1-comprendre-cryptographie-appliquee/">Chapitre 7.1 — Comprendre la cryptographie appliquée</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.2-lire-verifier-certificats-x509/">Chapitre 7.2 — Lire et vérifier les certificats X.509</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.3-construire-autorite-certification/">Chapitre 7.3 — Construire une autorité de certification</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.4-authentification-mutuelle-tls/">Chapitre 7.4 — Authentifier les deux extrémités avec mTLS</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.5-preparer-integration-freeipa/">Chapitre 7.5 — Préparer l'intégration à FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.6-renouveler-revoquer-certificats/">Chapitre 7.6 — Renouveler et révoquer les certificats</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_07/7.7-securiser-sentinel-tls/">Chapitre 7.7 — Sécuriser Sentinel avec TLS</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal current">Campagne 8 - FreeIPA</a>
+<ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../8.1-presentation-freeipa/">Chapitre 8.1 — Découvrir FreeIPA et la gestion centralisée des identités</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../8.2-architecture-interne-freeipa/">Chapitre 8.2 — Comprendre l'architecture interne de FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../8.3-installation-freeipa/">Chapitre 8.3 — Installer un serveur FreeIPA de laboratoire</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../8.4-gestion-utilisateurs/">Chapitre 8.4 — Gérer le cycle de vie des utilisateurs FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../8.5-groupes-roles/">Chapitre 8.5 — Organiser les groupes et les rôles FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../8.6-politiques-sudo/">Chapitre 8.6 — Centraliser les politiques sudo avec FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../8.7-gestion-hotes/">Chapitre 8.7 — Enrôler les hôtes et contrôler les accès avec HBAC</a>
+</li>
+<li class="toctree-l2 current"><a class="reference internal current" href="#">Chapitre 8.8 — Gérer les certificats de service avec FreeIPA</a>
+<ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="#vous-etes-ici">Vous êtes ici</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#objectifs-pedagogiques">Objectifs pédagogiques</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pourquoi-ce-chapitre-existe">Pourquoi ce chapitre existe</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#les-quatre-objets-a-ne-pas-confondre">Les quatre objets à ne pas confondre</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#identite-x509-le-san-avant-le-cn">Identité X.509 : le SAN avant le CN</a>
+<ul>
+<li class="toctree-l4"><a class="reference internal" href="#usages-de-cle">Usages de clé</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#preparer-principal-chemins-et-permissions">Préparer principal, chemins et permissions</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#demander-le-certificat-serveur">Demander le certificat serveur</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#proteger-la-cle-et-permettre-le-renouvellement">Protéger la clé et permettre le renouvellement</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#verifier-le-certificat-obtenu">Vérifier le certificat obtenu</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#certificats-clients-mtls">Certificats clients mTLS</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#renouvellement-et-rechargement-du-service">Renouvellement et rechargement du service</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#renouveler-revoquer-ou-arreter-le-suivi">Renouveler, révoquer ou arrêter le suivi</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#revocation-crl-et-ocsp">Révocation, CRL et OCSP</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#diagnostic">Diagnostic</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#regards-securite">Regards sécurité</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#mise-en-pratique-dossier-de-certificat-sentinel">Mise en pratique — dossier de certificat Sentinel</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#impact-sur-sentinel">Impact sur Sentinel</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#synthese">Synthèse</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pour-aller-plus-loin">Pour aller plus loin</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../8.9-integration-sentinel/">Chapitre 8.9 — Intégrer Sentinel à FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../8.10-mission-administration-freeipa/">Chapitre 8.10 — Mission : administrer Sentinel avec FreeIPA</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 9 - Déploiement avec Ansible</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.1-architecture-ansible/">Chapitre 9.1 — Comprendre l'architecture Ansible</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.2-composants-ansible/">Chapitre 9.2 — Comprendre les composants et l'idempotence Ansible</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.3-inventaires/">Chapitre 9.3 — Construire les inventaires Ansible</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.4-premiers-playbooks/">Chapitre 9.4 — Écrire les premiers playbooks</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.5-variables-templates/">Chapitre 9.5 — Piloter la configuration avec variables et templates</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.6-roles-ansible/">Chapitre 9.6 — Concevoir des rôles Ansible réutilisables</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.7-deployer-sentinel-ansible/">Chapitre 9.7 — Déployer Sentinel avec Ansible</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.8-integrer-sentinel-freeipa/">Chapitre 9.8 — Automatiser l'intégration de Sentinel à FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.9-industrialiser-laboratoire/">Chapitre 9.9 — Industrialiser le projet Ansible</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_09/9.10-mission-deploiement-sentinel/">Chapitre 9.10 — Mission : reconstruire Sentinel avec Ansible</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 10 - Packaging RPM</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_10/10.1-construire-paquet-rpm/">Chapitre 10.1 — Construire un paquet RPM</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_10/10.2-gerer-dependances-rpm/">Chapitre 10.2 — Gérer les dépendances RPM</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_10/10.3-gerer-fichiers-configuration-rpm/">Chapitre 10.3 — Gérer les fichiers de configuration RPM</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_10/10.4-signer-paquets-rpm/">Chapitre 10.4 — Signer les paquets RPM</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_10/10.5-exploiter-depot-rpm-prive/">Chapitre 10.5 — Exploiter un dépôt RPM privé</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_10/10.6-packager-sentinel/">Chapitre 10.6 — Packager Sentinel</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 11 - Conteneurs Podman</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_11/11.1-decouvrir-podman/">Chapitre 11.1 — Découvrir Podman</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_11/11.2-conteneurs-rootless/">Chapitre 11.2 — Exécuter des conteneurs rootless</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_11/11.3-construire-images-securisees/">Chapitre 11.3 — Construire des images sécurisées</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_11/11.4-reseaux-conteneurs/">Chapitre 11.4 — Concevoir les réseaux de conteneurs</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_11/11.5-gerer-secrets-podman/">Chapitre 11.5 — Gérer les secrets avec Podman</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_11/11.6-executer-sentinel-securite/">Chapitre 11.6 — Exécuter Sentinel en sécurité</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 12 - Supervision et audit</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_12/12.1-centraliser-journaux-rsyslog/">Chapitre 12.1 — Centraliser les journaux avec Rsyslog</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_12/12.2-auditer-systeme-auditd/">Chapitre 12.2 — Auditer le système avec auditd</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_12/12.3-controler-integrite-fichiers-aide/">Chapitre 12.3 — Contrôler l'intégrité des fichiers avec AIDE</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_12/12.4-superviser-sentinel-prometheus/">Chapitre 12.4 — Superviser Sentinel avec Prometheus</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_12/12.5-concevoir-alertes-alertmanager/">Chapitre 12.5 — Concevoir des alertes avec Alertmanager</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_12/12.6-construire-tableau-bord-sentinel/">Chapitre 12.6 — Construire le tableau de bord Sentinel</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 13 - Attaques et défense</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.1-reconnaissance/">Chapitre 13.1 — Reconnaissance</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.2-scan-reseau/">Chapitre 13.2 — Scan réseau</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.3-brute-force-ssh/">Chapitre 13.3 — Brute force SSH</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.4-escalade-privileges/">Chapitre 13.4 — Escalade de privilèges</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.5-mouvements-lateraux/">Chapitre 13.5 — Mouvements latéraux</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.6-persistance/">Chapitre 13.6 — Persistance</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.7-exfiltration/">Chapitre 13.7 — Exfiltration</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_13/13.8-etude-cas-complete/">Chapitre 13.8 — Étude de cas complète</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal">Campagne 14 - Projet final</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.1-deployer-sentinel-almalinux-minimale/">Chapitre 14.1 — Déployer Sentinel sur une AlmaLinux minimale</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.2-securiser-hote/">Chapitre 14.2 — Sécuriser l'hôte</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.3-integrer-freeipa/">Chapitre 14.3 — Intégrer FreeIPA</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.4-deployer-ansible/">Chapitre 14.4 — Déployer avec Ansible</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.5-packager-rpm/">Chapitre 14.5 — Packager avec RPM</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.6-conteneuriser-podman/">Chapitre 14.6 — Conteneuriser avec Podman</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.7-superviser-auditer/">Chapitre 14.7 — Superviser et auditer</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../campagne_14/14.8-audit-final-tests-kali/">Chapitre 14.8 — Audit final et tests depuis Kali</a>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</nav>
+<section class="wy-nav-content-wrap" data-toggle="wy-nav-shift">
+<nav aria-label="Mobile navigation menu" class="wy-nav-top" role="navigation">
+<i class="fa fa-bars" data-toggle="wy-nav-top"></i>
+<a href="../..">Formation Sentinel — AlmaLinux sécurisé</a>
+</nav>
+<div class="wy-nav-content">
+<div class="rst-content"><div aria-label="breadcrumbs navigation" role="navigation">
+<ul class="wy-breadcrumbs">
+<li><a aria-label="Docs" class="icon icon-home" href="../.."></a></li>
+<li class="breadcrumb-item">Campagnes</li>
+<li class="breadcrumb-item">Campagne 8 - FreeIPA</li>
+<li class="breadcrumb-item active">Chapitre 8.8 — Gérer les certificats de service avec FreeIPA</li>
+<li class="wy-breadcrumbs-aside">
+<a href="https://github.com/tdelaclos/formations/edit/master/docs/campagne_08/8.8-certificats.md">Edit on tdelaclos/formations</a>
+</li>
+</ul>
+<hr/>
+</div>
+<div class="document" itemscope="itemscope" itemtype="http://schema.org/Article" role="main">
+<div class="section" itemprop="articleBody">
+<h1 id="chapitre-88-gerer-les-certificats-de-service-avec-freeipa">Chapitre 8.8 — Gérer les certificats de service avec FreeIPA</h1>
+<blockquote>
+<p><strong>Campagne 8 — FreeIPA</strong></p>
+<p><em>« Émettre un certificat est un événement ; maintenir sa confiance est un cycle de vie. »</em></p>
+</blockquote>
+<h2 id="vous-etes-ici">Vous êtes ici</h2>
+<pre><code class="language-text">Partie II — Industrialiser la sécurité
+
+Campagne 8 — FreeIPA
+
+      8.1 Présentation de FreeIPA
+      8.2 Architecture interne
+      8.3 Installation du serveur
+      8.4 Gestion des utilisateurs
+      8.5 Groupes et rôles
+      8.6 Politiques sudo
+      8.7 Hôtes et règles HBAC
+    ► 8.8 Certificats
+      8.9 Intégration de Sentinel
+      8.10 Mission d'administration
+</code></pre>
+<h2 id="objectifs-pedagogiques">Objectifs pédagogiques</h2>
+<p>À la fin de ce chapitre, vous serez capable de :</p>
+<ul>
+<li>relier principal de service, SAN DNS, clé privée et certificat ;</li>
+<li>demander un certificat à la CA IdM avec <code>certmonger</code> ;</li>
+<li>vérifier chaîne, identité, usages et dates avec OpenSSL ;</li>
+<li>préparer un renouvellement qui recharge le service ;</li>
+<li>distinguer renouvellement, révocation et retrait du suivi.</li>
+</ul>
+<h2 id="pourquoi-ce-chapitre-existe">Pourquoi ce chapitre existe</h2>
+<p>La campagne 7 a construit une PKI manuelle pour comprendre TLS. FreeIPA fournit maintenant une autorité intégrée et une identité de domaine ; <code>certmonger</code> peut demander puis suivre les certificats sur l'hôte qui les utilise.</p>
+<p>Le danger serait de remplacer une copie manuelle par une demande automatique sans vérifier le nom, les usages, les permissions ou le comportement au renouvellement.</p>
+<h2 id="les-quatre-objets-a-ne-pas-confondre">Les quatre objets à ne pas confondre</h2>
+<table>
+<thead>
+<tr>
+<th>Objet</th>
+<th>Rôle</th>
+<th>Sensibilité</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>principal <code>HTTP/sentinel01...</code></td>
+<td>identité du service dans IdM/Kerberos</td>
+<td>contrôlé par le domaine</td>
+</tr>
+<tr>
+<td>clé privée</td>
+<td>prouve la possession de l'identité TLS</td>
+<td>secret local critique</td>
+</tr>
+<tr>
+<td>certificat</td>
+<td>lie clé publique, identité et usages</td>
+<td>public, mais doit être valide</td>
+</tr>
+<tr>
+<td>certificat de CA</td>
+<td>ancre ou intermédiaire de confiance</td>
+<td>distribué et protégé contre la substitution</td>
+</tr>
+</tbody>
+</table>
+<div class="mermaid">flowchart LR
+    Principal["Principal de service"] --&gt; Request["Demande autorisée"]
+    Key["Clé privée locale"] --&gt; CSR["CSR"]
+    Request --&gt; CA["Dogtag CA"]
+    CSR --&gt; CA
+    CA --&gt; Cert["Certificat signé"]
+    Cert --&gt; Service["Sentinel TLS"]
+</div>
+<p>Le certificat ne contient pas la clé privée. Copier le certificat n'usurpe pas le service ; copier la clé privée peut le permettre.</p>
+<h2 id="identite-x509-le-san-avant-le-cn">Identité X.509 : le SAN avant le CN</h2>
+<p>Les clients TLS modernes vérifient les entrées <strong>Subject Alternative Name</strong>. Pour le serveur :</p>
+<pre><code class="language-text">DNS:sentinel01.sentinel.example.test
+</code></pre>
+<p>Chaque nom réellement utilisé par un client doit être prévu. Ajouter des alias « au cas où » augmente la portée d'une clé compromise. Le CN historique ne remplace pas un SAN correct.</p>
+<h3 id="usages-de-cle">Usages de clé</h3>
+<p>Les extensions <strong>Key Usage</strong> et <strong>Extended Key Usage</strong> limitent les usages prévus :</p>
+<ul>
+<li>certificat serveur : <code>serverAuth</code> ;</li>
+<li>certificat client mTLS : <code>clientAuth</code> ;</li>
+<li>une CA possède des capacités de signature spécifiques.</li>
+</ul>
+<p>Réutiliser le certificat serveur comme client du healthcheck brouille les rôles et peut échouer lorsque les usages sont correctement restreints.</p>
+<h2 id="preparer-principal-chemins-et-permissions">Préparer principal, chemins et permissions</h2>
+<p>Depuis une session administrative :</p>
+<pre><code class="language-bash">kinit admin
+ipa service-add \
+  HTTP/sentinel01.sentinel.example.test
+ipa service-show \
+  HTTP/sentinel01.sentinel.example.test --all
+</code></pre>
+<p>Sur <code>sentinel01</code>, préparez un répertoire hors du dépôt Git :</p>
+<pre><code class="language-bash">sudo install -d -o root -g sentinel -m 0750 /etc/sentinel/tls
+sudo restorecon -Rv /etc/sentinel/tls
+</code></pre>
+<p>La politique SELinux introduite en campagne 6 et étendue en campagne 7 doit autoriser seulement la lecture des matériaux prévus. Vérifiez les types avec <code>ls -lZ</code> et recherchez les AVC au lieu de désactiver SELinux.</p>
+<h2 id="demander-le-certificat-serveur">Demander le certificat serveur</h2>
+<p><code>ipa-getcert</code> est l'interface de <code>certmonger</code> spécialisée pour la CA IdM :</p>
+<pre><code class="language-bash">sudo systemctl enable --now certmonger
+sudo ipa-getcert request \
+  -I sentinel-server \
+  -K HTTP/sentinel01.sentinel.example.test \
+  -D sentinel01.sentinel.example.test \
+  -k /etc/sentinel/tls/server.key \
+  -f /etc/sentinel/tls/server.crt
+</code></pre>
+<p>La requête est liée au principal et au nom DNS. Selon la politique et les droits du domaine, une approbation peut être nécessaire.</p>
+<p>Suivez l'état :</p>
+<pre><code class="language-bash">sudo getcert list -i sentinel-server
+</code></pre>
+<p>L'état attendu est <code>MONITORING</code>. Un état d'erreur doit être expliqué : principal absent, nom non autorisé, CA indisponible, permissions ou authentification de l'hôte.</p>
+<h2 id="proteger-la-cle-et-permettre-le-renouvellement">Protéger la clé et permettre le renouvellement</h2>
+<p>Après émission :</p>
+<pre><code class="language-bash">sudo chown root:sentinel /etc/sentinel/tls/server.key
+sudo chmod 0640 /etc/sentinel/tls/server.key
+sudo chown root:sentinel /etc/sentinel/tls/server.crt
+sudo chmod 0644 /etc/sentinel/tls/server.crt
+sudo restorecon -v /etc/sentinel/tls/server.key /etc/sentinel/tls/server.crt
+sudo -u sentinel test -r /etc/sentinel/tls/server.key
+</code></pre>
+<p>Vérifiez que les propriétaires et modes persistent après un renouvellement ou configurez-les explicitement dans la demande selon les options disponibles sur votre version de <code>getcert</code>. Le processus doit lire la clé sans pouvoir la remplacer.</p>
+<p>La clé ne doit apparaître ni dans Git, ni dans une archive de preuve, ni dans un copier-coller de terminal.</p>
+<h2 id="verifier-le-certificat-obtenu">Vérifier le certificat obtenu</h2>
+<pre><code class="language-bash">openssl x509 -in /etc/sentinel/tls/server.crt \
+  -noout -subject -issuer -serial -dates
+openssl x509 -in /etc/sentinel/tls/server.crt \
+  -noout -ext subjectAltName,keyUsage,extendedKeyUsage
+openssl verify \
+  -CAfile /etc/ipa/ca.crt \
+  /etc/sentinel/tls/server.crt
+</code></pre>
+<p>La checklist minimale :</p>
+<table>
+<thead>
+<tr>
+<th>Contrôle</th>
+<th>Résultat attendu</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>chaîne</td>
+<td>vérifiée par la CA IdM attendue</td>
+</tr>
+<tr>
+<td>SAN</td>
+<td>contient le FQDN réellement utilisé</td>
+</tr>
+<tr>
+<td>usages</td>
+<td>compatibles avec serveur TLS</td>
+</tr>
+<tr>
+<td>validité</td>
+<td>actif maintenant, marge de renouvellement suffisante</td>
+</tr>
+<tr>
+<td>clé privée</td>
+<td>lisible par Sentinel, non modifiable par lui</td>
+</tr>
+<tr>
+<td>suivi</td>
+<td>demande <code>MONITORING</code> dans <code>certmonger</code></td>
+</tr>
+</tbody>
+</table>
+<p>Pour confirmer que la clé correspond au certificat, comparez leurs clés publiques sans afficher la clé privée :</p>
+<pre><code class="language-bash">openssl x509 -in /etc/sentinel/tls/server.crt -pubkey -noout \
+  | openssl pkey -pubin -outform DER \
+  | sha256sum
+sudo openssl pkey -in /etc/sentinel/tls/server.key -pubout -outform DER \
+  | sha256sum
+</code></pre>
+<p>Les condensats doivent être identiques.</p>
+<h2 id="certificats-clients-mtls">Certificats clients mTLS</h2>
+<p>Un client Sentinel reçoit sa propre identité et une clé distincte. Sur <code>agent01</code>, le principe est identique avec un principal de service dédié et un SAN :</p>
+<pre><code class="language-text">sentinel-agent/agent01.sentinel.example.test@SENTINEL.EXAMPLE.TEST
+DNS:agent01.sentinel.example.test
+Extended Key Usage: clientAuth
+</code></pre>
+<p>Le nom exact du type de principal relève de votre convention. En revanche, ne partagez pas une seule clé entre tous les agents : vous perdriez l'attribution et la révocation individuelle.</p>
+<p>Le certificat du healthcheck local utilise encore une identité cliente dédiée. Sentinel <code>0.6.0</code> devra autoriser cette identité avec les agents légitimes.</p>
+<h2 id="renouvellement-et-rechargement-du-service">Renouvellement et rechargement du service</h2>
+<p><code>certmonger</code> surveille l'expiration et soumet une demande de renouvellement avant l'échéance. Le fichier renouvelé n'est utile que si le processus relit le certificat et la clé.</p>
+<div class="mermaid">sequenceDiagram
+    participant C as certmonger
+    participant CA as IdM CA
+    participant H as hook root contrôlé
+    participant S as Sentinel
+    C-&gt;&gt;CA: demande le renouvellement
+    CA--&gt;&gt;C: nouveau certificat
+    C-&gt;&gt;C: remplace le fichier en conservant le contrat
+    C-&gt;&gt;H: post-save validé
+    H-&gt;&gt;S: reload ou restart maîtrisé
+    S--&gt;&gt;H: service prêt
+</div>
+<p>Un hook post-enregistrement s'exécute avec des privilèges élevés. Il doit être root, non modifiable par <code>sentinel</code>, minimal et testé. Si Sentinel ne sait pas recharger TLS à chaud, utilisez un redémarrage contrôlé par systemd et vérifiez <code>/ready</code> ensuite.</p>
+<p>Consultez les options disponibles avant de l'associer :</p>
+<pre><code class="language-bash">ipa-getcert request --help
+getcert list -i sentinel-server
+</code></pre>
+<p>Pour tester le cycle sans attendre l'expiration, utilisez une VM et la commande de renouvellement documentée par la version, puis vérifiez numéro de série, dates, permissions, contexte SELinux et disponibilité du service. <code>getcert resubmit</code> déclenche une nouvelle soumission ; ce n'est pas une simulation parfaite de l'échéance automatique.</p>
+<h2 id="renouveler-revoquer-ou-arreter-le-suivi">Renouveler, révoquer ou arrêter le suivi</h2>
+<table>
+<thead>
+<tr>
+<th>Action</th>
+<th>Quand ?</th>
+<th>Conséquence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>renouveler</td>
+<td>certificat approche de l'expiration, clé encore digne de confiance</td>
+<td>nouvelle période de validité</td>
+</tr>
+<tr>
+<td>révoquer</td>
+<td>clé compromise, service retiré ou certificat émis à tort</td>
+<td>certificat déclaré non fiable</td>
+</tr>
+<tr>
+<td>arrêter le suivi</td>
+<td>certificat géré autrement ou service supprimé</td>
+<td>plus de renouvellement local</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-bash">sudo getcert stop-tracking -i sentinel-server
+</code></pre>
+<p>Cette commande n'efface pas nécessairement les fichiers et ne révoque pas automatiquement le certificat. De même, supprimer un fichier n'informe pas la CA.</p>
+<h2 id="revocation-crl-et-ocsp">Révocation, CRL et OCSP</h2>
+<p>La CA publie des informations de révocation, par liste CRL ou service OCSP selon l'architecture. Un client qui ne les consulte pas peut continuer à accepter un certificat révoqué jusqu'à expiration.</p>
+<p>Le laboratoire doit documenter :</p>
+<ul>
+<li>qui a le droit de révoquer ;</li>
+<li>comment retrouver le numéro de série ;</li>
+<li>comment publier et distribuer l'état de révocation ;</li>
+<li>comment Sentinel ou son frontal vérifie cet état ;</li>
+<li>comment remplacer rapidement l'identité compromise.</li>
+</ul>
+<p>Ne révoquez pas le certificat principal avant d'avoir une identité de remplacement et un accès de secours.</p>
+<h2 id="diagnostic">Diagnostic</h2>
+<div class="mermaid">flowchart TD
+    Problem["Certificat absent ou invalide"] --&gt; Request["getcert list : état et erreur"]
+    Request --&gt; Principal["principal et objet hôte/service"]
+    Principal --&gt; Name["SAN et DNS"]
+    Name --&gt; CA["CA, réseau, heure"]
+    CA --&gt; Files["modes, propriétaires, SELinux"]
+    Files --&gt; App["rechargement et journaux Sentinel"]
+</div>
+<pre><code class="language-bash">sudo getcert list -i sentinel-server
+ipa service-show HTTP/sentinel01.sentinel.example.test --all
+timedatectl
+ls -lZ /etc/sentinel/tls
+sudo ausearch -m AVC -ts recent -c sentinel -i
+journalctl -u sentinel --since '-10 minutes'
+</code></pre>
+<h2 id="regards-securite">Regards sécurité</h2>
+<ul>
+<li><strong>Architecte</strong> : supervise l'expiration et le dernier renouvellement réussi, pas seulement le fichier présent.</li>
+<li><strong>Attaquant</strong> : préfère voler une clé encore valide plutôt que casser TLS.</li>
+<li><strong>Culture</strong> : Kerberos et X.509 sont deux systèmes de tickets d'identité très différents ; un principal peut toutefois autoriser l'émission d'un certificat de service.</li>
+<li><strong>Piège</strong> : rendre une clé <code>0644</code> pour résoudre un refus remplace un problème d'exploitation par une fuite potentielle.</li>
+</ul>
+<h2 id="mise-en-pratique-dossier-de-certificat-sentinel">Mise en pratique — dossier de certificat Sentinel</h2>
+<ol>
+<li>créez le principal <code>HTTP/sentinel01...</code> ;</li>
+<li>préparez <code>/etc/sentinel/tls</code> avec propriétaires, modes et contexte SELinux ;</li>
+<li>demandez le certificat avec un identifiant de suivi ;</li>
+<li>attendez <code>MONITORING</code> ;</li>
+<li>vérifiez chaîne, SAN, usages, dates et correspondance de clé ;</li>
+<li>prouvez que <code>sentinel</code> lit la clé sans pouvoir la modifier ;</li>
+<li>documentez le hook de rechargement, sans l'activer avant revue ;</li>
+<li>écrivez la procédure de renouvellement, révocation, arrêt du suivi et retour arrière.</li>
+</ol>
+<h2 id="impact-sur-sentinel">Impact sur Sentinel</h2>
+<p>FreeIPA remplace la CA manuelle du laboratoire, pas le contrôle TLS de Sentinel. <code>certmonger</code> maintient les fichiers ; Sentinel les lit au démarrage, vérifie les clients et garde l'autorisation des SAN DNS dans sa configuration.</p>
+<h2 id="synthese">Synthèse</h2>
+<ul>
+<li>le principal autorise une identité de service, le SAN nomme l'identité TLS ;</li>
+<li>la clé privée reste sur l'hôte et reçoit les permissions les plus restrictives ;</li>
+<li><code>certmonger</code> demande, suit et renouvelle les certificats de service ;</li>
+<li>chaîne, SAN, usages, dates et correspondance de clé se vérifient séparément ;</li>
+<li>un renouvellement doit déclencher une relecture sûre par le service ;</li>
+<li>renouvellement, révocation et arrêt du suivi sont trois actions distinctes ;</li>
+<li>la révocation n'est utile que si les clients consultent l'information.</li>
+</ul>
+<h2 id="pour-aller-plus-loin">Pour aller plus loin</h2>
+<p>Le chapitre suivant branche ces identités sur Sentinel <code>0.6.0</code> et prouve la différence entre client anonyme, certificat fiable non autorisé et identité autorisée.</p>
+<p><a href="../8.9-integration-sentinel/">Continuer vers le chapitre 8.9 — Intégrer Sentinel à FreeIPA</a></p>
+<p>Référence : <a href="https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/9/html/managing_certificates_in_idm/">RHEL 9 — Managing certificates in IdM</a>.</p>
+</div>
+</div><footer>
+<div aria-label="Footer Navigation" class="rst-footer-buttons" role="navigation">
+<a class="btn btn-neutral float-left" href="../8.7-gestion-hotes/" title="Chapitre 8.7 — Enrôler les hôtes et contrôler les accès avec HBAC"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+<a class="btn btn-neutral float-right" href="../8.9-integration-sentinel/" title="Chapitre 8.9 — Intégrer Sentinel à FreeIPA">Next <span class="icon icon-circle-arrow-right"></span></a>
+</div>
+<hr/>
+<div role="contentinfo">
+<!-- Copyright etc -->
+</div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+</div>
+</div>
+</section>
+</div>
+<div aria-label="Versions" class="rst-versions" role="note">
+<span class="rst-current-version" data-toggle="rst-current-version">
+<span>
+<a class="fa fa-code-fork" href="https://github.com/tdelaclos/formations" style="color: #fcfcfc"> tdelaclos/formations</a>
+</span>
+<span><a href="../8.7-gestion-hotes/" style="color: #fcfcfc">« Previous</a></span>
+<span><a href="../8.9-integration-sentinel/" style="color: #fcfcfc">Next »</a></span>
+</span>
+</div>
+<script src="../../js/jquery-3.6.0.min.js"></script>
+<script>var base_url = "../..";</script>
+<script src="../../js/theme_extra.js"></script>
+<script src="../../js/theme.js"></script>
+<script src="../../search/main.js"></script>
+<script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+<script type="module">import mermaid from "https://unpkg.com/mermaid@10.4.0/dist/mermaid.esm.min.mjs";
+mermaid.initialize({});</script></body>
+</html>
